@@ -8,4 +8,8 @@
 	<Platforms>AnyCPU</Platforms>	  
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="PInvoke.User32" Version="0.7.104" />
+  </ItemGroup>
+
 </Project>

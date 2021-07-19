@@ -5,8 +5,76 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WindowCommander"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Commander" Height="800" Width="600" WindowStyle="None" Loaded="Window_Loaded">
+	<WindowChrome.WindowChrome>
+		<WindowChrome CaptionHeight="0"/>
+	</WindowChrome.WindowChrome>
+	<DockPanel>
+		<DockPanel.Style>
+			<Style TargetType="DockPanel">
+				<Style.Setters>
+					<Setter Property="Margin" Value="0"></Setter>
+				</Style.Setters>
+				<Style.Triggers>
+					<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, 
+							AncestorType={x:Type Window}}, Path=WindowState}" Value="Maximized">
+						<Setter Property="Margin" Value="7"></Setter>
+					</DataTrigger>
+				</Style.Triggers>
+			</Style>
+		</DockPanel.Style>
+		<Border DockPanel.Dock="Top" BorderThickness="0, 1, 0, 0">
+			<Border.Style>
+				<Style TargetType="Border">
+					<Style.Setters>
+						<Setter Property="BorderBrush" Value="gray"></Setter>
+					</Style.Setters>
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, 
+								AncestorType={x:Type Window}}, Path=IsActive}" Value="True">
+							<Setter Property="BorderBrush" Value="Yellow"></Setter>
+							<Setter Property="BorderThickness" Value="15"></Setter>
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</Border.Style>
+			<Grid Background="BlueViolet" Height="30" MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+				<TextBlock.Foreground>
+					<SolidColorBrush Color="White"></SolidColorBrush>
+				</TextBlock.Foreground>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" ></ColumnDefinition>
+					<ColumnDefinition Width="Auto" ></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+				<Grid>
 
-    </Grid>
+				</Grid>
+				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+					<Viewbox>
+						<TextBlock Padding="5,0">‒</TextBlock>
+					</Viewbox>
+					<Viewbox>
+						<TextBlock Padding="5,0">☐</TextBlock>
+					</Viewbox>
+					<Viewbox>
+						<TextBlock Padding="5,0">✕</TextBlock>
+					</Viewbox>
+
+
+				</StackPanel>
+			</Grid>
+		</Border>
+		<Border BorderBrush="Red" BorderThickness="1">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="5" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<TextBlock FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">Left side</TextBlock>
+				<GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"  />
+				<TextBlock Grid.Column="2" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" >Right side</TextBlock>
+			</Grid>
+		</Border>
+	</DockPanel>
 </Window>
