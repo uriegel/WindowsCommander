@@ -44,7 +44,7 @@
 					<ColumnDefinition Width="Auto" ></ColumnDefinition>
 				</Grid.ColumnDefinitions>
 				<Grid Background="White" MouseMove="Grid_MouseMove" MouseDown="Grid_MouseDown">
-					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">Commander</TextBlock>
+					<TextBlock TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType" HorizontalAlignment="Center" VerticalAlignment="Center">Commander</TextBlock>
 				</Grid>
 				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
 					<StackPanel.Resources>
