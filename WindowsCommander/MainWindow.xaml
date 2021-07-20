@@ -27,44 +27,58 @@
 			<Border.Style>
 				<Style TargetType="Border">
 					<Style.Setters>
-						<Setter Property="BorderBrush" Value="gray"></Setter>
+						<Setter Property="BorderBrush" Value="LightGray"></Setter>
 					</Style.Setters>
 					<Style.Triggers>
 						<DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, 
 								AncestorType={x:Type Window}}, Path=IsActive}" Value="True">
-							<Setter Property="BorderBrush" Value="Yellow"></Setter>
+							<Setter Property="BorderBrush" Value="Blue"></Setter>
 							<Setter Property="BorderThickness" Value="15"></Setter>
 						</DataTrigger>
 					</Style.Triggers>
 				</Style>
 			</Border.Style>
-			<Grid Background="BlueViolet" Height="30" MouseLeftButtonDown="Grid_MouseLeftButtonDown">
-				<TextBlock.Foreground>
-					<SolidColorBrush Color="White"></SolidColorBrush>
-				</TextBlock.Foreground>
+			<Grid Background="White" Height="30">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" ></ColumnDefinition>
 					<ColumnDefinition Width="Auto" ></ColumnDefinition>
 				</Grid.ColumnDefinitions>
-				<Grid>
-
+				<Grid Background="White" MouseMove="Grid_MouseMove" MouseDown="Grid_MouseDown">
+					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">Commander</TextBlock>
 				</Grid>
-				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-					<Viewbox>
-						<TextBlock Padding="5,0">‒</TextBlock>
-					</Viewbox>
-					<Viewbox>
-						<TextBlock Padding="5,0">☐</TextBlock>
-					</Viewbox>
-					<Viewbox>
-						<TextBlock Padding="5,0">✕</TextBlock>
-					</Viewbox>
-
-
+				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+					<StackPanel.Resources>
+						<Style TargetType="TextBlock" x:Key="WindowControl">
+							<Style.Triggers>
+								<Trigger Property="IsMouseOver" Value="True">
+									<Setter Property="Background" Value="LightGray"></Setter>
+								</Trigger>
+							</Style.Triggers>
+							<Setter Property="TextBlock.FontSize" Value="17"></Setter>
+							<Setter Property="TextBlock.Padding" Value="10, 0, 10, 4"></Setter>
+						</Style>
+						<Style TargetType="TextBlock" BasedOn="{StaticResource WindowControl}">
+						</Style>
+					</StackPanel.Resources>
+					<TextBlock MouseLeftButtonUp="Minimize_Click" >‒</TextBlock>
+					<TextBlock MouseLeftButtonUp="Maximize_Click" >☐</TextBlock>
+					<TextBlock MouseLeftButtonUp="Close_Click">
+						<TextBlock.Style>
+							<Style TargetType="TextBlock" BasedOn="{StaticResource WindowControl}">
+								<Style.Triggers>
+									<Trigger Property="IsMouseOver" Value="True">
+										<Setter Property="Background" Value="Red"></Setter>
+										<Setter Property="Foreground" Value="White"></Setter>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</TextBlock.Style>
+						✕
+					</TextBlock>
 				</StackPanel>
 			</Grid>
 		</Border>
-		<Border BorderBrush="Red" BorderThickness="1">
+		<Border BorderBrush="LightGray" BorderThickness="0, 1, 0, 0">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
