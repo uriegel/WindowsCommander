@@ -37,5 +37,4 @@ namespace WindowsCommander
 	}
 }
 
-// TODO Icon
 // TODO Save Windows State

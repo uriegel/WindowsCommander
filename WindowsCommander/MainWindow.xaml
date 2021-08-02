@@ -93,9 +93,9 @@
 					<ColumnDefinition Width="5" />
 					<ColumnDefinition Width="*" MinWidth="15" />
 				</Grid.ColumnDefinitions>
-				<TextBlock FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" MinWidth="50">Left side</TextBlock>
+				<local:Folder HorizontalAlignment="Stretch"></local:Folder>
 				<GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"  />
-				<TextBlock Grid.Column="2" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" MinWidth="50" >Right side</TextBlock>
+				<local:Folder Grid.Column="2" HorizontalAlignment="Stretch" ></local:Folder>
 			</Grid>
 		</Border>
 	</DockPanel>
