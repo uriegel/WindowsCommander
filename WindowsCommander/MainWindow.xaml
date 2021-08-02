@@ -1,14 +1,17 @@
-﻿<Window x:Class="WindowCommander.MainWindow"
+﻿<Window x:Class="WindowsCommander.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WindowCommander"
+        xmlns:local="clr-namespace:WindowsCommander"
         mc:Ignorable="d"
         Title="Commander" Height="800" Width="600" WindowStyle="None" Loaded="Window_Loaded">
 	<WindowChrome.WindowChrome>
 		<WindowChrome CaptionHeight="0"/>
 	</WindowChrome.WindowChrome>
+	<Window.Resources>
+		<BitmapImage x:Key="Kirk" UriSource="/Resources/kirk.png" />
+	</Window.Resources>
 	<DockPanel>
 		<DockPanel.Style>
 			<Style TargetType="DockPanel">
@@ -40,13 +43,18 @@
 			</Border.Style>
 			<Grid Background="White" Height="30">
 				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" ></ColumnDefinition>
 					<ColumnDefinition Width="*" ></ColumnDefinition>
 					<ColumnDefinition Width="Auto" ></ColumnDefinition>
 				</Grid.ColumnDefinitions>
-				<Grid Background="White" MouseMove="Grid_MouseMove" MouseDown="Grid_MouseDown">
+				<Grid>
+					<Image Source="{StaticResource Kirk}" Stretch="UniformToFill"
+						   RenderOptions.BitmapScalingMode="Fant"></Image>
+				</Grid>
+				<Grid Background="White" Grid.Column="1" MouseMove="Grid_MouseMove" MouseDown="Grid_MouseDown">
 					<TextBlock TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType" HorizontalAlignment="Center" VerticalAlignment="Center">Commander</TextBlock>
 				</Grid>
-				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+				<StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
 					<StackPanel.Resources>
 						<Style TargetType="TextBlock" x:Key="WindowControl">
 							<Style.Triggers>

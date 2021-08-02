@@ -1,11 +1,9 @@
-﻿using PInvoke;
-
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 
-namespace WindowCommander
+namespace WindowsCommander
 {
 	public partial class MainWindow : Window
 	{
@@ -14,7 +12,7 @@ namespace WindowCommander
 		void Grid_MouseMove(object sender, MouseEventArgs e)
 		{
 			if (e.MouseDevice.LeftButton == MouseButtonState.Pressed)
-				User32.PostMessage(windowHandle, User32.WindowMessage.WM_NCLBUTTONDOWN, new IntPtr(2), IntPtr.Zero);
+				PInvoke.PostMessage(windowHandle, WindowMessage.WM_NCLBUTTONDOWN, new IntPtr(2), IntPtr.Zero);
 		}
 
 		void Grid_MouseDown(object sender, MouseButtonEventArgs e)
