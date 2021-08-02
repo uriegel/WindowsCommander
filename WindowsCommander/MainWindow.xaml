@@ -89,13 +89,13 @@
 		<Border BorderBrush="LightGray" BorderThickness="0, 1, 0, 0">
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="*" MinWidth="15" />
 					<ColumnDefinition Width="5" />
-					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="*" MinWidth="15" />
 				</Grid.ColumnDefinitions>
-				<TextBlock FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">Left side</TextBlock>
+				<TextBlock FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" MinWidth="50">Left side</TextBlock>
 				<GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"  />
-				<TextBlock Grid.Column="2" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" >Right side</TextBlock>
+				<TextBlock Grid.Column="2" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" MinWidth="50" >Right side</TextBlock>
 			</Grid>
 		</Border>
 	</DockPanel>
