@@ -6,10 +6,15 @@
              xmlns:local="clr-namespace:WindowsCommander"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-	<ListView Name="listView">
-		<ListView.View>
-			<GridView>
-			</GridView>
-		</ListView.View>
-	</ListView>
+	<DockPanel>
+		<TextBox KeyboardNavigation.IsTabStop="False" Text ="{Binding Path}" 
+				 KeyDown="TextBox_KeyDown" PreviewKeyDown="TextBox_PreviewKeyDown" DockPanel.Dock="Top" GotFocus="TextBox_GotFocus" 
+				 BorderThickness="0" />
+		<ListView Name="listView" BorderThickness="0">
+			<ListView.View>
+				<GridView>
+				</GridView>
+			</ListView.View>
+		</ListView>
+	</DockPanel>
 </UserControl>

@@ -75,5 +75,36 @@ namespace WindowsCommander
             }
             catch { }
         }
+
+        void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke((Action)(() => (sender as TextBox).SelectAll()));
+            e.Handled = true;
+        }
+
+        void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Return:
+                    //(DataContext as ItemViewContext).ChangePath.Execute((sender as TextBox).Text);
+                    Directory.GetItems((sender as TextBox).Text);
+                    e.Handled = true;
+                    //liste.FocusItem((DataContext as ItemViewContext).View.CurrentItem as Item, true);
+                    break;
+            }
+        }
+
+        void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Down:
+                    //liste.FocusItem((DataContext as ItemViewContext).View.CurrentItem as Item, true);
+                    e.Handled = true;
+                    break;
+            }
+        }
+
     }
 }
