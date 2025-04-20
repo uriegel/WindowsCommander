@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Commander"
         mc:Ignorable="d"
         Icon="/Resources/Kirk.ico"
-        Title="Commander" Height="450" Width="800">
+        Title="Commander" Width="600" Height="800" >
     <Grid>
 
     </Grid>
