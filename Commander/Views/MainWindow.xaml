@@ -8,6 +8,14 @@
         Icon="/Resources/Kirk.ico"
         Title="Commander" Width="600" Height="800" >
     <Grid>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MinWidth="15" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" MinWidth="15" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" ></Grid>
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" 
+                      Background="{x:Static SystemColors.WindowBrush}"/>
+        <Grid Grid.Column="2" Cursor="" ></Grid>
     </Grid>
 </Window>
