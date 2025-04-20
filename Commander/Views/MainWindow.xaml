@@ -14,8 +14,7 @@
             <ColumnDefinition Width="*" MinWidth="15" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" ></Grid>
-        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" 
-                      Background="{x:Static SystemColors.WindowBrush}"/>
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" />
         <Grid Grid.Column="2" Cursor="" ></Grid>
     </Grid>
 </Window>
