@@ -7,14 +7,73 @@
         mc:Ignorable="d"
         Icon="/Resources/Kirk.ico"
         Title="Commander" Width="600" Height="800" >
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="15" />
-            <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="*" MinWidth="15" />
-        </Grid.ColumnDefinitions>
-        <local:TestControl Grid.Column="0" HorizontalAlignment="Stretch"></local:TestControl>
-        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" Background="Transparent"  />
-        <local:TestControl Grid.Column="2" HorizontalAlignment="Stretch"></local:TestControl>
-    </Grid>
+    <DockPanel>
+        <Menu IsMainMenu="True" DockPanel.Dock="Top">
+            <MenuItem Header = "_Datei">
+                <MenuItem Header="_Umbenennen"
+                          Command="{Binding Rename}"
+                          InputGestureText="F2" />
+                <MenuItem Header="Kopie _anlegen"
+                          Command="{Binding RenameAsCopy}"
+                          InputGestureText="F2" />
+                <MenuItem Header="_Erweitertes Umbenennen"
+                          Command="{Binding ExtendedRename}"
+                          InputGestureText="F2" />
+                <Separator />
+                <MenuItem Header="_Kopieren"
+                          Command="{Binding Copy}"
+                          InputGestureText="F5" />
+                <MenuItem Header="_Verschieben"
+                          Command="{Binding Move}"
+                          InputGestureText="F6" />
+                <MenuItem Header="_Löschen"
+                          Command="{Binding Delete}"
+                          InputGestureText="Entf" />
+                <MenuItem Header="_Ordner anlegen"
+                          Command="{Binding CreateFolder}"
+                          InputGestureText="F7" />
+                <Separator />
+                <MenuItem Header="_Eigenschaften"
+                          Command="{Binding ShowProperties}"
+                          InputGestureText="Alt+Enter" />
+            </MenuItem>
+            <MenuItem Header = "_Navigation">
+                <MenuItem Header="_Favoriten"
+                          Command="{Binding Favorites}"
+                          InputGestureText="F1" />
+                <MenuItem Header="_Gleichen Ordner öffnen"
+                          Command="{Binding AdaptPath}"
+                          InputGestureText="F9" />
+            </MenuItem>
+            <MenuItem Header = "_Selektion">
+                <MenuItem Header="Selektiere markierten Eintrag"
+                          Command="{Binding SelectCurrent}"
+                          InputGestureText="Einfg" />
+                <MenuItem Header="Selektiere _Alles"
+                          Command="{Binding SelectAll}"
+                          InputGestureText="Num+" />
+                <MenuItem Header="Selektiere _Selektion entfernen"
+                          Command="{Binding SelectNone}"
+                          InputGestureText="Num-" />
+            </MenuItem>
+            <MenuItem Header = "_Ansicht">
+                <MenuItem Header="_Vorschau"
+                          Command="{Binding Preview}"
+                          InputGestureText="F3" />
+                <MenuItem Header="Vorschaumodus"
+                          Command="{Binding PreviewMode}"
+                          InputGestureText="CTRL+F3" />
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="15" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" MinWidth="15" />
+            </Grid.ColumnDefinitions>
+            <local:TestControl Grid.Column="0" HorizontalAlignment="Stretch"></local:TestControl>
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" Background="Transparent"  />
+            <local:TestControl Grid.Column="2" HorizontalAlignment="Stretch"></local:TestControl>
+        </Grid>
+    </DockPanel>
 </Window>
