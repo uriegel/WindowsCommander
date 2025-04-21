@@ -13,8 +13,8 @@
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="*" MinWidth="15" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" ></Grid>
-        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" />
-        <Grid Grid.Column="2" Cursor="" ></Grid>
+        <local:TestControl Grid.Column="0" HorizontalAlignment="Stretch"></local:TestControl>
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" Background="Transparent"  />
+        <local:TestControl Grid.Column="2" HorizontalAlignment="Stretch"></local:TestControl>
     </Grid>
 </Window>

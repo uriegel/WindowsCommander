@@ -7,6 +7,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
     	<ApplicationIcon>Resources\Kirk.ico</ApplicationIcon>
 		<UseWPF>true</UseWPF>
+		<LangVersion>Preview</LangVersion>
 	</PropertyGroup>
 
     <ItemGroup>
