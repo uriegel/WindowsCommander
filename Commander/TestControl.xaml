@@ -1,11 +1,12 @@
 ﻿<UserControl x:Class="Commander.TestControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"     
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Commander"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" SizeChanged="UserControl_SizeChanged">
+             d:DesignHeight="450" d:DesignWidth="800" 
+             SizeChanged="UserControl_SizeChanged">
     <UserControl.Resources>
         <Storyboard x:Key="WaterRipples" >
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(local:WaterRipple.Phase)" 
@@ -42,10 +43,11 @@
             <TextBlock Margin="2, 0, 0, 0" Grid.Column="1" Text="Zeit"></TextBlock>
             <TextBlock Margin="2, 0, 0, 0" Grid.Column="2" TextAlignment="Right" Text="Größe"></TextBlock>
         </Grid>
-        <ListView Grid.Row="2" Name="PeopleListView" 
+        <ListView Grid.Row="2" x:Name="PeopleListView" 
                   VirtualizingPanel.VirtualizationMode="Recycling" 
                   HorizontalContentAlignment="Stretch"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                     SelectionMode="Multiple"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="PeopleListView_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>

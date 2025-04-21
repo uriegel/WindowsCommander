@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -82,6 +83,13 @@ public partial class TestControl : UserControl
             context!.W2 = new GridLength(griddie.ActualWidth / 3, GridUnitType.Star);
             context!.W3 = new GridLength(griddie.ActualWidth / 6, GridUnitType.Star);
         }
+    }
+
+    void PeopleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var selected = e.AddedItems.OfType<Item>();
+        var toRemove = selected.Where(n => n.Name == "@AdvancedKeySettingsNotification.png");
+        PeopleListView.SelectedItems.Remove(toRemove.FirstOrDefault());
     }
 
     bool modus = false;

@@ -16,8 +16,8 @@
     </Window.InputBindings>
 
     <DockPanel>
-        <Menu IsMainMenu="True" DockPanel.Dock="Top">
-            <MenuItem Header = "_Datei">
+        <Menu IsMainMenu="True" DockPanel.Dock="Top" KeyboardNavigation.IsTabStop="False" >
+            <MenuItem Header = "_Datei" KeyboardNavigation.IsTabStop="False">
                 <MenuItem Header="_Umbenennen"
                           Command="{Binding Rename}"
                           InputGestureText="F2" />
@@ -45,7 +45,7 @@
                           Command="{Binding ShowProperties}"
                           InputGestureText="Alt+Enter" />
             </MenuItem>
-            <MenuItem Header = "_Navigation">
+            <MenuItem Header = "_Navigation" KeyboardNavigation.IsTabStop="False">
                 <MenuItem Header="_Favoriten"
                           Command="{Binding Favorites}"
                           InputGestureText="F1" />
@@ -53,7 +53,7 @@
                           Command="{Binding AdaptPath}"
                           InputGestureText="F9" />
             </MenuItem>
-            <MenuItem Header = "_Selektion">
+            <MenuItem Header = "_Selektion" KeyboardNavigation.IsTabStop="False">
                 <MenuItem Header="Selektiere markierten Eintrag"
                           Command="local:MainWindow.SelectCurrentCommand"
                           InputGestureText="Einfg" />
@@ -64,7 +64,7 @@
                           Command="{Binding SelectNone}"
                           InputGestureText="Num-" />
             </MenuItem>
-            <MenuItem Header = "_Ansicht">
+            <MenuItem Header = "_Ansicht" KeyboardNavigation.IsTabStop="False">
                 <MenuItem Header="_Vorschau"
                           Command="{Binding Preview}"
                           InputGestureText="F3" />
@@ -79,8 +79,10 @@
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" MinWidth="15" />
             </Grid.ColumnDefinitions>
-            <local:TestControl Grid.Column="0" HorizontalAlignment="Stretch"></local:TestControl>
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" Background="Transparent"  />
+            <local:TestControl x:Name="testControl" Grid.Column="0" HorizontalAlignment="Stretch"></local:TestControl>
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" 
+                          Background="Transparent"
+                          KeyboardNavigation.IsTabStop="False"/>
             <local:TestControl Grid.Column="2" HorizontalAlignment="Stretch"></local:TestControl>
         </Grid>
     </DockPanel>

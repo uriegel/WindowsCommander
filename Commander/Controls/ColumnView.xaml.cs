@@ -10,10 +10,14 @@ public partial class ColumnView : UserControl
     }
 }
 
-// TODO In TestView controlling Selections via Keybord: Ins, Ctrl+A, Shift End, Shift Home
-// TODO Don't select parent item
+// TODO Window loded: set focus on left ColumnView
+// TODO F10, alt, ... Focus Menu and MenuItems
+// TODO In TestView controlling Selections via Keybord: Ins
+
+
 // TODO HeaderControl with a variable number of Headers
 // TODO HeaderControl to TestView
+// TODO Shift Tab: focus path textBox
 // TODO Resize HeaderColumns
 // TODO ColumnView with HeaderControl and Controller
 // TODO Controller with DataContext, HeaderControl
