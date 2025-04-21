@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Commander"
         mc:Ignorable="d"
         Icon="/Resources/Kirk.ico"
-        Title="Commander" Width="600" Height="800" >
+        Title="Commander" Width="600" Height="800"
+        Loaded="Window_Loaded">
     <Window.CommandBindings>
         <CommandBinding Command="local:MainWindow.SelectCurrentCommand"
                         Executed="SelectCurrent_Executed" />

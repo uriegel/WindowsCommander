@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Commander;
@@ -50,5 +51,10 @@ public partial class MainWindow : Window
 
         Properties.Settings.Default.Save();
         base.OnClosing(e);
+    }
+
+    void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        Keyboard.Focus(testControl.PeopleListView);
     }
 }

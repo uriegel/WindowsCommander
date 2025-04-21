@@ -10,7 +10,7 @@ public partial class ColumnView : UserControl
     }
 }
 
-// TODO Window loded: set focus on left ColumnView
+// TODO Mouse click should focus the item, not select it
 // TODO F10, alt, ... Focus Menu and MenuItems
 // TODO In TestView controlling Selections via Keybord: Ins
 
