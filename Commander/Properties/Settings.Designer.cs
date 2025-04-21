@@ -73,7 +73,7 @@ namespace Commander.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public global::System.Windows.WindowState WindowState {
             get {
                 return ((global::System.Windows.WindowState)(this["WindowState"]));

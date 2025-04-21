@@ -5,6 +5,7 @@
         <TargetFramework>net9.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+		<PublishSingleFile>true</PublishSingleFile>
     	<ApplicationIcon>Resources\Kirk.ico</ApplicationIcon>
 		<UseWPF>true</UseWPF>
 		<LangVersion>Preview</LangVersion>
