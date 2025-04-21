@@ -11,6 +11,10 @@
 	</PropertyGroup>
 
     <ItemGroup>
+        <EmbeddedResource Include="Effects\WaterRipple.ps" />
+    </ItemGroup>
+
+    <ItemGroup>
       <Resource Include="Resources\Kirk.ico" />
     </ItemGroup>
 

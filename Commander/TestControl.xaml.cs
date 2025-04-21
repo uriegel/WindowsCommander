@@ -21,13 +21,13 @@ public partial class TestControl : UserControl
 
     void TextBox_GotFocus(object sender, RoutedEventArgs e)
     {
-        Dispatcher.BeginInvoke((Action)(() => (sender as TextBox)?.SelectAll()));
+        Dispatcher.BeginInvoke(() => (sender as TextBox)?.SelectAll());
         e.Handled = true;
     }
 
-    void story_Completed(object sender, EventArgs e)
+    void story_Completed(object? sender, EventArgs e)
     {
-        Storyboard story = (Storyboard)FindResource("WaterWaves");
+        var story = (Storyboard)FindResource("WaterRipples");
         story.Completed -= story_Completed;
         PeopleListView.Effect = null;
     }
@@ -41,31 +41,33 @@ public partial class TestControl : UserControl
                 modus = !modus;
                 UserControl_SizeChanged(null, null);
 
-                //    //(DataContext as ItemViewContext).ChangePath.Execute((sender as TextBox).Text);
-                //    var items = Directory.GetItems((sender as TextBox).Text);
-                //    this.listView.ItemsSource = items;
-                //    e.Handled = true;
-                //    //liste.FocusItem((DataContext as ItemViewContext).View.CurrentItem as Item, true);
+                ////(DataContext as ItemViewContext).ChangePath.Execute((sender as TextBox).Text);
+                //var items = Directory.GetItems((sender as TextBox).Text);
+                //this.listView.ItemsSource = items;
+                //e.Handled = true;
+                //liste.FocusItem((DataContext as ItemViewContext).View.CurrentItem as Item, true);
 
 
-                //Dispatcher.BeginInvoke(DispatcherPriority.Input, (Action)(() =>
-                //{
-                //    WasserEffect wasser = new WasserEffect();
-                //    wasser.Amplitude = 10;
-                //    wasser.Regler = 2;
-                //    wasser.Frequency = 35;
-                //    PeopleListView.Effect = wasser;
-                //    Storyboard story = (Storyboard)FindResource("WaterWaves");
-                //    story.Completed += story_Completed;
-                //    story.Begin();
-                //}));
+                Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+                {
+                    var ripple = new WaterRipple
+                    {
+                        Amplitude = 10,
+                        RatioControl = 2,
+                        Frequency = 35
+                    };
+                    PeopleListView.Effect = ripple;
+                    var story = (Storyboard)FindResource("WaterRipples");
+                    story.Completed += story_Completed;
+                    story.Begin();
+                });
 
 
                 break;
         }
     }
 
-    void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+    void UserControl_SizeChanged(object? sender, SizeChangedEventArgs e)
     {
         var context = DataContext as TestContent;
         if (modus)
