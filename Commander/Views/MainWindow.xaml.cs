@@ -1,13 +1,26 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace Commander;
 
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    #region Routed Commands
+
+    public static RoutedUICommand SelectCurrentCommand { get; } = new("SelectCurrent", "SelectCurrent", typeof(MainWindow));
+
+    #endregion
+
+    #region Command Bindings
+    
+    void SelectCurrent_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        InitializeComponent();
+
     }
+
+    #endregion
+
+    public MainWindow() => InitializeComponent();
 
     protected override void OnSourceInitialized(EventArgs e)
     {

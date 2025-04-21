@@ -7,6 +7,14 @@
         mc:Ignorable="d"
         Icon="/Resources/Kirk.ico"
         Title="Commander" Width="600" Height="800" >
+    <Window.CommandBindings>
+        <CommandBinding Command="local:MainWindow.SelectCurrentCommand"
+                        Executed="SelectCurrent_Executed" />
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="Insert" Command="local:MainWindow.SelectCurrentCommand" />
+    </Window.InputBindings>
+
     <DockPanel>
         <Menu IsMainMenu="True" DockPanel.Dock="Top">
             <MenuItem Header = "_Datei">
@@ -47,7 +55,7 @@
             </MenuItem>
             <MenuItem Header = "_Selektion">
                 <MenuItem Header="Selektiere markierten Eintrag"
-                          Command="{Binding SelectCurrent}"
+                          Command="local:MainWindow.SelectCurrentCommand"
                           InputGestureText="Einfg" />
                 <MenuItem Header="Selektiere _Alles"
                           Command="{Binding SelectAll}"
