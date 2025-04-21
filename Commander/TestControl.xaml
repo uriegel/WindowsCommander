@@ -30,9 +30,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBox KeyboardNavigation.IsTabStop="False" Text ="{Binding Path}" 
-				    KeyDown="TextBox_KeyDown" GotFocus="TextBox_GotFocus" 
-				    BorderThickness="0" />
+        <TextBox KeyboardNavigation.IsTabStop="False"
+                 KeyDown="TextBox_KeyDown" GotFocus="TextBox_GotFocus" BorderThickness="0" />
         <Grid Grid.Row="1" Name="griddie" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding W1}"/>
@@ -47,6 +46,7 @@
                   VirtualizingPanel.VirtualizationMode="Recycling" 
                   HorizontalContentAlignment="Stretch"
                      SelectionMode="Multiple"
+                  PreviewMouseDown="PeopleListView_PreviewMouseDown"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="PeopleListView_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>

@@ -93,6 +93,12 @@ public partial class TestControl : UserControl
     }
 
     bool modus = false;
+
+    void PeopleListView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        PeopleListView.Focus();
+        e.Handled = true;
+    }
 }
 
 class TestContent : INotifyPropertyChanged
