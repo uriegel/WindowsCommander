@@ -16,6 +16,36 @@ public partial class MainWindow : Window
     
     void SelectCurrent_Executed(object sender, ExecutedRoutedEventArgs e)
     {
+        var element = FocusManager.GetFocusedElement(this);
+        if (element is ListViewItem lvi)
+        {
+            if (LeftView.PeopleListView.SelectedItems.Contains(lvi.DataContext))
+            {
+                LeftView.PeopleListView.SelectedItems.Remove(lvi.DataContext);
+                lvi.IsSelected = false;
+            }
+            else
+            {
+                LeftView.PeopleListView.SelectedItems.Add(lvi.DataContext);
+                lvi.IsSelected = true;
+            }
+
+
+            int index = LeftView.PeopleListView.ItemContainerGenerator.IndexFromContainer(lvi);
+            int nextIndex = index + 1;
+
+            if (nextIndex < LeftView.PeopleListView.ItemsSource.Cast<Item>().Count())
+            {
+                var nextItem = LeftView.PeopleListView.Items[nextIndex];
+
+                LeftView.PeopleListView.ScrollIntoView(nextItem); // Optional: ensure it's visible
+                LeftView.PeopleListView.UpdateLayout(); // Ensure container is generated
+
+                var nextContainer = (ListViewItem)LeftView.PeopleListView.ItemContainerGenerator.ContainerFromItem(nextItem);
+                if (nextContainer != null)
+                    Keyboard.Focus(nextContainer); // Focus with visible focus rectangle
+            }
+        }
 
     }
 
@@ -55,6 +85,6 @@ public partial class MainWindow : Window
 
     void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        Keyboard.Focus(testControl.PeopleListView);
+        Keyboard.Focus(LeftView.PeopleListView);
     }
 }

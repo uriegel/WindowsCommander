@@ -10,11 +10,6 @@ public partial class ColumnView : UserControl
     }
 }
 
-// TODO Mouse click should focus the item, not select it
-// TODO F10, alt, ... Focus Menu and MenuItems
-// TODO In TestView controlling Selections via Keybord: Ins
-
-
 // TODO HeaderControl with a variable number of Headers
 // TODO HeaderControl to TestView
 // TODO Shift Tab: focus path textBox

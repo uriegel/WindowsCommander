@@ -7,6 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using System.Xml.Linq;
+
+using Commander.Extensions;
 
 namespace Commander;
 
@@ -96,7 +99,12 @@ public partial class TestControl : UserControl
 
     void PeopleListView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-        PeopleListView.Focus();
+        var lbi = (e.OriginalSource as DependencyObject)?.FindAncestorOrSelf<ListBoxItem>();
+        PeopleListView.UpdateLayout(); // Ensure layout is up to date
+        PeopleListView.ScrollIntoView(lbi); // Ensure the item is visible
+        //ListViewItem container = (ListViewItem)PeopleListView.ItemContainerGenerator.ContainerFromItem(lbi);
+        Keyboard.Focus(lbi); 
+
         e.Handled = true;
     }
 }
