@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -7,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using System.Xml.Linq;
 
 using Commander.Extensions;
 
@@ -19,6 +17,12 @@ public partial class TestControl : UserControl
     {
         DataContext = new TestContent();
         InitializeComponent();
+        griddie.HeaderItems = new[]
+        {
+            new ColumnViewHeaderItem("Name"),
+            new ColumnViewHeaderItem("Date"),
+            new ColumnViewHeaderItem("Size", TextAlignment.Right)
+        };
         var items = Directory.GetItems(@"c:\windows\system32");
         PeopleListView.ItemsSource = items;
     }
