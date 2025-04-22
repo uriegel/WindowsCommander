@@ -20,8 +20,8 @@ public partial class TestControl : UserControl
         griddie.HeaderItems = new[]
         {
             new ColumnViewHeaderItem("Name"),
-            new ColumnViewHeaderItem("Date"),
-            new ColumnViewHeaderItem("Size", TextAlignment.Right)
+            new ColumnViewHeaderItem("Datum"),
+            new ColumnViewHeaderItem("Größe", TextAlignment.Right)
         };
         var items = Directory.GetItems(@"c:\windows\system32");
         PeopleListView.ItemsSource = items;
