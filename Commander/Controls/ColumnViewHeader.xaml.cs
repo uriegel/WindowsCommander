@@ -54,20 +54,52 @@ public partial class ColumnViewHeader : UserControl
     {
         if (sender is Border border)
         {
-            var pos = e.GetPosition(border);
-            if (pos.X < 10 && border != firstBorder)
+            if (!dragging)
             {
-                border.Cursor = Cursors.ScrollWE;
-            }
-            else if (pos.X > border.ActualWidth - 10 && border != lastBorder)
-            {
-                border.Cursor = Cursors.ScrollWE;
+                var pos = e.GetPosition(border);
+                if (pos.X < 10 && border != firstBorder)
+                {
+                    border.Cursor = Cursors.ScrollWE;
+                    if (e.LeftButton == MouseButtonState.Pressed && !dragging)
+                    {
+                        border.CaptureMouse();
+                        border.MouseLeftButtonUp += OnMouseUp;
+                        dragging = true;
+                    }
+                }
+                else if (pos.X > border.ActualWidth - 10 && border != lastBorder)
+                {
+                    border.Cursor = Cursors.ScrollWE;
+                    if (e.LeftButton == MouseButtonState.Pressed && !dragging)
+                    {
+                        border.CaptureMouse();
+                        border.MouseLeftButtonUp += OnMouseUp;
+                        dragging = true;
+                    }
+                }
+                else
+                    border.Cursor = Cursors.Arrow;
             }
             else
+            {
+                border.Cursor = Cursors.ScrollWE;
+                var pos = e.GetPosition(border);
+            }
+        }
+
+        void OnMouseUp(object? sender, MouseEventArgs e)
+        {
+            if (sender is Border border)
+            {
+                border.MouseLeftButtonUp -= OnMouseUp;
+                border.ReleaseMouseCapture();
+                dragging = false;
                 border.Cursor = Cursors.Arrow;
+            }
         }
     }
 
+    bool dragging;
     Border? firstBorder;
     Border? lastBorder;
 }
