@@ -279,7 +279,7 @@ public class NotifyPropertyChanged : INotifyPropertyChanged
     /// <summary>
     /// Hit Hilfe dieses Ereignisses werden Änderungen signalisiert
     /// </summary>
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     #endregion
 

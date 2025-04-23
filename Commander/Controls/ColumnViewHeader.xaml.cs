@@ -1,13 +1,53 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 using Commander.Extensions;
+
+using Microsoft.VisualBasic;
 
 namespace Commander;
 
 public partial class ColumnViewHeader : UserControl
 {
+    #region Attaches Properties
+
+    public static readonly DependencyProperty ColumnCountProperty = DependencyProperty.RegisterAttached(
+        "ColumnCount", typeof(ColumnViewHeaderContext), typeof(ColumnViewHeader), new PropertyMetadata(null, ColumnCountChanged));
+
+    public static ColumnViewHeaderContext GetColumnCount(DependencyObject obj) => (ColumnViewHeaderContext)obj.GetValue(ColumnCountProperty);
+
+    public static void SetColumnCount(DependencyObject obj, ColumnViewHeaderContext value) => obj.SetValue(ColumnCountProperty, value);
+
+    public static void ColumnCountChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+    {
+        if (obj is not Grid)
+            return;
+
+        var ctx = (ColumnViewHeaderContext)e.NewValue;
+        var grid = (Grid)obj;
+        grid.ColumnDefinitions.Clear();
+
+        var idx = 1;
+        foreach (var col in ctx.StarLength.Cast<double>())
+        {
+            var coldef = new ColumnDefinition();
+            var binding = new Binding
+            {
+                Source = e.NewValue,
+                Path = new PropertyPath($"StarLength[{idx++}]"),
+                Converter = new GridLengthConverter()
+            };
+            BindingOperations.SetBinding(coldef, ColumnDefinition.WidthProperty, binding);
+            grid.ColumnDefinitions.Add(coldef);
+        }
+    }
+
+    #endregion 
+
     public ColumnViewHeaderItem[] HeaderItems 
     { 
         get => field;
@@ -19,13 +59,17 @@ public partial class ColumnViewHeader : UserControl
             foreach (var item in field)
                 item.Index = idx++;
 
-            Grid.ItemsSource = field;
-            Grid.MouseMove += OnMouseMove;
+            Headers.ItemsSource = field;
+            Headers.MouseMove += OnMouseMove;
             // border.SetResourceReference(Border.BorderBrushProperty, "MyBorderBrush");
         }
     } = [];
 
-    public ColumnViewHeader() => InitializeComponent();
+    public ColumnViewHeader()
+    {
+        DataContext = new ColumnViewHeaderContext { StarLength = [0.1, 0.2, 0.3] };
+        InitializeComponent();
+    }
 
     void OnMouseMove(object? sender, MouseEventArgs e)
     {
@@ -74,6 +118,7 @@ public partial class ColumnViewHeader : UserControl
                 border.ReleaseMouseCapture();
                 dragging = false;
                 border.Cursor = Cursors.Arrow;
+                (this.DataContext as ColumnViewHeaderContext).StarLength = [0.6, 0.3, 0.1];
             }
         }
     }
@@ -81,7 +126,32 @@ public partial class ColumnViewHeader : UserControl
     bool dragging;
 }
 
+public class ColumnViewHeaderContext : INotifyPropertyChanged
+{
+    public Collection StarLength
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnChanged(nameof(StarLength));
+        }
+    } = [];
+
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    void OnChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+}
+
 public record ColumnViewHeaderItem(string Name, TextAlignment Alignment = TextAlignment.Left)
 {
     public int Index { get; set; }
 };
+
+public class GridLengthConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) 
+        => new GridLength((double)value, GridUnitType.Star);
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+}

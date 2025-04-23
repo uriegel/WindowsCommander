@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Commander"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <ItemsControl x:Name="Grid" >
+    <ItemsControl x:Name="Headers" >
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <Border Grid.Column="{Binding Index}">
@@ -33,12 +33,7 @@
 
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                <Grid local:ColumnViewHeader.ColumnCount = "{Binding}">
                 </Grid>
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
