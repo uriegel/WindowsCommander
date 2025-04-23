@@ -87,7 +87,7 @@
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" 
                           Background="Transparent"
                           KeyboardNavigation.IsTabStop="False"/>
-            <local:TestControl x:Name="RightView" Grid.Column="2" HorizontalAlignment="Stretch"></local:TestControl>
+            <local:ColumnView x:Name="RightView" Grid.Column="2" HorizontalAlignment="Stretch"></local:ColumnView>
         </Grid>
     </DockPanel>
 </Window>

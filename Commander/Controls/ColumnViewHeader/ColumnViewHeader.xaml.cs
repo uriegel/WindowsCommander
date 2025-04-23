@@ -10,7 +10,7 @@ namespace Commander;
 
 public partial class ColumnViewHeader : UserControl
 {
-    #region Attaches Properties
+    #region Attached Properties
 
     public static readonly DependencyProperty ColumnsProperty = DependencyProperty.RegisterAttached(
         "Columns", typeof(Context), typeof(ColumnViewHeader), new PropertyMetadata(null, ColumnsChanged));
