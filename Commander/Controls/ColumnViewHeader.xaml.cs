@@ -65,58 +65,90 @@ public partial class ColumnViewHeader : UserControl
 
     public ColumnViewHeader()
     {
-        DataContext = new ColumnViewHeaderContext { StarLength = [0.1, 0.2, 0.3] };
+        DataContext = new ColumnViewHeaderContext { StarLength = [1, 1, 1] };
         InitializeComponent();
     }
+
+    double start = 0;
+    int startIndex = 0;
+    double[] stars = [];
+    bool first;
 
     void OnMouseMove(object? sender, MouseEventArgs e)
     {
         var dO = e.OriginalSource as DependencyObject;
         var border = dO?.FindAncestorOrSelf<Border>();
-        if (border != null)
+        if (border != null 
+                && border.DataContext is ColumnViewHeaderItem item 
+                && DataContext is ColumnViewHeaderContext ctx)
         {
             if (!dragging)
             {
                 var pos = e.GetPosition(border);
-                if (pos.X < 10 && (border.DataContext as ColumnViewHeaderItem)?.Index != 0)
+                if (pos.X < 10 && item.Index != 0)
                 {
                     border.Cursor = Cursors.ScrollWE;
                     if (e.LeftButton == MouseButtonState.Pressed && !dragging)
                     {
-                        border.CaptureMouse();
-                        border.MouseLeftButtonUp += OnMouseUp;
-                        dragging = true;
+                        InitializeDrag();
+                        first = false;
+                        startIndex = item.Index - 1;
+                        start = pos.X;
                     }
                 }
-                else if (pos.X > border.ActualWidth - 10 && (border.DataContext as ColumnViewHeaderItem)?.Index != 2)
+                else if (pos.X > border.ActualWidth - 10 && item.Index < ctx.StarLength.Length - 1)
                 {
                     border.Cursor = Cursors.ScrollWE;
                     if (e.LeftButton == MouseButtonState.Pressed && !dragging)
                     {
-                        border.CaptureMouse();
-                        border.MouseLeftButtonUp += OnMouseUp;
-                        dragging = true;
+                        InitializeDrag();
+                        first = true;
+                        startIndex = item.Index;
+                        start = pos.X;
                     }
                 }
                 else
                     border.Cursor = Cursors.Arrow;
             }
-            else
+            else 
             {
                 border.Cursor = Cursors.ScrollWE;
                 var pos = e.GetPosition(border);
-            }
-        }
+                var newStars = new double[ctx.StarLength.Length];
+                if (first)
+                    stars.CopyTo(newStars);
+                else
+                    ctx.StarLength.CopyTo(newStars);
+                var factor = (pos.X - start);
+                newStars[startIndex] += factor;
+                newStars[startIndex + 1] -= factor;
+                ctx.StarLength = newStars;
 
-        void OnMouseUp(object? sender, MouseEventArgs e)
-        {
-            if (sender is Border border)
+            }
+
+            void InitializeDrag()
             {
-                border.MouseLeftButtonUp -= OnMouseUp;
-                border.ReleaseMouseCapture();
-                dragging = false;
-                border.Cursor = Cursors.Arrow;
-                (this.DataContext as ColumnViewHeaderContext).StarLength = [0.6, 0.3, 0.1];
+                var grid = dO?.FindAncestorOrSelf<Grid>();
+                var cols = grid?.Children.Cast<ContentPresenter>()?.ToArray();
+                border.CaptureMouse();
+                border.MouseLeftButtonUp += OnMouseUp;
+                stars = new double[ctx.StarLength.Length];
+                ctx.StarLength.CopyTo(stars);
+                for (var i = 0; i < stars.Length; i++)
+                    stars[i] = cols?[i].ActualWidth ?? 0;
+                ctx.StarLength = stars;
+                dragging = true;
+            }
+
+            void OnMouseUp(object? sender, MouseEventArgs e)
+            {
+                if (sender is Border border && DataContext is ColumnViewHeaderContext ctx)
+                {
+                    border.MouseLeftButtonUp -= OnMouseUp;
+                    border.ReleaseMouseCapture();
+                    dragging = false;
+                    border.Cursor = Cursors.Arrow;
+                }
             }
         }
     }
