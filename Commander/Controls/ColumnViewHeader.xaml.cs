@@ -9,7 +9,6 @@ using Commander.Extensions;
 
 namespace Commander;
 
-// TODO: Bounds checking
 // TODO: adapt stars in ColumnViewContext
 // TODO: multiple files
 public partial class ColumnViewHeader : UserControl
@@ -125,7 +124,8 @@ public partial class ColumnViewHeader : UserControl
                 var factor = (pos.X - start);
                 newStars[startIndex] += factor;
                 newStars[startIndex + 1] -= factor;
-                ctx.StarLength = newStars;
+                if (newStars[startIndex] > 10 && newStars[startIndex + 1] > 10)
+                    ctx.StarLength = newStars;
 
             }
 
