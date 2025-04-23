@@ -17,6 +17,7 @@ public partial class TestControl : UserControl
     {
         DataContext = new TestContent();
         InitializeComponent();
+        griddie.ColumnViewContext = DataContext as TestContent;
         griddie.HeaderItems =
         [
             new ColumnViewHeaderItem("Name"),
@@ -46,8 +47,6 @@ public partial class TestControl : UserControl
         switch (e.Key)
         {
             case Key.Return:
-                modus = !modus;
-                UserControl_SizeChanged(null, null);
 
                 ////(DataContext as ItemViewContext).ChangePath.Execute((sender as TextBox).Text);
                 //var items = Directory.GetItems((sender as TextBox).Text);
@@ -75,23 +74,6 @@ public partial class TestControl : UserControl
         }
     }
 
-    void UserControl_SizeChanged(object? sender, SizeChangedEventArgs e)
-    {
-        var context = DataContext as TestContent;
-        if (modus)
-        {
-            context!.W1 = new GridLength(griddie.ActualWidth / 6, GridUnitType.Star);
-            context!.W2 = new GridLength(griddie.ActualWidth / 3, GridUnitType.Star);
-            context!.W3 = new GridLength(griddie.ActualWidth / 2, GridUnitType.Star);
-        }
-        else
-        {
-            context!.W1 = new GridLength(griddie.ActualWidth / 2, GridUnitType.Star);
-            context!.W2 = new GridLength(griddie.ActualWidth / 3, GridUnitType.Star);
-            context!.W3 = new GridLength(griddie.ActualWidth / 6, GridUnitType.Star);
-        }
-    }
-
     void PeopleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         var selected = e.AddedItems.OfType<Item>();
@@ -116,7 +98,7 @@ public partial class TestControl : UserControl
     }
 }
 
-class TestContent : INotifyPropertyChanged
+public class TestContent : INotifyPropertyChanged
 {
     public GridLength W1 
     { 

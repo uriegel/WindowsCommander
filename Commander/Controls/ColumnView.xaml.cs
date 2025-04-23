@@ -10,8 +10,6 @@ public partial class ColumnView : UserControl
     }
 }
 
-// TODO HeaderControl with a variable number of Headers
-// TODO HeaderControl to TestView
 // TODO Shift Tab: focus path textBox
 // TODO Resize HeaderColumns
 // TODO ColumnView with HeaderControl and Controller

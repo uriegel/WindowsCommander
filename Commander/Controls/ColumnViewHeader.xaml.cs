@@ -9,7 +9,6 @@ using Commander.Extensions;
 
 namespace Commander;
 
-// TODO: adapt stars in ColumnViewContext
 // TODO: multiple files
 public partial class ColumnViewHeader : UserControl
 {
@@ -47,6 +46,20 @@ public partial class ColumnViewHeader : UserControl
     }
 
     #endregion 
+
+    public TestContent? ColumnViewContext { 
+        get => field; 
+        set
+        {
+            field = value;
+            if (ColumnViewContext != null && DataContext is ColumnViewHeaderContext ctx)
+            {
+                ColumnViewContext.W1 = new GridLength(ctx.StarLength[0], GridUnitType.Star);
+                ColumnViewContext.W2 = new GridLength(ctx.StarLength[1], GridUnitType.Star);
+                ColumnViewContext.W3 = new GridLength(ctx.StarLength[2], GridUnitType.Star);
+            }
+        }
+    }
 
     public ColumnViewHeaderItem[] HeaderItems 
     { 
@@ -124,9 +137,13 @@ public partial class ColumnViewHeader : UserControl
                 var factor = (pos.X - start);
                 newStars[startIndex] += factor;
                 newStars[startIndex + 1] -= factor;
-                if (newStars[startIndex] > 10 && newStars[startIndex + 1] > 10)
+                if (newStars[startIndex] > 10 && newStars[startIndex + 1] > 10 && ColumnViewContext != null)
+                {
                     ctx.StarLength = newStars;
-
+                    ColumnViewContext.W1 = new GridLength(newStars[0], GridUnitType.Star);
+                    ColumnViewContext.W2 = new GridLength(newStars[1], GridUnitType.Star);
+                    ColumnViewContext.W3 = new GridLength(newStars[2], GridUnitType.Star);
+                }
             }
 
             void InitializeDrag()
