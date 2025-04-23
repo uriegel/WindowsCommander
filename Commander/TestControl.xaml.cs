@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
+using Commander.Controls.ColumnViewHeader;
 using Commander.Extensions;
 
 namespace Commander;
@@ -20,9 +21,9 @@ public partial class TestControl : UserControl
         griddie.ColumnViewContext = DataContext as TestContent;
         griddie.HeaderItems =
         [
-            new ColumnViewHeaderItem("Name"),
-            new ColumnViewHeaderItem("Datum"),
-            new ColumnViewHeaderItem("Größe", TextAlignment.Right)
+            new HeaderItem("Name"),
+            new HeaderItem("Datum"),
+            new HeaderItem("Größe", TextAlignment.Right)
         ];
         var items = Directory.GetItems(@"c:\windows\system32");
         PeopleListView.ItemsSource = items;

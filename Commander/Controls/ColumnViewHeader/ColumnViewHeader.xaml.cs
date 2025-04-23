@@ -1,32 +1,30 @@
-﻿using System.ComponentModel;
-using System.Globalization;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
+using Commander.Controls.ColumnViewHeader;
 using Commander.Extensions;
 
 namespace Commander;
 
-// TODO: multiple files
 public partial class ColumnViewHeader : UserControl
 {
     #region Attaches Properties
 
     public static readonly DependencyProperty ColumnsProperty = DependencyProperty.RegisterAttached(
-        "Columns", typeof(ColumnViewHeaderContext), typeof(ColumnViewHeader), new PropertyMetadata(null, ColumnsChanged));
+        "Columns", typeof(Context), typeof(ColumnViewHeader), new PropertyMetadata(null, ColumnsChanged));
 
-    public static ColumnViewHeaderContext GetColumns(DependencyObject obj) => (ColumnViewHeaderContext)obj.GetValue(ColumnsProperty);
+    public static Context GetColumns(DependencyObject obj) => (Context)obj.GetValue(ColumnsProperty);
 
-    public static void SetColumns(DependencyObject obj, ColumnViewHeaderContext value) => obj.SetValue(ColumnsProperty, value);
+    public static void SetColumns(DependencyObject obj, Context value) => obj.SetValue(ColumnsProperty, value);
 
     public static void ColumnsChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
     {
         if (obj is not Grid)
             return;
 
-        var ctx = (ColumnViewHeaderContext)e.NewValue;
+        var ctx = (Context)e.NewValue;
         var grid = (Grid)obj;
         grid.ColumnDefinitions.Clear();
 
@@ -38,7 +36,7 @@ public partial class ColumnViewHeader : UserControl
             {
                 Source = e.NewValue,
                 Path = new PropertyPath($"StarLength[{idx++}]"),
-                Converter = new GridLengthConverter()
+                Converter = new HeaderGridLengthConverter()
             };
             BindingOperations.SetBinding(coldef, ColumnDefinition.WidthProperty, binding);
             grid.ColumnDefinitions.Add(coldef);
@@ -52,7 +50,7 @@ public partial class ColumnViewHeader : UserControl
         set
         {
             field = value;
-            if (ColumnViewContext != null && DataContext is ColumnViewHeaderContext ctx)
+            if (ColumnViewContext != null && DataContext is Context ctx)
             {
                 ColumnViewContext.W1 = new GridLength(ctx.StarLength[0], GridUnitType.Star);
                 ColumnViewContext.W2 = new GridLength(ctx.StarLength[1], GridUnitType.Star);
@@ -61,7 +59,7 @@ public partial class ColumnViewHeader : UserControl
         }
     }
 
-    public ColumnViewHeaderItem[] HeaderItems 
+    public HeaderItem[] HeaderItems 
     { 
         get => field;
         set
@@ -80,7 +78,7 @@ public partial class ColumnViewHeader : UserControl
 
     public ColumnViewHeader()
     {
-        DataContext = new ColumnViewHeaderContext { StarLength = [1, 1, 1] };
+        DataContext = new Context { StarLength = [1, 1, 1] };
         InitializeComponent();
     }
 
@@ -94,8 +92,8 @@ public partial class ColumnViewHeader : UserControl
         var dO = e.OriginalSource as DependencyObject;
         var border = dO?.FindAncestorOrSelf<Border>();
         if (border != null 
-                && border.DataContext is ColumnViewHeaderItem item 
-                && DataContext is ColumnViewHeaderContext ctx)
+                && border.DataContext is HeaderItem item 
+                && DataContext is Context ctx)
         {
             if (!dragging)
             {
@@ -162,7 +160,7 @@ public partial class ColumnViewHeader : UserControl
 
             void OnMouseUp(object? sender, MouseEventArgs e)
             {
-                if (sender is Border border && DataContext is ColumnViewHeaderContext ctx)
+                if (sender is Border border && DataContext is Context ctx)
                 {
                     border.MouseLeftButtonUp -= OnMouseUp;
                     border.ReleaseMouseCapture();
@@ -176,32 +174,3 @@ public partial class ColumnViewHeader : UserControl
     bool dragging;
 }
 
-public class ColumnViewHeaderContext : INotifyPropertyChanged
-{
-    public double[] StarLength
-    {
-        get => field;
-        set
-        {
-            field = value;
-            OnChanged(nameof(StarLength));
-        }
-    } = [];
-
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    void OnChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-}
-
-public record ColumnViewHeaderItem(string Name, TextAlignment Alignment = TextAlignment.Left)
-{
-    public int Index { get; set; }
-};
-
-public class GridLengthConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) 
-        => new GridLength((double)value, GridUnitType.Star);
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
-}
