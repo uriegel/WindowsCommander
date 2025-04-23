@@ -9,6 +9,9 @@ using Commander.Extensions;
 
 namespace Commander;
 
+// TODO: Bounds checking
+// TODO: adapt stars in ColumnViewContext
+// TODO: multiple files
 public partial class ColumnViewHeader : UserControl
 {
     #region Attaches Properties
