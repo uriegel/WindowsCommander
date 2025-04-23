@@ -6,7 +6,41 @@
              xmlns:local="clr-namespace:Commander"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid x:Name="Grid">
-            
-    </Grid>
+    <ItemsControl x:Name="Grid" >
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Border Grid.Column="{Binding Index}">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource MyBorderBrush}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock Text="{Binding Name}" Margin="5, 0" TextAlignment="{Binding Alignment}" Opacity="0.8"></TextBlock>
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+
+        <ItemsControl.ItemContainerStyle>
+            <Style>
+                <Setter Property="Grid.Column" Value="{Binding Index}" />
+            </Style>
+        </ItemsControl.ItemContainerStyle>
+
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+    </ItemsControl>
 </UserControl>

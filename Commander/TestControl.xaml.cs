@@ -17,12 +17,12 @@ public partial class TestControl : UserControl
     {
         DataContext = new TestContent();
         InitializeComponent();
-        griddie.HeaderItems = new[]
-        {
+        griddie.HeaderItems =
+        [
             new ColumnViewHeaderItem("Name"),
             new ColumnViewHeaderItem("Datum"),
             new ColumnViewHeaderItem("Größe", TextAlignment.Right)
-        };
+        ];
         var items = Directory.GetItems(@"c:\windows\system32");
         PeopleListView.ItemsSource = items;
     }
