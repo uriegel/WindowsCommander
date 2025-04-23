@@ -33,7 +33,7 @@
 
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <Grid local:ColumnViewHeader.ColumnCount = "{Binding}">
+                <Grid local:ColumnViewHeader.Columns="{Binding}">
                 </Grid>
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>

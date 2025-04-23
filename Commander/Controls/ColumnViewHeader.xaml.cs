@@ -7,22 +7,20 @@ using System.Windows.Input;
 
 using Commander.Extensions;
 
-using Microsoft.VisualBasic;
-
 namespace Commander;
 
 public partial class ColumnViewHeader : UserControl
 {
     #region Attaches Properties
 
-    public static readonly DependencyProperty ColumnCountProperty = DependencyProperty.RegisterAttached(
-        "ColumnCount", typeof(ColumnViewHeaderContext), typeof(ColumnViewHeader), new PropertyMetadata(null, ColumnCountChanged));
+    public static readonly DependencyProperty ColumnsProperty = DependencyProperty.RegisterAttached(
+        "Columns", typeof(ColumnViewHeaderContext), typeof(ColumnViewHeader), new PropertyMetadata(null, ColumnsChanged));
 
-    public static ColumnViewHeaderContext GetColumnCount(DependencyObject obj) => (ColumnViewHeaderContext)obj.GetValue(ColumnCountProperty);
+    public static ColumnViewHeaderContext GetColumns(DependencyObject obj) => (ColumnViewHeaderContext)obj.GetValue(ColumnsProperty);
 
-    public static void SetColumnCount(DependencyObject obj, ColumnViewHeaderContext value) => obj.SetValue(ColumnCountProperty, value);
+    public static void SetColumns(DependencyObject obj, ColumnViewHeaderContext value) => obj.SetValue(ColumnsProperty, value);
 
-    public static void ColumnCountChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+    public static void ColumnsChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
     {
         if (obj is not Grid)
             return;
@@ -31,7 +29,7 @@ public partial class ColumnViewHeader : UserControl
         var grid = (Grid)obj;
         grid.ColumnDefinitions.Clear();
 
-        var idx = 1;
+        var idx = 0;
         foreach (var col in ctx.StarLength.Cast<double>())
         {
             var coldef = new ColumnDefinition();
@@ -128,7 +126,7 @@ public partial class ColumnViewHeader : UserControl
 
 public class ColumnViewHeaderContext : INotifyPropertyChanged
 {
-    public Collection StarLength
+    public double[] StarLength
     {
         get => field;
         set
