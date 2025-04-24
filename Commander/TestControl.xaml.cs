@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
+using Commander.Controllers;
 using Commander.Controls.ColumnViewHeader;
 using Commander.Extensions;
 
@@ -16,9 +17,9 @@ public partial class TestControl : UserControl
 {
     public TestControl()
     {
-        DataContext = new TestContent();
         InitializeComponent();
-        griddie.ColumnViewContext = DataContext as TestContent;
+        DataContext = new ColumnViewContext();
+        griddie.ColumnViewContext = DataContext as ColumnViewContext;
         griddie.HeaderItems =
         [
             new HeaderItem("Name"),
@@ -97,23 +98,6 @@ public partial class TestControl : UserControl
             e.Handled = true;
         }
     }
-}
-
-public class TestContent : INotifyPropertyChanged
-{
-    public GridLength[] W
-    {
-        get => field;
-        set
-        {
-            field = value;
-            OnChanged(nameof(W));
-        }
-    } = [];
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    void OnChanged(string name) => PropertyChanged?.Invoke(this, new(name));
 }
 
 class Directory

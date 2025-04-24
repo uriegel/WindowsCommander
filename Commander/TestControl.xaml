@@ -43,11 +43,11 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, 
-                                Path=DataContext.W[0]}" />
+                                Path=DataContext.ColumnWidths[0]}" />
                             <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, 
-                                Path=DataContext.W[1]}" />
+                                Path=DataContext.ColumnWidths[1]}" />
                             <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, 
-                                Path=DataContext.W[2]}" />
+                                Path=DataContext.ColumnWidths[2]}" />
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Margin="0, 0, 5, 0" Text="{Binding Name}" Padding="0" TextTrimming="CharacterEllipsis" />

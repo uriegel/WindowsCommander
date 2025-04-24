@@ -16,7 +16,10 @@ public partial class ColumnView : UserControl
     public ColumnView()
     {
         InitializeComponent();
+        OnInitialize();
     }
+
+    protected virtual void OnInitialize() { }
 
     void TextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
     {

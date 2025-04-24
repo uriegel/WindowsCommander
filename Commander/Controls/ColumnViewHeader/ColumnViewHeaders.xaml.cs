@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
+using Commander.Controllers;
 using Commander.Controls.ColumnViewHeader;
 using Commander.Extensions;
 
@@ -45,13 +46,13 @@ public partial class ColumnViewHeaders : UserControl
 
     #endregion 
 
-    public TestContent? ColumnViewContext { 
+    public ColumnViewContext? ColumnViewContext { 
         get => field; 
         set
         {
             field = value;
             if (ColumnViewContext != null && DataContext is Context ctx)
-                ColumnViewContext.W = [.. ctx.StarLength.Select(n => new GridLength(n, GridUnitType.Star))];
+                ColumnViewContext.ColumnWidths = [.. ctx.StarLength.Select(n => new GridLength(n, GridUnitType.Star))];
         }
     }
 
@@ -134,7 +135,7 @@ public partial class ColumnViewHeaders : UserControl
                 if (newStars[startIndex] > 10 && newStars[startIndex + 1] > 10 && ColumnViewContext != null)
                 {
                     ctx.StarLength = newStars;
-                    ColumnViewContext.W = [.. ctx.StarLength.Select(n => new GridLength(n, GridUnitType.Star))];
+                    ColumnViewContext.ColumnWidths = [.. ctx.StarLength.Select(n => new GridLength(n, GridUnitType.Star))];
                 }
             }
 

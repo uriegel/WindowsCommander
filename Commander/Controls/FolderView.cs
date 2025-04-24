@@ -3,6 +3,9 @@ using System.IO;
 using System;
 
 using Commander.Controllers;
+using Commander.Controls.ColumnViewHeader;
+using System.Windows.Controls;
+using System.Windows;
 
 namespace Commander;
 
@@ -50,6 +53,19 @@ public class FolderView : ColumnView
             //OnError(e);
             //MainContext.Instance.ErrorText = "Ordner konnte nicht gewechselt werden";
         }
+    }
+
+    protected override void OnInitialize()
+    {
+        var ctx = new ColumnViewContext();
+        DataContext = ctx;
+        Headers.ColumnViewContext = ctx;
+        Headers.HeaderItems =
+        [
+            new HeaderItem("Name"),
+            new HeaderItem("Datum"),
+            new HeaderItem("Größe", TextAlignment.Right)
+        ];
     }
 
     bool DetectController(string path)
