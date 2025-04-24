@@ -1,18 +1,23 @@
-﻿
-using System.IO;
-using System;
+﻿using System.IO;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 using Commander.Controllers;
-using Commander.Controls.ColumnViewHeader;
-using System.Windows.Controls;
-using System.Windows;
 using Commander.Controllers.Root;
 
-namespace Commander;
-
-public class FolderView22 : ColumnView
+namespace Commander.Controls;
+/// <summary>
+/// Interaktionslogik für FolderView.xaml
+/// </summary>
+public partial class FolderView : UserControl
 {
-    public FolderView22() : base() => controller = new RootController(this);
+    public FolderView()
+    {
+        InitializeComponent();
+        controller = new RootController(this);
+    }
 
     public async void ChangePath(string path, bool saveHistory)
     {
@@ -80,6 +85,50 @@ public class FolderView22 : ColumnView
             else
                 return false;
         }
+    }
+
+    void TextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case Key.Return:
+
+                ////(DataContext as ItemViewContext).ChangePath.Execute((sender as TextBox).Text);
+                //var items = Directory.GetItems((sender as TextBox).Text);
+                //this.listView.ItemsSource = items;
+                //e.Handled = true;
+                //liste.FocusItem((DataContext as ItemViewContext).View.CurrentItem as Item, true);
+
+
+                Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+                {
+                    var ripple = new WaterRipple
+                    {
+                        Amplitude = 10,
+                        RatioControl = 2,
+                        Frequency = 35
+                    };
+                    ColumnView.Effect = ripple;
+                    var story = (Storyboard)FindResource("WaterRipples");
+                    story.Completed += story_Completed;
+                    story.Begin();
+                });
+
+                break;
+        }
+
+        void story_Completed(object? sender, EventArgs e)
+        {
+            var story = (Storyboard)FindResource("WaterRipples");
+            story.Completed -= story_Completed;
+            ColumnView.Effect = null;
+        }
+    }
+
+    void TextBox_GotFocus(object sender, System.Windows.RoutedEventArgs e)
+    {
+        Dispatcher.BeginInvoke(() => (sender as TextBox)?.SelectAll());
+        e.Handled = true;
     }
 
     IController controller;

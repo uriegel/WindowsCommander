@@ -1,8 +1,10 @@
-﻿namespace Commander.Controllers
+﻿using Commander.Controls;
+
+namespace Commander.Controllers
 {
     interface IController 
     {
         void RemoveAll();
-        Task<int> Fill(string path, FolderView22 folderView);
+        Task<int> Fill(string path, FolderView folderView);
     }
 }

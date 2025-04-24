@@ -7,7 +7,7 @@ using Commander.Controllers;
 using Commander.Controls.ColumnViewHeader;
 using Commander.Extensions;
 
-namespace Commander;
+namespace Commander.Controls;
 
 public partial class ColumnViewHeaders : UserControl
 {

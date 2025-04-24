@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Commander"
+        xmlns:controls="clr-namespace:Commander.Controls"
         mc:Ignorable="d"
         Icon="/Resources/Kirk.ico"
         Title="Commander" Width="600" Height="800"
@@ -87,7 +88,7 @@
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" 
                           Background="Transparent"
                           KeyboardNavigation.IsTabStop="False"/>
-            <local:FolderView22 x:Name="RightView" Grid.Column="2" HorizontalAlignment="Stretch"></local:FolderView22>
+            <controls:FolderView x:Name="RightView" Grid.Column="2" HorizontalAlignment="Stretch"></controls:FolderView>
         </Grid>
     </DockPanel>
 </Window>
