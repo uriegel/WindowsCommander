@@ -10,9 +10,9 @@ using Commander.Controllers.Root;
 
 namespace Commander;
 
-public class FolderView : ColumnView
+public class FolderView22 : ColumnView
 {
-    public FolderView() : base() => controller = new RootController(this);
+    public FolderView22() : base() => controller = new RootController(this);
 
     public async void ChangePath(string path, bool saveHistory)
     {

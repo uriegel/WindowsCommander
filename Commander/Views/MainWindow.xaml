@@ -87,7 +87,7 @@
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" 
                           Background="Transparent"
                           KeyboardNavigation.IsTabStop="False"/>
-            <local:FolderView x:Name="RightView" Grid.Column="2" HorizontalAlignment="Stretch"></local:FolderView>
+            <local:FolderView22 x:Name="RightView" Grid.Column="2" HorizontalAlignment="Stretch"></local:FolderView22>
         </Grid>
     </DockPanel>
 </Window>

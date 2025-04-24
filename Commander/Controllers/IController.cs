@@ -3,6 +3,6 @@
     interface IController 
     {
         void RemoveAll();
-        Task<int> Fill(string path, FolderView folderView);
+        Task<int> Fill(string path, FolderView22 folderView);
     }
 }

@@ -14,7 +14,7 @@ class RootController : IController
 
     public void RemoveAll() { }
     
-    public Task<int> Fill(string path, FolderView folderView)
+    public Task<int> Fill(string path, FolderView22 folderView)
     {
         var drives = 
             DriveInfo
@@ -29,7 +29,7 @@ class RootController : IController
     #endregion
 
 
-    public RootController(FolderView folderView)
+    public RootController(FolderView22 folderView)
     {
         var ctx = new ColumnViewContext();
         folderView.DataContext = ctx;
