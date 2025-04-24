@@ -101,35 +101,16 @@ public partial class TestControl : UserControl
 
 public class TestContent : INotifyPropertyChanged
 {
-    public GridLength W1 
-    { 
-        get => field; 
-        set  
-        {
-            field = value; 
-            OnChanged(nameof(W1));
-        }
-    }
-
-    public GridLength W2
+    public GridLength[] W
     {
         get => field;
         set
         {
             field = value;
-            OnChanged(nameof(W2));
+            OnChanged(nameof(W));
         }
-    }
+    } = [];
 
-    public GridLength W3
-    {
-        get => field;
-        set
-        {
-            field = value;
-            OnChanged(nameof(W3));
-        }
-    }
     public event PropertyChangedEventHandler? PropertyChanged;
 
     void OnChanged(string name) => PropertyChanged?.Invoke(this, new(name));

@@ -51,7 +51,11 @@ public partial class MainWindow : Window
 
     #endregion
 
-    public MainWindow() => InitializeComponent();
+    public MainWindow()
+    {
+        InitializeComponent();
+        RightView.ChangePath("root", true);
+    }
 
     protected override void OnSourceInitialized(EventArgs e)
     {

@@ -8,12 +8,12 @@ using Commander.Extensions;
 
 namespace Commander;
 
-public partial class ColumnViewHeader : UserControl
+public partial class ColumnViewHeaders : UserControl
 {
     #region Attached Properties
 
     public static readonly DependencyProperty ColumnsProperty = DependencyProperty.RegisterAttached(
-        "Columns", typeof(Context), typeof(ColumnViewHeader), new PropertyMetadata(null, ColumnsChanged));
+        "Columns", typeof(Context), typeof(ColumnViewHeaders), new PropertyMetadata(null, ColumnsChanged));
 
     public static Context GetColumns(DependencyObject obj) => (Context)obj.GetValue(ColumnsProperty);
 
@@ -51,11 +51,7 @@ public partial class ColumnViewHeader : UserControl
         {
             field = value;
             if (ColumnViewContext != null && DataContext is Context ctx)
-            {
-                ColumnViewContext.W1 = new GridLength(ctx.StarLength[0], GridUnitType.Star);
-                ColumnViewContext.W2 = new GridLength(ctx.StarLength[1], GridUnitType.Star);
-                ColumnViewContext.W3 = new GridLength(ctx.StarLength[2], GridUnitType.Star);
-            }
+                ColumnViewContext.W = [.. ctx.StarLength.Select(n => new GridLength(n, GridUnitType.Star))];
         }
     }
 
@@ -76,7 +72,7 @@ public partial class ColumnViewHeader : UserControl
         }
     } = [];
 
-    public ColumnViewHeader()
+    public ColumnViewHeaders()
     {
         DataContext = new Context { StarLength = [1, 1, 1] };
         InitializeComponent();
@@ -138,9 +134,7 @@ public partial class ColumnViewHeader : UserControl
                 if (newStars[startIndex] > 10 && newStars[startIndex + 1] > 10 && ColumnViewContext != null)
                 {
                     ctx.StarLength = newStars;
-                    ColumnViewContext.W1 = new GridLength(newStars[0], GridUnitType.Star);
-                    ColumnViewContext.W2 = new GridLength(newStars[1], GridUnitType.Star);
-                    ColumnViewContext.W3 = new GridLength(newStars[2], GridUnitType.Star);
+                    ColumnViewContext.W = [.. ctx.StarLength.Select(n => new GridLength(n, GridUnitType.Star))];
                 }
             }
 
