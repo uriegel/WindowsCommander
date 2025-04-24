@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
+using Commander.Extensions;
 using Commander.RoutedEvents;
 
 namespace Commander.Controls;
@@ -45,16 +47,17 @@ public partial class ColumnView : UserControl
 
     void ListView_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        // var lbi = (e.OriginalSource as DependencyObject)?.FindAncestorOrSelf<ListBoxItem>();
-        //if (lbi != null)
-        //{
-        //    ListView.UpdateLayout(); // Ensure layout is up to date
-        //    ListView.ScrollIntoView(lbi); // Ensure the item is visible
-        //    //ListViewItem container = (ListViewItem)PeopleListView.ItemContainerGenerator.ContainerFromItem(lbi);
-        //    Keyboard.Focus(lbi);
-
-        //    e.Handled = true;
-        //}
+        if (Keyboard.Modifiers != ModifierKeys.Control)
+        {
+            var lbi = (e.OriginalSource as DependencyObject)?.FindAncestorOrSelf<ListBoxItem>();
+            if (lbi != null)
+            {
+                ListView.UpdateLayout();
+                ListView.ScrollIntoView(lbi);
+                Keyboard.Focus(lbi);
+                e.Handled = true;
+            }
+        }
     }
 
     void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
