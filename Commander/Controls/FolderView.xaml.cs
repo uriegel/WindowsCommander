@@ -8,9 +8,12 @@ using Commander.Controllers;
 using Commander.Controllers.Root;
 
 namespace Commander.Controls;
-/// <summary>
-/// Interaktionslogik für FolderView.xaml
-/// </summary>
+
+// TODO OnEnter
+// TODO DirectoryController
+// TODO Eliminate TestControl when DirectoryController is done
+// TODO Shift Tab: focus path textBox
+
 public partial class FolderView : UserControl
 {
     public FolderView()
@@ -130,6 +133,9 @@ public partial class FolderView : UserControl
         Dispatcher.BeginInvoke(() => (sender as TextBox)?.SelectAll());
         e.Handled = true;
     }
+
+    void ColumnView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        => controller.OnSelectionChanged(ColumnView.ListView.SelectedItems, e);
 
     IController controller;
 }

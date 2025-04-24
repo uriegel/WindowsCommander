@@ -1,6 +1,8 @@
 ﻿
+using System.Collections;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 
 using Commander.Controls;
 using Commander.Controls.ColumnViewHeader;
@@ -25,6 +27,14 @@ class RootController : IController
                 .ThenBy(n => n.Name);
         folderView.ColumnView.ListView.ItemsSource = drives;
         return 0.ToAsync();
+    }
+
+    public void OnSelectionChanged(IList selectedItems, SelectionChangedEventArgs e)
+    {
+        //var selected = e.AddedItems.OfType<Item>();
+        //var toRemove = selected.Where(n => n.Name == "@AdvancedKeySettingsNotification.png");
+        //ColumnView.ListView.SelectedItems.Remove(toRemove.FirstOrDefault());
+        selectedItems.Clear();
     }
 
     #endregion

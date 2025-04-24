@@ -38,6 +38,6 @@
 
         <TextBox KeyboardNavigation.IsTabStop="False" KeyDown="TextBox_KeyDown" 
                  GotFocus="TextBox_GotFocus" BorderThickness="0" />
-        <controls:ColumnView Grid.Row="1" x:Name="ColumnView"/>
+        <controls:ColumnView Grid.Row="1" x:Name="ColumnView" SelectionChanged="ColumnView_SelectionChanged"  />
     </Grid>
 </UserControl>

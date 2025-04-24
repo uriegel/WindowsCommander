@@ -65,9 +65,9 @@ public static class DependencyObjectExtensions
     /// <typeparam name="childItem">Typ des gesuchten Kindelementes</typeparam>
     /// <param name="element">Element, dessen Kindelement gesucht werden soll</param>
     /// <returns>Das gewünschte Kindelement, oder null, falls nicht gefunden</returns>
-    public static childItem FindVisualChild<childItem>(this DependencyObject element)
-        where childItem : DependencyObject
-        => (childItem)element.FindVisualChild(typeof(childItem));
+    public static T? FindVisualChild<T>(this DependencyObject element)
+        where T : DependencyObject
+        => element.FindVisualChild(typeof(T)) as T;
 
     /// <summary>
     /// Ein Kindelement von Element ermitteln, welches dem Typ "childType" entspricht

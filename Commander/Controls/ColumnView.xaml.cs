@@ -1,20 +1,24 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Animation;
-using System.Windows.Threading;
-
-using Commander.Extensions;
 
 namespace Commander.Controls;
 
-// TODO ListView_SelectionChanged => Controller
-// TODO DirectoryController
-// TODO Eliminate TestControl when DirectoryController is done
-// TODO Shift Tab: focus path textBox
-
 public partial class ColumnView : UserControl
 {
+    #region Routed Events
+
+    public static readonly RoutedEvent SelectionChangedEvent =
+        EventManager.RegisterRoutedEvent("SelectionChanged", RoutingStrategy.Bubble, typeof(SelectionChangedEventHandler),
+            typeof(ColumnView));
+
+    public event SelectionChangedEventHandler SelectionChanged
+    {
+        add { AddHandler(SelectionChangedEvent, value); }
+        remove { RemoveHandler(SelectionChangedEvent, value); }
+    }
+
+    #endregion
+
     public ColumnView() => InitializeComponent();
 
     void ListView_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -32,12 +36,10 @@ public partial class ColumnView : UserControl
     }
 
     void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        //var selected = e.AddedItems.OfType<Item>();
-        //var toRemove = selected.Where(n => n.Name == "@AdvancedKeySettingsNotification.png");
-        //ListView.SelectedItems.Remove(toRemove.FirstOrDefault());
-        // TODO to Controller
-        ListView.SelectedItems.Clear();
-    }
+        => RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, e.AddedItems, e.RemovedItems)
+        {
+            RoutedEvent = SelectionChangedEvent,
+            Source = this
+        });
 }
 
