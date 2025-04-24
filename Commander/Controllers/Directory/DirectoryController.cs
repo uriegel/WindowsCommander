@@ -8,23 +8,23 @@ using Commander.Controls.ColumnViewHeader;
 
 using CsTools.Extensions;
 
-namespace Commander.Controllers.Root;
+namespace Commander.Controllers.Directory;
 
-class RootController : IController
+class DirectoryController : IController
 {
     #region IController
 
     public void RemoveAll() { }
-    
-    public Task<int> Fill(string? _, FolderView folderView)
+
+    public Task<int> Fill(string? path, FolderView folderView)
     {
-        var drives = 
-            DriveInfo
-                .GetDrives()
-                .Select(RootItem.Create)
-                .OrderByDescending(n => n.IsMounted)
-                .ThenBy(n => n.Name);
-        folderView.ColumnView.ListView.ItemsSource = drives;
+        var directoryInfo = new DirectoryInfo(path ?? @"c:\");
+
+        var directories = directoryInfo.GetFiles()
+            .OrderBy(n => n.Name)
+            .Select(DirectoryItem.Create);
+
+        folderView.ColumnView.ListView.ItemsSource = directories;
         return 0.ToAsync();
     }
 
@@ -33,17 +33,16 @@ class RootController : IController
         //var selected = e.AddedItems.OfType<Item>();
         //var toRemove = selected.Where(n => n.Name == "@AdvancedKeySettingsNotification.png");
         //ColumnView.ListView.SelectedItems.Remove(toRemove.FirstOrDefault());
-        selectedItems.Clear();
     }
 
     public void OnCurrentItemChanged(object? obj)
-        => currentItem = (obj as ListViewItem)?.DataContext as RootItem;
+        => currentItem = obj as DirectoryItem;
 
     public string? GetCurrentPath() => currentItem?.Name;
 
     #endregion
 
-    public RootController(FolderView folderView)
+    public DirectoryController(FolderView folderView)
     {
         var ctx = new ColumnViewContext();
         folderView.DataContext = ctx;
@@ -51,7 +50,7 @@ class RootController : IController
         folderView.ColumnView.Headers.HeaderItems =
         [
             new HeaderItem("Name"),
-            new HeaderItem("Beschreibung"),
+            new HeaderItem("Datum"),
             new HeaderItem("Größe", TextAlignment.Right)
         ];
     }
@@ -71,6 +70,5 @@ class RootController : IController
         //throw new NotImplementedException();
     }
 
-    RootItem? currentItem;
+    DirectoryItem? currentItem;
 }
-

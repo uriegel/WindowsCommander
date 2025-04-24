@@ -5,13 +5,11 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 using Commander.Controllers;
+using Commander.Controllers.Directory;
 using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO OnEnter
-// TODO DirectoryController
-// TODO Eliminate TestControl when DirectoryController is done
 // TODO Shift Tab: focus path textBox
 
 public partial class FolderView : UserControl
@@ -22,13 +20,19 @@ public partial class FolderView : UserControl
         controller = new RootController(this);
     }
 
-    public async void ChangePath(string path, bool saveHistory)
+    public async void ChangePath(string? path, bool saveHistory, bool dontFocus = false)
     {
         DetectController(path);
         try
         {
             controller.RemoveAll();
             var lastPos = await controller.Fill(path, this);
+            if (!dontFocus)
+                await Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+                {
+                    var listViewItem = (ListViewItem)ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(0);
+                    listViewItem?.Focus();
+                });
             //if (lastPos != -1)
             //    folderView.ScrollTo(lastPos);
             //folderView.Context.CurrentDirectories = Actions.Instance.ShowHidden ? controller.Directories + controller.HiddenDirectories : controller.Directories;
@@ -36,12 +40,12 @@ public partial class FolderView : UserControl
             //folderView.Context.CurrentPath = controller.CurrentPath;
             //folderView.OnPathChanged(saveHistory ? CurrentPath : null);
         }
-        catch (UnauthorizedAccessException uae)
+        catch (UnauthorizedAccessException)
         {
             //OnError(uae);
             //MainContext.Instance.ErrorText = "Kein Zugriff";
         }
-        catch (DirectoryNotFoundException dnfe)
+        catch (DirectoryNotFoundException)
         {
             //OnError(dnfe);
             //MainContext.Instance.ErrorText = "Pfad nicht gefunden";
@@ -56,24 +60,23 @@ public partial class FolderView : UserControl
         //    OnError(re);
         //    MainContext.Instance.ErrorText = "Der Netzwerkname des Gerätes konnte nicht ermittelt werden";
         //}
-        catch (Exception e)
+        catch (Exception)
         {
             //OnError(e);
             //MainContext.Instance.ErrorText = "Ordner konnte nicht gewechselt werden";
         }
     }
 
-    bool DetectController(string path)
+    bool DetectController(string? path)
     {
         return path switch
         {
             //"fav" => SetController(() => new FavoritesController(folderView)),
             //"remotes" => SetController(() => new RemotesController(folderView)),
             "root" => SetController(() => new RootController(this)),
-            //"" => SetController(() => new RootController(folderView)),
+            "" => SetController(() => new RootController(this)),
             //_ when path.StartsWith("remote") => SetController(() => new RemoteController(folderView)),
-            //_ => SetController(() => new DirectoryController(folderView))
-            _ => SetController(() => new RootController(this)),
+            _ => SetController(() => new DirectoryController(this))
         };
 
         bool SetController<T>(Func<T> controller)
@@ -136,6 +139,12 @@ public partial class FolderView : UserControl
 
     void ColumnView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         => controller.OnSelectionChanged(ColumnView.ListView.SelectedItems, e);
+
+    void ColumnView_CurrentItemChanged(object sender, RoutedEvents.CurrentItemChangedEventArgs e)
+        => controller.OnCurrentItemChanged(e.CurrentItem);
+
+    void ColumnView_OnEnter(object sender, System.Windows.RoutedEventArgs e)
+        => ChangePath(controller.GetCurrentPath(), true);
 
     IController controller;
 }

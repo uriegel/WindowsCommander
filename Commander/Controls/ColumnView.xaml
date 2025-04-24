@@ -18,7 +18,11 @@
                   HorizontalContentAlignment="Stretch"
                   SelectionMode="Multiple"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                  Focusable="False"
                   PreviewMouseDown="ListView_PreviewMouseDown"
+                  MouseDoubleClick="ListView_MouseDoubleClick"
+                  KeyDown="ListView_KeyDown"
+                  GotFocus="ListView_GotFocus"
                   SelectionChanged="ListView_SelectionChanged">
             <ListView.Resources>
                 <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">

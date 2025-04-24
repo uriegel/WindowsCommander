@@ -11,6 +11,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Controllers/Root/RootItemDataTemplate.xaml" />
+                <ResourceDictionary Source="/Controllers/Directory/DirectoryItemDataTemplate.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Storyboard x:Key="WaterRipples" >
@@ -38,6 +39,9 @@
 
         <TextBox KeyboardNavigation.IsTabStop="False" KeyDown="TextBox_KeyDown" 
                  GotFocus="TextBox_GotFocus" BorderThickness="0" />
-        <controls:ColumnView Grid.Row="1" x:Name="ColumnView" SelectionChanged="ColumnView_SelectionChanged"  />
+        <controls:ColumnView Grid.Row="1" x:Name="ColumnView" 
+                             SelectionChanged="ColumnView_SelectionChanged" 
+                             CurrentItemChanged="ColumnView_CurrentItemChanged"
+                             OnEnter="ColumnView_OnEnter"/>
     </Grid>
 </UserControl>

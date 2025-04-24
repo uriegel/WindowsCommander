@@ -84,7 +84,7 @@
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" MinWidth="15" />
             </Grid.ColumnDefinitions>
-            <local:TestControl x:Name="LeftView" Grid.Column="0" HorizontalAlignment="Stretch"></local:TestControl>
+            <controls:FolderView x:Name="LeftView" Grid.Column="0" HorizontalAlignment="Stretch"></controls:FolderView>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" 
                           Background="Transparent"
                           KeyboardNavigation.IsTabStop="False"/>

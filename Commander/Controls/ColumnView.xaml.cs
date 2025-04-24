@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
+using Commander.RoutedEvents;
+
 namespace Commander.Controls;
 
 public partial class ColumnView : UserControl
@@ -15,6 +17,26 @@ public partial class ColumnView : UserControl
     {
         add { AddHandler(SelectionChangedEvent, value); }
         remove { RemoveHandler(SelectionChangedEvent, value); }
+    }
+
+    public static readonly RoutedEvent CurrentItemChangedEvent =
+        EventManager.RegisterRoutedEvent("CurrentItemChanged", RoutingStrategy.Bubble, typeof(CurrentItemChangedEventHandler),
+            typeof(ColumnView));
+
+    public event CurrentItemChangedEventHandler CurrentItemChanged
+    {
+        add { AddHandler(CurrentItemChangedEvent, value); }
+        remove { RemoveHandler(CurrentItemChangedEvent, value); }
+    }
+
+    public static readonly RoutedEvent OnEnterEvent =
+        EventManager.RegisterRoutedEvent("OnEnter", RoutingStrategy.Bubble, typeof(RoutedEventHandler),
+            typeof(ColumnView));
+
+    public event RoutedEventHandler OnEnter
+    {
+        add { AddHandler(OnEnterEvent, value); }
+        remove { RemoveHandler(OnEnterEvent, value); }
     }
 
     #endregion
@@ -39,6 +61,34 @@ public partial class ColumnView : UserControl
         => RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, e.AddedItems, e.RemovedItems)
         {
             RoutedEvent = SelectionChangedEvent,
+            Source = this
+        });
+
+    void ListView_GotFocus(object sender, RoutedEventArgs e)
+    {
+        RaiseEvent(new CurrentItemChangedEventArgs(e.OriginalSource as ListBoxItem)
+        {
+            RoutedEvent = CurrentItemChangedEvent,
+            Source = this
+        });
+    }
+
+    void ListView_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case System.Windows.Input.Key.Enter:
+                RaiseEvent(new RoutedEventArgs(OnEnterEvent)
+                {
+                    Source = this
+                });
+                break;
+        }
+    }
+
+    void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        => RaiseEvent(new RoutedEventArgs(OnEnterEvent)
+        {
             Source = this
         });
 }
