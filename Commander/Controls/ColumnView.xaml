@@ -11,6 +11,22 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Controllers/Root/RootItemDataTemplate.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <Storyboard x:Key="WaterRipples" >
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(local:WaterRipple.Phase)" 
+                                           Storyboard.TargetName="ListView">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="20"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="10"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(local:WaterRipple.Amplitude)" 
+                                           Storyboard.TargetName="ListView">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="4"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -24,7 +40,13 @@
                  KeyDown="TextBox_KeyDown" GotFocus="TextBox_GotFocus" BorderThickness="0" />
         <local:ColumnViewHeaders Grid.Row="1" x:Name="Headers" />
 
-        <ListView Grid.Row="2" x:Name="ListView" >
+        <ListView Grid.Row="2" x:Name="ListView" 
+                  VirtualizingPanel.VirtualizationMode="Recycling" 
+                  HorizontalContentAlignment="Stretch"
+                  SelectionMode="Multiple"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                  PreviewMouseDown="ListView_PreviewMouseDown"
+                  SelectionChanged="ListView_SelectionChanged">
             <ListView.Resources>
                 <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
                     <Setter Property="Padding" Value="4,2"/>

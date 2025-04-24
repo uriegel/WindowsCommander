@@ -43,7 +43,6 @@ public partial class TestControl : UserControl
         PeopleListView.Effect = null;
     }
 
-
     void TextBox_KeyDown(object sender, KeyEventArgs e)
     {
         switch (e.Key)
@@ -83,8 +82,6 @@ public partial class TestControl : UserControl
         PeopleListView.SelectedItems.Remove(toRemove.FirstOrDefault());
     }
 
-    bool modus = false;
-
     void PeopleListView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
         var lbi = (e.OriginalSource as DependencyObject)?.FindAncestorOrSelf<ListBoxItem>();
@@ -97,6 +94,11 @@ public partial class TestControl : UserControl
 
             e.Handled = true;
         }
+    }
+
+    private void ListView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+
     }
 }
 

@@ -55,10 +55,6 @@ public class FolderView : ColumnView
         }
     }
 
-    protected override void OnInitialize()
-    {
-    }
-
     bool DetectController(string path)
     {
         return path switch
