@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,8 +37,8 @@ class RootController : IController
         selectedItems.Clear();
     }
 
-    public void OnCurrentItemChanged(object? obj)
-        => currentItem = (obj as ListViewItem)?.DataContext as RootItem;
+    public void OnCurrentItemChanged(INotifyPropertyChanged? prop)
+        => currentItem = prop as RootItem;
 
     public string? GetCurrentPath() => currentItem?.Name;
 

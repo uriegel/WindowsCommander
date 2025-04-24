@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
@@ -141,7 +142,7 @@ public partial class FolderView : UserControl
         => controller.OnSelectionChanged(ColumnView.ListView.SelectedItems, e);
 
     void ColumnView_CurrentItemChanged(object sender, RoutedEvents.CurrentItemChangedEventArgs e)
-        => controller.OnCurrentItemChanged(e.CurrentItem);
+        => controller.OnCurrentItemChanged(e.CurrentItem?.DataContext as INotifyPropertyChanged);
 
     void ColumnView_OnEnter(object sender, System.Windows.RoutedEventArgs e)
         => ChangePath(controller.GetCurrentPath(), true);

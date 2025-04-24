@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,6 +8,8 @@ using Commander.Controls;
 using Commander.Controls.ColumnViewHeader;
 
 using CsTools.Extensions;
+
+using static CsTools.Extensions.Core;
 
 namespace Commander.Controllers.Directory;
 
@@ -20,11 +23,19 @@ class DirectoryController : IController
     {
         var directoryInfo = new DirectoryInfo(path ?? @"c:\");
 
-        var directories = directoryInfo.GetFiles()
+        var directories = directoryInfo.GetDirectories()
             .OrderBy(n => n.Name)
             .Select(DirectoryItem.Create);
+        var files = directoryInfo.GetFiles()
+            .OrderBy(n => n.Name)
+            .Select(FileItem.Create);
 
-        folderView.ColumnView.ListView.ItemsSource = directories;
+        folderView.ColumnView.ListView.ItemsSource =
+            ConcatEnumerables(
+                [new ParentItem() as INotifyPropertyChanged],
+                directories,
+                files);
+        currentPath = directoryInfo.FullName;
         return 0.ToAsync();
     }
 
@@ -35,10 +46,22 @@ class DirectoryController : IController
         //ColumnView.ListView.SelectedItems.Remove(toRemove.FirstOrDefault());
     }
 
-    public void OnCurrentItemChanged(object? obj)
-        => currentItem = obj as DirectoryItem;
+    public void OnCurrentItemChanged(INotifyPropertyChanged? prop)
+        => currentItem = prop;
 
-    public string? GetCurrentPath() => currentItem?.Name;
+    public string? GetCurrentPath()
+    {
+        if (currentItem is ParentItem && currentPath?.Length == 3)
+            return "root";
+        else 
+            return currentPath?.AppendPath(currentItem is FileItem fi
+                ? fi.Name
+                : currentItem is DirectoryItem di
+                ? di.Name
+                : currentItem is ParentItem
+                ? ".."
+                : null);
+    }
 
     #endregion
 
@@ -70,5 +93,6 @@ class DirectoryController : IController
         //throw new NotImplementedException();
     }
 
-    DirectoryItem? currentItem;
+    INotifyPropertyChanged? currentItem;
+    string? currentPath;
 }

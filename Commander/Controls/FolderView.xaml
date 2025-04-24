@@ -11,7 +11,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Controllers/Root/RootItemDataTemplate.xaml" />
+                <ResourceDictionary Source="/Controllers/Directory/FileItemDataTemplate.xaml" />
                 <ResourceDictionary Source="/Controllers/Directory/DirectoryItemDataTemplate.xaml" />
+                <ResourceDictionary Source="/Controllers/Directory/ParentItemDataTemplate.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Storyboard x:Key="WaterRipples" >

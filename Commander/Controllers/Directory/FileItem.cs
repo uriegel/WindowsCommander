@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Commander.Controllers.Directory;
 
-public class DirectoryItem : INotifyPropertyChanged
+public class FileItem : INotifyPropertyChanged
 {
     public string Name
     {
@@ -25,11 +25,22 @@ public class DirectoryItem : INotifyPropertyChanged
         }
     }
 
-    public static DirectoryItem Create(DirectoryInfo info)
+    public long? Size
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnChanged(nameof(Size));
+        }
+    }
+
+    public static FileItem Create(FileInfo info)
         => new()
         {
             Name = info.Name ?? "",
-            DateTime = info.LastWriteTime
+            DateTime = info.LastWriteTime,
+            Size = info.Length
         };
 
     public event PropertyChangedEventHandler? PropertyChanged;
