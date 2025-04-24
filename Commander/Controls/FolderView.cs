@@ -6,13 +6,13 @@ using Commander.Controllers;
 using Commander.Controls.ColumnViewHeader;
 using System.Windows.Controls;
 using System.Windows;
+using Commander.Controllers.Root;
 
 namespace Commander;
 
 public class FolderView : ColumnView
 {
-    public FolderView() : base()
-        => controller = new RootController(this);
+    public FolderView() : base() => controller = new RootController(this);
 
     public async void ChangePath(string path, bool saveHistory)
     {
@@ -57,15 +57,6 @@ public class FolderView : ColumnView
 
     protected override void OnInitialize()
     {
-        var ctx = new ColumnViewContext();
-        DataContext = ctx;
-        Headers.ColumnViewContext = ctx;
-        Headers.HeaderItems =
-        [
-            new HeaderItem("Name"),
-            new HeaderItem("Datum"),
-            new HeaderItem("Größe", TextAlignment.Right)
-        ];
     }
 
     bool DetectController(string path)

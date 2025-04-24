@@ -6,6 +6,13 @@
              xmlns:local="clr-namespace:Commander"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Controllers/Root/RootItemDataTemplate.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -18,7 +25,13 @@
         <local:ColumnViewHeaders Grid.Row="1" x:Name="Headers" />
 
         <ListView Grid.Row="2" x:Name="ListView" >
-            
+            <ListView.Resources>
+                <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                    <Setter Property="Padding" Value="4,2"/>
+                    <Setter Property="Margin" Value="0"/>
+                    <Setter Property="MinHeight" Value="0"/>
+                </Style>
+            </ListView.Resources>
         </ListView> 
     </Grid>
 </UserControl>

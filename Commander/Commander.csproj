@@ -16,6 +16,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="CsTools" Version="7.25.5" />
+    </ItemGroup>
+
+    <ItemGroup>
       <Resource Include="Resources\Kirk.ico" />
     </ItemGroup>
 

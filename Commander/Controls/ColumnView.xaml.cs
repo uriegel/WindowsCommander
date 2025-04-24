@@ -2,13 +2,7 @@
 
 namespace Commander;
 
-// TODO ColumnView TestContent => not 3 Gridlengths but 1 array
-// TODO ColumnView TestContent => rename
-// TODO ColumnView with HeaderControl and Controller
-// TODO Controller: HeaderItems, FillItems
-// TODO RootController:
-// TODO FolderController
-// TODO Controller with DataContext, HeaderControl
+// TODO Eliminate TestControl
 // TODO Shift Tab: focus path textBox
 
 public partial class ColumnView : UserControl
