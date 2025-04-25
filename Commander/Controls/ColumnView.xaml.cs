@@ -55,7 +55,16 @@ public partial class ColumnView : UserControl
                 ListView.UpdateLayout();
                 ListView.ScrollIntoView(lbi);
                 Keyboard.Focus(lbi);
-                e.Handled = true;
+                if (e.ClickCount == 1)
+                    e.Handled = true;
+                else if (e.ClickCount == 2)
+                {
+                    RaiseEvent(new RoutedEventArgs(OnEnterEvent)
+                    {
+                        Source = this
+                    });
+                    e.Handled = true;
+                }
             }
         }
     }
@@ -88,11 +97,5 @@ public partial class ColumnView : UserControl
                 break;
         }
     }
-
-    void ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        => RaiseEvent(new RoutedEventArgs(OnEnterEvent)
-        {
-            Source = this
-        });
 }
 

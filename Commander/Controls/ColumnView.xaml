@@ -20,7 +20,6 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                   Focusable="False"
                   PreviewMouseDown="ListView_PreviewMouseDown"
-                  MouseDoubleClick="ListView_MouseDoubleClick"
                   KeyDown="ListView_KeyDown"
                   GotFocus="ListView_GotFocus"
                   SelectionChanged="ListView_SelectionChanged">
