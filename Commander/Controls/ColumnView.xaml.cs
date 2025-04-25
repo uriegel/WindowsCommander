@@ -70,7 +70,7 @@ public partial class ColumnView : UserControl
     }
 
     void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        => RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, e.AddedItems, e.RemovedItems)
+        => RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, e.RemovedItems, e.AddedItems)
         {
             RoutedEvent = SelectionChangedEvent,
             Source = this

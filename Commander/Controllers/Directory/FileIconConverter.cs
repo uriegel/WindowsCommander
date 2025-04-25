@@ -18,7 +18,6 @@ public class FileIconConverter : IValueConverter
     {
         if (value is string path)
         {
-            ImageBrush? imageBrush;
             var extension = path.EndsWith("exe", StringComparison.InvariantCultureIgnoreCase) ? path : path.GetFileExtension();
             //if (string.Compare(extension, ".7z", true) == 0)
             //    extension = ".zip";
@@ -29,14 +28,7 @@ public class FileIconConverter : IValueConverter
             //else if (string.Compare(extension, ".tar", true) == 0)
             //    extension = ".zip";
 
-            //if (extension == ".exe")
-            //    imageBrush = ImageBrushCreator.ExtractIcon(path);
-            //else if (!icons.TryGetValue(extension, out imageBrush))
-            //{
-                imageBrush = ExtractIcon(extension ?? ".");
-            //    icons[extension] = imageBrush;
-            //}
-            return imageBrush;
+            return ExtractIcon(extension ?? ".");
         }
         else
             return null;

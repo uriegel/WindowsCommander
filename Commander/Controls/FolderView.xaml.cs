@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
@@ -11,8 +12,16 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
+// TODO StackPanel -> TextBlock -> CharEllipis not visible 
+// TODO fillpath parent: select last folder
 // TODO Shift Tab: focus path textBox
-// StackPanel -> TextBlock -> CharEllipis not visible 
+// TODO focus path textBox binding to Context and Command fill path
+// TODO save last pathes
+// TODO History
+// TODO StatusBar
+// TODO Filter hidden
+// TODO Restriction
+// TODO Sorting
 
 public partial class FolderView : UserControl
 {
