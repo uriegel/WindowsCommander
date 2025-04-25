@@ -12,7 +12,6 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO StackPanel -> TextBlock -> CharEllipis not visible 
 // TODO fillpath parent: select last folder
 // TODO Shift Tab: focus path textBox
 // TODO focus path textBox binding to Context and Command fill path

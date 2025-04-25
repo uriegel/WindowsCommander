@@ -78,6 +78,14 @@
                           InputGestureText="CTRL+F3" />
             </MenuItem>
         </Menu>
+        <StatusBar DockPanel.Dock="Bottom" Background="Transparent" Padding="0">
+            <StatusBarItem>
+                <TextBlock Text="Linker Text" />
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="Rechter Text" />
+            </StatusBarItem>
+         </StatusBar>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="15" />

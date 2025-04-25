@@ -15,14 +15,18 @@
                                 Path=DataContext.ColumnWidths[2]}" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal" Margin="2, 0, 5, 0"  >
+            <Grid Margin="2, 0, 5, 0"  >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
                 <Border Margin="0,0,5,0" Width="16" Height="16" 
                         UseLayoutRounding="True"
-                        SnapsToDevicePixels="True"
+                        SnapsToDevicePixels="False"
                         RenderOptions.BitmapScalingMode="NearestNeighbor"
-                        Background="{Binding IconPath, Converter={StaticResource FileIconConverter}}" />
-                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-            </StackPanel>
+                        Background="{Binding IconPath, Converter={StaticResource FileIconConverter}}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+            </Grid>
 
             <TextBlock Margin="0, 0, 5, 0" Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding DateTime}" />
             <TextBlock Margin="5, 0, 0, 0" Grid.Column="2" TextAlignment="Right" TextTrimming="CharacterEllipsis"
