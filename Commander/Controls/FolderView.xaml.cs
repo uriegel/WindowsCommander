@@ -12,6 +12,7 @@ using Commander.Controllers.Root;
 namespace Commander.Controls;
 
 // TODO Shift Tab: focus path textBox
+// StackPanel -> TextBlock -> CharEllipis not visible 
 
 public partial class FolderView : UserControl
 {
@@ -27,11 +28,14 @@ public partial class FolderView : UserControl
         try
         {
             controller.RemoveAll();
+            ColumnView.ListView.UpdateLayout();
             var lastPos = await controller.Fill(path, this);
             if (!dontFocus)
-                await Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+                await Dispatcher.BeginInvoke(DispatcherPriority.Input, async () =>
                 {
                     var listViewItem = (ListViewItem)ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(0);
+                    ColumnView.ListView.UpdateLayout();
+                    ColumnView.ListView.ScrollIntoView(listViewItem);
                     listViewItem?.Focus();
                 });
             //if (lastPos != -1)

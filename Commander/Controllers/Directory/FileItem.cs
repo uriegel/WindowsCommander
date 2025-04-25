@@ -15,6 +15,8 @@ public class FileItem : INotifyPropertyChanged
         }
     } = "";
 
+    public string? IconPath { get; init; }
+
     public DateTime DateTime
     {
         get => field;
@@ -39,6 +41,7 @@ public class FileItem : INotifyPropertyChanged
         => new()
         {
             Name = info.Name ?? "",
+            IconPath = info.Name ?? "",
             DateTime = info.LastWriteTime,
             Size = info.Length
         };

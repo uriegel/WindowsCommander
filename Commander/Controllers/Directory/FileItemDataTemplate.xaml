@@ -1,6 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:localDir="clr-namespace:Commander.Controllers.Directory" 
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <localDir:FileIconConverter x:Key="FileIconConverter" />
+
     <DataTemplate DataType="{x:Type localDir:FileItem}">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -12,7 +15,11 @@
                                 Path=DataContext.ColumnWidths[2]}" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Margin="0, 0, 5, 0" Text="{Binding Name}" Padding="0" TextTrimming="CharacterEllipsis" />
+            <StackPanel Orientation="Horizontal" Margin="2, 0, 5, 0"  >
+                <Border Margin="0,0,5,0" Width="16" Height="16" Background="{Binding IconPath, Converter={StaticResource FileIconConverter}}" />
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+            </StackPanel>
+
             <TextBlock Margin="0, 0, 5, 0" Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding DateTime}" />
             <TextBlock Margin="5, 0, 0, 0" Grid.Column="2" TextAlignment="Right" TextTrimming="CharacterEllipsis"
                             Text="{Binding Size}" />
