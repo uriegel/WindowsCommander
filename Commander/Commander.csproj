@@ -12,6 +12,10 @@
 	</PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Resources\Folder.ico" />
+    </ItemGroup>
+
+    <ItemGroup>
         <EmbeddedResource Include="Effects\WaterRipple.ps" />
     </ItemGroup>
 
@@ -20,6 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Resource Include="Resources\Folder.ico" />
       <Resource Include="Resources\Kirk.ico" />
     </ItemGroup>
 
