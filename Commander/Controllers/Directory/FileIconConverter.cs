@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Data;
@@ -20,7 +19,7 @@ public class FileIconConverter : IValueConverter
         if (value is string path)
         {
             ImageBrush? imageBrush;
-            var extension = path.GetFileExtension();
+            var extension = path.EndsWith("exe", StringComparison.InvariantCultureIgnoreCase) ? path : path.GetFileExtension();
             //if (string.Compare(extension, ".7z", true) == 0)
             //    extension = ".zip";
             //else if (string.Compare(extension, ".rar", true) == 0)
@@ -48,16 +47,21 @@ public class FileIconConverter : IValueConverter
 
     static ImageBrush? ExtractIcon(string name)
     {
-        var info = new ShFileInfo();
-        IntPtr ptr = Api.SHGetFileInfo(name, FileAttributes.Normal, ref info, Marshal.SizeOf(info),
+        if (!icons.TryGetValue(name, out var bitmapSource))
+        {
+            var info = new ShFileInfo();
+            IntPtr ptr = Api.SHGetFileInfo(name, FileAttributes.Normal, ref info, Marshal.SizeOf(info),
             SHGetFileInfoConstants.ICON |
             SHGetFileInfoConstants.SMALLICON |
             SHGetFileInfoConstants.USEFILEATTRIBUTES |
             SHGetFileInfoConstants.TYPENAME);
 
-        if (info.IconHandle == 0)
-            return null;
-        var bitmapSource = Imaging.CreateBitmapSourceFromHIcon(info.IconHandle,Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            if (info.IconHandle == 0)
+                return null;
+            bitmapSource = Imaging.CreateBitmapSourceFromHIcon(info.IconHandle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bitmapSource.Freeze();
+            icons[name] = bitmapSource;
+        }
         var brush = new ImageBrush(bitmapSource)
         {
             Stretch = Stretch.None
@@ -65,4 +69,5 @@ public class FileIconConverter : IValueConverter
         return brush;
     }
 
+    static readonly Dictionary<string, BitmapSource> icons = [];
 }

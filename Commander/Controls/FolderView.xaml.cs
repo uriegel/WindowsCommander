@@ -31,11 +31,11 @@ public partial class FolderView : UserControl
             ColumnView.ListView.UpdateLayout();
             var lastPos = await controller.Fill(path, this);
             if (!dontFocus)
-                await Dispatcher.BeginInvoke(DispatcherPriority.Input, async () =>
+                await Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
                 {
+                    ColumnView.ListView.ScrollIntoView(ColumnView.ListView.Items[0]);
                     var listViewItem = (ListViewItem)ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(0);
                     ColumnView.ListView.UpdateLayout();
-                    ColumnView.ListView.ScrollIntoView(listViewItem);
                     listViewItem?.Focus();
                 });
             //if (lastPos != -1)

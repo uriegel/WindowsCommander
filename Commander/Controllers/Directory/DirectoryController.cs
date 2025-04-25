@@ -41,9 +41,10 @@ class DirectoryController : IController
 
     public void OnSelectionChanged(IList selectedItems, SelectionChangedEventArgs e)
     {
-        //var selected = e.AddedItems.OfType<Item>();
-        //var toRemove = selected.Where(n => n.Name == "@AdvancedKeySettingsNotification.png");
-        //ColumnView.ListView.SelectedItems.Remove(toRemove.FirstOrDefault());
+        var selected = e.AddedItems.OfType<INotifyPropertyChanged>();
+        var toRemove = selected.FirstOrDefault(n => n is ParentItem);
+        if (toRemove != null)
+            selectedItems.Remove(toRemove);
     }
 
     public void OnCurrentItemChanged(INotifyPropertyChanged? prop)

@@ -41,7 +41,9 @@ public class FileItem : INotifyPropertyChanged
         => new()
         {
             Name = info.Name ?? "",
-            IconPath = info.Name ?? "",
+            IconPath = info.Name?.EndsWith("exe", StringComparison.InvariantCultureIgnoreCase) == true
+                        ? info.FullName 
+                        : info.Name ?? "",
             DateTime = info.LastWriteTime,
             Size = info.Length
         };
