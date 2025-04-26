@@ -23,13 +23,21 @@
                   KeyDown="ListView_KeyDown"
                   GotFocus="ListView_GotFocus"
                   SelectionChanged="ListView_SelectionChanged">
-            <ListView.Resources>
+            <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
                     <Setter Property="Padding" Value="4,2"/>
                     <Setter Property="Margin" Value="0"/>
                     <Setter Property="MinHeight" Value="0"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsHidden}" Value="True">
+                            <Setter Property="Opacity" Value="0.6"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsReady}" Value="True">
+                            <Setter Property="Opacity" Value="0.6"/>
+                        </DataTrigger>
+                    </Style.Triggers>
                 </Style>
-            </ListView.Resources>
+            </ListView.ItemContainerStyle>            
         </ListView> 
     </Grid>
 </UserControl>

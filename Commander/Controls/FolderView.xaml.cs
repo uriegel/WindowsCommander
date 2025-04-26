@@ -10,7 +10,6 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO Show hidden
 // TODO Shift Tab: focus path textBox
 // TODO focus path textBox binding to Context and Command fill path
 // TODO save last pathes
