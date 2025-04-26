@@ -10,7 +10,6 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO Shift Tab: focus path textBox
 // TODO focus path textBox binding to Context and Command fill path
 // TODO save last pathes
 // TODO History
@@ -155,6 +154,17 @@ public partial class FolderView : UserControl
 
     void ColumnView_OnEnter(object sender, System.Windows.RoutedEventArgs e)
         => ChangePath(controller.GetCurrentPath(), true);
+
+    void ColumnView_KeyDown(object sender, KeyEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case System.Windows.Input.Key.Tab when (Keyboard.Modifiers == ModifierKeys.Shift):
+                PathTextBox.Focus();
+                e.Handled = true;
+                break;
+        }
+    }
 
     IController controller;
 }

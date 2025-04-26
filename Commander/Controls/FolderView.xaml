@@ -39,11 +39,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBox KeyboardNavigation.IsTabStop="False" KeyDown="TextBox_KeyDown" 
+        <TextBox x:Name="PathTextBox" KeyboardNavigation.IsTabStop="False" KeyDown="TextBox_KeyDown" 
                  GotFocus="TextBox_GotFocus" BorderThickness="0" />
         <controls:ColumnView Grid.Row="1" x:Name="ColumnView" 
                              SelectionChanged="ColumnView_SelectionChanged" 
                              CurrentItemChanged="ColumnView_CurrentItemChanged"
-                             OnEnter="ColumnView_OnEnter"/>
+                             OnEnter="ColumnView_OnEnter" KeyDown="ColumnView_KeyDown"/>
     </Grid>
 </UserControl>
