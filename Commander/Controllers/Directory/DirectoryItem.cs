@@ -6,19 +6,9 @@ using Commander.Extensions;
 
 namespace Commander.Controllers.Directory;
 
-public class DirectoryItem : INotifyPropertyChanged
+public class DirectoryItem : Item
 {
     public ImageSource? Icon { get; set; }
-
-    public string Name
-    {
-        get => field;
-        set
-        {
-            field = value;
-            OnChanged(nameof(Name));
-        }
-    } = "";
 
     public DateTime DateTime
     {
@@ -34,12 +24,9 @@ public class DirectoryItem : INotifyPropertyChanged
         => new()
         {
             Icon = "Resources/Folder.ico".IconFromResource(),
+            IsHidden = info.Attributes.HasFlag(FileAttributes.Hidden),
             Name = info.Name ?? "",
             DateTime = info.LastWriteTime
         };
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    void OnChanged(string name) => PropertyChanged?.Invoke(this, new(name));
 }
 

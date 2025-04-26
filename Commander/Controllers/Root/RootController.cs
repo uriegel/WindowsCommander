@@ -37,7 +37,7 @@ class RootController : IController
         selectedItems.Clear();
     }
 
-    public void OnCurrentItemChanged(INotifyPropertyChanged? prop)
+    public void OnCurrentItemChanged(Item? prop)
         => currentItem = prop as RootItem;
 
     public string? GetCurrentPath() => currentItem?.Name;

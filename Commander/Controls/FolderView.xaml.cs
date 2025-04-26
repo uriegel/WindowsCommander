@@ -1,8 +1,6 @@
-﻿using System.ComponentModel;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
@@ -12,7 +10,7 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO fillpath parent: select last folder
+// TODO Show hidden
 // TODO Shift Tab: focus path textBox
 // TODO focus path textBox binding to Context and Command fill path
 // TODO save last pathes
@@ -21,6 +19,8 @@ namespace Commander.Controls;
 // TODO Filter hidden
 // TODO Restriction
 // TODO Sorting
+// TODO Banner
+// TODO Selection
 
 public partial class FolderView : UserControl
 {
@@ -41,13 +41,11 @@ public partial class FolderView : UserControl
             if (!dontFocus)
                 await Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
                 {
-                    ColumnView.ListView.ScrollIntoView(ColumnView.ListView.Items[0]);
-                    var listViewItem = (ListViewItem)ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(0);
+                    ColumnView.ListView.ScrollIntoView(ColumnView.ListView.Items[lastPos]);
+                    var listViewItem = (ListViewItem)ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(lastPos);
                     ColumnView.ListView.UpdateLayout();
                     listViewItem?.Focus();
                 });
-            //if (lastPos != -1)
-            //    folderView.ScrollTo(lastPos);
             //folderView.Context.CurrentDirectories = Actions.Instance.ShowHidden ? controller.Directories + controller.HiddenDirectories : controller.Directories;
             //folderView.Context.CurrentFiles = Actions.Instance.ShowHidden ? controller.Files + controller.Files : controller.Files;
             //folderView.Context.CurrentPath = controller.CurrentPath;
@@ -154,7 +152,7 @@ public partial class FolderView : UserControl
         => controller.OnSelectionChanged(ColumnView.ListView.SelectedItems, e);
 
     void ColumnView_CurrentItemChanged(object sender, RoutedEvents.CurrentItemChangedEventArgs e)
-        => controller.OnCurrentItemChanged(e.CurrentItem?.DataContext as INotifyPropertyChanged);
+        => controller.OnCurrentItemChanged(e.CurrentItem?.DataContext as Item);
 
     void ColumnView_OnEnter(object sender, System.Windows.RoutedEventArgs e)
         => ChangePath(controller.GetCurrentPath(), true);

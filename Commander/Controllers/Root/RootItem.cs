@@ -1,20 +1,9 @@
-﻿using System.ComponentModel;
-using System.IO;
+﻿using System.IO;
 
 namespace Commander.Controllers.Root;
 
-public class RootItem : INotifyPropertyChanged
+public class RootItem : Item
 {
-    public string Name
-    {
-        get => field;
-        set
-        {
-            field = value;
-            OnChanged(nameof(Name));
-        }
-    } = "";
-
     public string Description
     {
         get => field;
@@ -53,8 +42,4 @@ public class RootItem : INotifyPropertyChanged
             Size = driveInfo.IsReady ? (long?)driveInfo.TotalSize : null,
             IsMounted = driveInfo.IsReady
         };
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    void OnChanged(string name) => PropertyChanged?.Invoke(this, new(name));
 }

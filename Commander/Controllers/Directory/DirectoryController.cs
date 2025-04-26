@@ -32,22 +32,28 @@ class DirectoryController : IController
 
         folderView.ColumnView.ListView.ItemsSource =
             ConcatEnumerables(
-                [new ParentItem() as INotifyPropertyChanged],
+                [new ParentItem() as Item],
                 directories,
                 files);
+        var oldPos = folderView.ColumnView
+                        .ListView
+                        .Items
+                        .Cast<Item>()
+                        .Index()
+                        .FirstOrDefault(n => n.Item.Name == currentPath?.SubstringAfterLast('\\'));
         currentPath = directoryInfo.FullName;
-        return 0.ToAsync();
+        return oldPos.Index.ToAsync();
     }
 
     public void OnSelectionChanged(IList selectedItems, SelectionChangedEventArgs e)
     {
-        var selected = e.AddedItems.OfType<INotifyPropertyChanged>();
+        var selected = e.AddedItems.OfType<Item>();
         var toRemove = selected.FirstOrDefault(n => n is ParentItem);
         if (toRemove != null)
             selectedItems.Remove(toRemove);
     }
 
-    public void OnCurrentItemChanged(INotifyPropertyChanged? prop)
+    public void OnCurrentItemChanged(Item? prop)
         => currentItem = prop;
 
     public string? GetCurrentPath()
@@ -94,6 +100,6 @@ class DirectoryController : IController
         //throw new NotImplementedException();
     }
 
-    INotifyPropertyChanged? currentItem;
+    Item? currentItem;
     string? currentPath;
 }

@@ -3,18 +3,8 @@ using System.IO;
 
 namespace Commander.Controllers.Directory;
 
-public class FileItem : INotifyPropertyChanged
+public class FileItem : Item
 {
-    public string Name
-    {
-        get => field;
-        set
-        {
-            field = value;
-            OnChanged(nameof(Name));
-        }
-    } = "";
-
     public string? IconPath { get; init; }
 
     public DateTime DateTime
@@ -41,15 +31,12 @@ public class FileItem : INotifyPropertyChanged
         => new()
         {
             Name = info.Name ?? "",
+            IsHidden = info.Attributes.HasFlag(FileAttributes.Hidden),
             IconPath = info.Name?.EndsWith("exe", StringComparison.InvariantCultureIgnoreCase) == true
                         ? info.FullName 
                         : info.Name ?? "",
             DateTime = info.LastWriteTime,
             Size = info.Length
         };
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    void OnChanged(string name) => PropertyChanged?.Invoke(this, new(name));
 }
 
