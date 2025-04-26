@@ -10,7 +10,8 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO StatusBar
+// TODO StatusBar: ActiveFolderContext, CurrentItemPath
+// TODO StatusBar: files, dirs
 // TODO Drive icons, removable drive icons
 // TODO save last pathes
 // TODO History
@@ -145,10 +146,13 @@ public partial class FolderView : UserControl
         => Controller.OnSelectionChanged(ColumnView.ListView.SelectedItems, e);
 
     void ColumnView_CurrentItemChanged(object sender, RoutedEvents.CurrentItemChangedEventArgs e)
-        => Controller.OnCurrentItemChanged(e.CurrentItem?.DataContext as Item);
+    {
+        if (DataContext is FolderViewContext fvc)
+            fvc.CurrentItemPath = Controller.GetCurrentPath(fvc.CurrentPath, e.CurrentItem?.DataContext as Item) ?? "";   
+    }
 
     void ColumnView_OnEnter(object sender, System.Windows.RoutedEventArgs e)
-        => ChangePath(Controller.GetCurrentPath((DataContext as FolderViewContext)?.CurrentPath), true);
+        =>  ChangePath((DataContext as FolderViewContext)?.CurrentItemPath, true);
 
     void ColumnView_KeyDown(object sender, KeyEventArgs e)
     {

@@ -39,10 +39,8 @@ class RootController : IController
         selectedItems.Clear();
     }
 
-    public void OnCurrentItemChanged(Item? prop)
-        => currentItem = prop as RootItem;
-
-    public string? GetCurrentPath(string? _) => currentItem?.Name;
+    public string? GetCurrentPath(string? parentPath, Item? item)
+        => item?.Name;
 
     #endregion
 
@@ -73,7 +71,5 @@ class RootController : IController
     {
         //throw new NotImplementedException();
     }
-
-    RootItem? currentItem;
 }
 

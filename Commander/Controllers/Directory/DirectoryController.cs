@@ -54,19 +54,16 @@ class DirectoryController : IController
             selectedItems.Remove(toRemove);
     }
 
-    public void OnCurrentItemChanged(Item? prop)
-        => currentItem = prop;
-
-    public string? GetCurrentPath(string? parentPath)
+    public string? GetCurrentPath(string? parentPath, Item? item)
     {
-        if (currentItem is ParentItem && parentPath?.Length == 3)
+        if (item is ParentItem && parentPath?.Length == 3)
             return "root";
         else 
-            return parentPath.AppendPath(currentItem is FileItem fi
+            return parentPath.AppendPath(item is FileItem fi
                 ? fi.Name
-                : currentItem is DirectoryItem di
+                : item is DirectoryItem di
                 ? di.Name
-                : currentItem is ParentItem
+                : item is ParentItem
                 ? ".."
                 : null);
     }
@@ -100,6 +97,4 @@ class DirectoryController : IController
     {
         //throw new NotImplementedException();
     }
-
-    Item? currentItem;
 }

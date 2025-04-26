@@ -79,10 +79,21 @@
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Background="Transparent" Padding="0">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
             <StatusBarItem>
                 <TextBlock Text="Linker Text" />
             </StatusBarItem>
-            <StatusBarItem>
+            <StatusBarItem Grid.Column="2">
                 <TextBlock Text="Rechter Text" />
             </StatusBarItem>
          </StatusBar>

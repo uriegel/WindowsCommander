@@ -16,6 +16,16 @@ public class FolderViewContext : INotifyPropertyChanged
         }
     } = "";
 
+    public string CurrentItemPath
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnChanged(nameof(CurrentItemPath));
+        }
+    } = "";
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public ColumnViewContext ColumnViewContext { get; set; } = new();
