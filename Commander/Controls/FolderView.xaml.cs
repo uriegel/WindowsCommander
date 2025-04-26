@@ -10,7 +10,6 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO Drive icons, removable drive icons
 // TODO save last pathes
 // TODO History
 // TODO Sorting
