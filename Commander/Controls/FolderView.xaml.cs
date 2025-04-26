@@ -10,7 +10,6 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO History
 // TODO Sorting
 // TODO Filter hidden, Status bar update
 // TODO Restriction
@@ -33,6 +32,8 @@ public partial class FolderView : UserControl
             Controller.RemoveAll();
             ColumnView.ListView.UpdateLayout();
             var lastPos = await Controller.Fill(path, this);
+            if (saveHistory && DataContext is FolderViewContext fvc && fvc.CurrentPath != null)
+                history.Set(fvc.CurrentPath);
             if (!dontFocus)
                 await Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
                 {
@@ -154,9 +155,17 @@ public partial class FolderView : UserControl
     {
         switch (e.Key)
         {
-            case System.Windows.Input.Key.Tab when (Keyboard.Modifiers == ModifierKeys.Shift):
+            case Key.Tab when (Keyboard.Modifiers == ModifierKeys.Shift):
                 PathTextBox.Focus();
                 e.Handled = true;
+                break;
+            case Key.Back:
+                {
+                    var path = history?.Get(Keyboard.Modifiers == ModifierKeys.Shift);
+                    if (path != null)
+                        ChangePath(path, false);
+                    e.Handled = true;
+                }
                 break;
         }
     }
@@ -171,4 +180,6 @@ public partial class FolderView : UserControl
                 fvc.OnChanged();
         }
     }
+
+    readonly History history = new();
 }
