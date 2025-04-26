@@ -26,6 +26,8 @@ class RootController : IController
                 .OrderByDescending(n => n.IsMounted)
                 .ThenBy(n => n.Name);
         folderView.ColumnView.ListView.ItemsSource = drives;
+        if (folderView.DataContext is FolderViewContext fvc)
+            fvc.CurrentPath = "root";
         return 0.ToAsync();
     }
 
@@ -40,14 +42,14 @@ class RootController : IController
     public void OnCurrentItemChanged(Item? prop)
         => currentItem = prop as RootItem;
 
-    public string? GetCurrentPath() => currentItem?.Name;
+    public string? GetCurrentPath(string? _) => currentItem?.Name;
 
     #endregion
 
     public RootController(FolderView folderView)
     {
         var ctx = new ColumnViewContext();
-        folderView.DataContext = ctx;
+        folderView.ColumnView.DataContext = ctx;
         folderView.ColumnView.Headers.ColumnViewContext = ctx;
         folderView.ColumnView.Headers.HeaderItems =
         [

@@ -37,7 +37,7 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </ListView.ItemContainerStyle>            
+            </ListView.ItemContainerStyle>
         </ListView> 
     </Grid>
 </UserControl>

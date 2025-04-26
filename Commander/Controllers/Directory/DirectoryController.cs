@@ -40,8 +40,9 @@ class DirectoryController : IController
                         .Items
                         .Cast<Item>()
                         .Index()
-                        .FirstOrDefault(n => n.Item.Name == currentPath?.SubstringAfterLast('\\'));
-        currentPath = directoryInfo.FullName;
+                        .FirstOrDefault(n => n.Item.Name == (folderView.DataContext as FolderViewContext)?.CurrentPath?.SubstringAfterLast('\\'));
+        if (folderView.DataContext is FolderViewContext fvc)
+            fvc.CurrentPath = directoryInfo.FullName;
         return oldPos.Index.ToAsync();
     }
 
@@ -56,12 +57,12 @@ class DirectoryController : IController
     public void OnCurrentItemChanged(Item? prop)
         => currentItem = prop;
 
-    public string? GetCurrentPath()
+    public string? GetCurrentPath(string? parentPath)
     {
-        if (currentItem is ParentItem && currentPath?.Length == 3)
+        if (currentItem is ParentItem && parentPath?.Length == 3)
             return "root";
         else 
-            return currentPath?.AppendPath(currentItem is FileItem fi
+            return parentPath.AppendPath(currentItem is FileItem fi
                 ? fi.Name
                 : currentItem is DirectoryItem di
                 ? di.Name
@@ -75,7 +76,7 @@ class DirectoryController : IController
     public DirectoryController(FolderView folderView)
     {
         var ctx = new ColumnViewContext();
-        folderView.DataContext = ctx;
+        folderView.ColumnView.DataContext = ctx;
         folderView.ColumnView.Headers.ColumnViewContext = ctx;
         folderView.ColumnView.Headers.HeaderItems =
         [
@@ -101,5 +102,4 @@ class DirectoryController : IController
     }
 
     Item? currentItem;
-    string? currentPath;
 }

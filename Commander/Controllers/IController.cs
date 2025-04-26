@@ -12,6 +12,6 @@ namespace Commander.Controllers
         Task<int> Fill(string? path, FolderView folderView);
         void OnSelectionChanged(IList selectedItems, SelectionChangedEventArgs e);
         void OnCurrentItemChanged(Item? obj);
-        string? GetCurrentPath();
+        string? GetCurrentPath(string? parentPath);
     }
 }

@@ -10,10 +10,10 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO focus path textBox binding to Context and Command fill path
+// TODO StatusBar
+// TODO Drive icons, removable drive icons
 // TODO save last pathes
 // TODO History
-// TODO StatusBar
 // TODO Filter hidden
 // TODO Restriction
 // TODO Sorting
@@ -25,7 +25,7 @@ public partial class FolderView : UserControl
     public FolderView()
     {
         InitializeComponent();
-        controller = new RootController(this);
+        Controller = new RootController(this);
     }
 
     public async void ChangePath(string? path, bool saveHistory, bool dontFocus = false)
@@ -33,9 +33,9 @@ public partial class FolderView : UserControl
         DetectController(path);
         try
         {
-            controller.RemoveAll();
+            Controller.RemoveAll();
             ColumnView.ListView.UpdateLayout();
-            var lastPos = await controller.Fill(path, this);
+            var lastPos = await Controller.Fill(path, this);
             if (!dontFocus)
                 await Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
                 {
@@ -91,10 +91,10 @@ public partial class FolderView : UserControl
         bool SetController<T>(Func<T> controller)
             where T : IController
         {
-            if (this.controller is not T)
+            if (this.Controller is not T)
             {
                 //this.controller.Dispose();
-                this.controller = controller();
+                this.Controller = controller();
                 return true;
             }
             else
@@ -108,12 +108,7 @@ public partial class FolderView : UserControl
         {
             case Key.Return:
 
-                ////(DataContext as ItemViewContext).ChangePath.Execute((sender as TextBox).Text);
-                //var items = Directory.GetItems((sender as TextBox).Text);
-                //this.listView.ItemsSource = items;
-                //e.Handled = true;
-                //liste.FocusItem((DataContext as ItemViewContext).View.CurrentItem as Item, true);
-
+                ChangePath(PathTextBox.Text, true);
 
                 Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
                 {
@@ -147,13 +142,13 @@ public partial class FolderView : UserControl
     }
 
     void ColumnView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        => controller.OnSelectionChanged(ColumnView.ListView.SelectedItems, e);
+        => Controller.OnSelectionChanged(ColumnView.ListView.SelectedItems, e);
 
     void ColumnView_CurrentItemChanged(object sender, RoutedEvents.CurrentItemChangedEventArgs e)
-        => controller.OnCurrentItemChanged(e.CurrentItem?.DataContext as Item);
+        => Controller.OnCurrentItemChanged(e.CurrentItem?.DataContext as Item);
 
     void ColumnView_OnEnter(object sender, System.Windows.RoutedEventArgs e)
-        => ChangePath(controller.GetCurrentPath(), true);
+        => ChangePath(Controller.GetCurrentPath((DataContext as FolderViewContext)?.CurrentPath), true);
 
     void ColumnView_KeyDown(object sender, KeyEventArgs e)
     {
@@ -166,5 +161,14 @@ public partial class FolderView : UserControl
         }
     }
 
-    IController controller;
+    IController Controller 
+    {
+        get => field; 
+        set
+        {
+            field = value;
+            if (DataContext is FolderViewContext fvc)
+                fvc.OnChanged();
+        }
+    }
 }
