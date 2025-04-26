@@ -1,8 +1,9 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Commander;
+using Commander.Controls;
+
+namespace Commander.Views;
 
 public partial class MainWindow : Window
 {
@@ -89,4 +90,16 @@ public partial class MainWindow : Window
     }
 
     void Window_Loaded(object sender, RoutedEventArgs e) {}
+
+    void LeftView_GotFocus(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowContext mwc && LeftView.DataContext is FolderViewContext fvc)
+            mwc.ActiveFolderView = fvc;
+    }
+
+    void RightView_GotFocus(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowContext mwc && RightView.DataContext is FolderViewContext fvc)
+            mwc.ActiveFolderView = fvc;
+    }
 }

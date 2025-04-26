@@ -10,7 +10,6 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO StatusBar: ActiveFolderContext, CurrentItemPath
 // TODO StatusBar: files, dirs
 // TODO Drive icons, removable drive icons
 // TODO save last pathes

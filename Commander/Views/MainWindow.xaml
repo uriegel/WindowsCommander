@@ -1,14 +1,17 @@
-﻿<Window x:Class="Commander.MainWindow"
+﻿<Window x:Class="Commander.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Commander"
+        xmlns:local="clr-namespace:Commander.Views"
         xmlns:controls="clr-namespace:Commander.Controls"
         mc:Ignorable="d"
         Icon="/Resources/Kirk.ico"
         Title="Commander" Width="600" Height="800"
         Loaded="Window_Loaded">
+    <Window.DataContext>
+        <local:MainWindowContext />
+    </Window.DataContext>
     <Window.CommandBindings>
         <CommandBinding Command="local:MainWindow.SelectCurrentCommand"
                         Executed="SelectCurrent_Executed" />
@@ -91,7 +94,7 @@
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
             <StatusBarItem>
-                <TextBlock Text="Linker Text" />
+                <TextBlock Text="{Binding ActiveFolderView.CurrentItemPath}" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="2">
                 <TextBlock Text="Rechter Text" />
@@ -103,11 +106,17 @@
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" MinWidth="15" />
             </Grid.ColumnDefinitions>
-            <controls:FolderView x:Name="LeftView" Grid.Column="0" HorizontalAlignment="Stretch"></controls:FolderView>
+            <controls:FolderView x:Name="LeftView" Grid.Column="0" 
+                                 HorizontalAlignment="Stretch"
+                                 GotFocus="LeftView_GotFocus">
+            </controls:FolderView>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Cursor="SizeWE" 
                           Background="Transparent"
                           KeyboardNavigation.IsTabStop="False"/>
-            <controls:FolderView x:Name="RightView" Grid.Column="2" HorizontalAlignment="Stretch"></controls:FolderView>
+            <controls:FolderView x:Name="RightView" Grid.Column="2" 
+                                 HorizontalAlignment="Stretch"
+                                 GotFocus="RightView_GotFocus">
+            </controls:FolderView>
         </Grid>
     </DockPanel>
 </Window>
