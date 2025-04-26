@@ -10,12 +10,11 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO StatusBar: files, dirs
 // TODO Drive icons, removable drive icons
 // TODO save last pathes
 // TODO History
 // TODO Sorting
-// TODO Filter hidden
+// TODO Filter hidden, Status bar update
 // TODO Restriction
 // TODO Banner
 // TODO Selection

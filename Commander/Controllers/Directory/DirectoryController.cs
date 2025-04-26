@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,10 +24,12 @@ class DirectoryController : IController
 
         var directories = directoryInfo.GetDirectories()
             .OrderBy(n => n.Name)
-            .Select(DirectoryItem.Create);
+            .Select(DirectoryItem.Create)
+            .ToArray();
         var files = directoryInfo.GetFiles()
             .OrderBy(n => n.Name)
-            .Select(FileItem.Create);
+            .Select(FileItem.Create)
+            .ToArray();
 
         folderView.ColumnView.ListView.ItemsSource =
             ConcatEnumerables(
@@ -42,7 +43,11 @@ class DirectoryController : IController
                         .Index()
                         .FirstOrDefault(n => n.Item.Name == (folderView.DataContext as FolderViewContext)?.CurrentPath?.SubstringAfterLast('\\'));
         if (folderView.DataContext is FolderViewContext fvc)
+        {
             fvc.CurrentPath = directoryInfo.FullName;
+            fvc.DirectoriesCount = directories.Length;
+            fvc.FilesCount = files.Length;
+        }
         return oldPos.Index.ToAsync();
     }
 
@@ -83,18 +88,5 @@ class DirectoryController : IController
         ];
     }
 
-    public void Execute(string command)
-    {
-        //throw new NotImplementedException();
-    }
-
-    public void Refresh()
-    {
-        //throw new NotImplementedException();
-    }
-
-    public void Dispose()
-    {
-        //throw new NotImplementedException();
-    }
+    public void Refresh()  { }
 }

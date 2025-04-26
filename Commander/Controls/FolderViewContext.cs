@@ -26,6 +26,26 @@ public class FolderViewContext : INotifyPropertyChanged
         }
     } = "";
 
+    public int DirectoriesCount
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnChanged(nameof(DirectoriesCount));
+        }
+    }
+
+    public int FilesCount
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnChanged(nameof(FilesCount));
+        }
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public ColumnViewContext ColumnViewContext { get; set; } = new();

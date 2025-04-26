@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,17 +26,17 @@ class RootController : IController
                 .ThenBy(n => n.Name);
         folderView.ColumnView.ListView.ItemsSource = drives;
         if (folderView.DataContext is FolderViewContext fvc)
+        {
             fvc.CurrentPath = "root";
+            fvc.DirectoriesCount = 0;
+            fvc.FilesCount = 0;
+        }
+
         return 0.ToAsync();
     }
 
     public void OnSelectionChanged(IList selectedItems, SelectionChangedEventArgs e)
-    {
-        //var selected = e.AddedItems.OfType<Item>();
-        //var toRemove = selected.Where(n => n.Name == "@AdvancedKeySettingsNotification.png");
-        //ColumnView.ListView.SelectedItems.Remove(toRemove.FirstOrDefault());
-        selectedItems.Clear();
-    }
+        => selectedItems.Clear();
 
     public string? GetCurrentPath(string? parentPath, Item? item)
         => item?.Name;
@@ -57,19 +56,6 @@ class RootController : IController
         ];
     }
 
-    public void Execute(string command)
-    {
-        //throw new NotImplementedException();
-    }
-
-    public void Refresh()
-    {
-        //throw new NotImplementedException();
-    }
-
-    public void Dispose()
-    {
-        //throw new NotImplementedException();
-    }
+    public void Refresh() { }
 }
 
