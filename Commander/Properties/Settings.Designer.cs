@@ -82,5 +82,29 @@ namespace Commander.Properties {
                 this["WindowState"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LeftPath {
+            get {
+                return ((string)(this["LeftPath"]));
+            }
+            set {
+                this["LeftPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RightPath {
+            get {
+                return ((string)(this["RightPath"]));
+            }
+            set {
+                this["RightPath"] = value;
+            }
+        }
     }
 }

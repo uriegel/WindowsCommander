@@ -55,8 +55,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        LeftView.ChangePath("root", true, true);
-        RightView.ChangePath("root", true, true);
+        LeftView.ChangePath(Properties.Settings.Default.LeftPath ?? "root", true, true);
+        RightView.ChangePath(Properties.Settings.Default.RightPath ?? "root", true, true);
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -74,7 +74,7 @@ public partial class MainWindow : Window
         }
 
         // Restore window state after layout is applied
-        this.Loaded += (s, ev) => WindowState = Properties.Settings.Default.WindowState;
+        Loaded += (s, ev) => WindowState = Properties.Settings.Default.WindowState;
     }
 
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -84,6 +84,8 @@ public partial class MainWindow : Window
         Properties.Settings.Default.WindowWidth = Width;
         Properties.Settings.Default.WindowHeight = Height;
         Properties.Settings.Default.WindowState = WindowState;
+        Properties.Settings.Default.LeftPath = (LeftView.DataContext as FolderViewContext)?.CurrentPath ?? Properties.Settings.Default.LeftPath;
+        Properties.Settings.Default.RightPath = (RightView.DataContext as FolderViewContext)?.CurrentPath ?? Properties.Settings.Default.RightPath;
 
         Properties.Settings.Default.Save();
         base.OnClosing(e);

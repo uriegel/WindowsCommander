@@ -17,5 +17,11 @@
     <Setting Name="WindowState" Type="System.Windows.WindowState" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="LeftPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="RightPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
