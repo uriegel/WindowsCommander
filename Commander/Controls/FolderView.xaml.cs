@@ -14,9 +14,9 @@ namespace Commander.Controls;
 // TODO Drive icons, removable drive icons
 // TODO save last pathes
 // TODO History
+// TODO Sorting
 // TODO Filter hidden
 // TODO Restriction
-// TODO Sorting
 // TODO Banner
 // TODO Selection
 
