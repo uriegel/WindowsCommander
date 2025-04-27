@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -11,9 +12,10 @@ using Commander.Controllers.Root;
 using Commander.Controls.ColumnViewHeader;
 using Commander.Views;
 
+using static System.Net.WebRequestMethods;
+
 namespace Commander.Controls;
 
-// TODO Filter hidden: Status bar update
 // TODO Restriction
 // TODO Version, Exif with Statusbar hint (lightblue background
 // TODO Banner
@@ -55,7 +57,7 @@ public partial class FolderView : UserControl
                     else if (i is FileItem fi)
                         return MainWindowContext.Instance.ShowHidden || !fi.IsHidden;
                     else
-                        return false;
+                        return true;
                 }
                 else
                     return false;
@@ -79,18 +81,21 @@ public partial class FolderView : UserControl
             var lastPos = await Controller.Fill(path, this);
             if (saveHistory && DataContext is FolderViewContext fvc && fvc.CurrentPath != null)
                 history.Set(fvc.CurrentPath);
+            var view = CollectionViewSource.GetDefaultView(ColumnView.ListView.ItemsSource) as ListCollectionView;
+            var items = view?.Cast<Item>();
             if (!dontFocus)
                 await Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
                 {
-                    ColumnView.ListView.ScrollIntoView(ColumnView.ListView.Items[lastPos]);
+                    ColumnView.ListView.ScrollIntoView(items?.Skip(lastPos).FirstOrDefault());
                     var listViewItem = (ListViewItem)ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(lastPos);
                     ColumnView.ListView.UpdateLayout();
                     listViewItem?.Focus();
                 });
-            //folderView.Context.CurrentDirectories = Actions.Instance.ShowHidden ? controller.Directories + controller.HiddenDirectories : controller.Directories;
-            //folderView.Context.CurrentFiles = Actions.Instance.ShowHidden ? controller.Files + controller.Files : controller.Files;
-            //folderView.Context.CurrentPath = controller.CurrentPath;
-            //folderView.OnPathChanged(saveHistory ? CurrentPath : null);
+            if (DataContext is FolderViewContext fvc1)
+            {
+                fvc1.DirectoriesCount = items?.Where(n => n is DirectoryItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
+                fvc1.FilesCount = items?.Where(n => n is FileItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0; 
+            }
         }
         catch (UnauthorizedAccessException)
         {
@@ -151,6 +156,13 @@ public partial class FolderView : UserControl
         {
             var view = CollectionViewSource.GetDefaultView(ColumnView.ListView.ItemsSource) as ListCollectionView;
             view?.Refresh();
+
+            var items = view?.Cast<Item>();
+            if (DataContext is FolderViewContext fvc && items != null)
+            {
+                fvc.DirectoriesCount = items.Where(n => n is DirectoryItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
+                fvc.FilesCount = items?.Where(n => n is FileItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
+            }
         }
     }
 

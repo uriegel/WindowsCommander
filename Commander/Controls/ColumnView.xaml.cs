@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
+using Commander.Controllers;
 using Commander.Controllers.Directory;
 using Commander.Extensions;
 using Commander.RoutedEvents;
@@ -81,7 +82,8 @@ public partial class ColumnView : UserControl
 
     void ListView_GotFocus(object sender, RoutedEventArgs e)
     {
-        RaiseEvent(new CurrentItemChangedEventArgs(e.OriginalSource as ListBoxItem)
+        var lbi = e.OriginalSource as ListBoxItem;
+        RaiseEvent(new CurrentItemChangedEventArgs(lbi)
         {
             RoutedEvent = CurrentItemChangedEvent,
             Source = this
@@ -106,6 +108,11 @@ public partial class ColumnView : UserControl
         var view = (ListCollectionView)CollectionViewSource.GetDefaultView(ListView.ItemsSource);
         view.CustomSort = new DirectoryComparer(e.Index, e.Descending);
         view.Refresh();
+
+        UpdateLayout();
+        var listViewItem = (ListViewItem)ListView.ItemContainerGenerator.ContainerFromIndex(0);
+        ListView.ScrollIntoView(view.GetItemAt(0));
+        listViewItem?.Focus();
     }
 }
 

@@ -41,11 +41,7 @@ class DirectoryController : IController
                         .Index()
                         .FirstOrDefault(n => n.Item.Name == (folderView.DataContext as FolderViewContext)?.CurrentPath?.SubstringAfterLast('\\'));
         if (folderView.DataContext is FolderViewContext fvc)
-        {
             fvc.CurrentPath = directoryInfo.FullName;
-            fvc.DirectoriesCount = directories.Length;
-            fvc.FilesCount = files.Length;
-        }
         return oldPos.Index.ToAsync();
     }
 
