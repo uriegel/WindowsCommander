@@ -12,7 +12,8 @@ using Commander.Controls.ColumnViewHeader;
 
 namespace Commander.Controls;
 
-// TODO Filter hidden, Status bar update
+// TODO Filter hidden
+// TODO Filter hidden: Status bar update
 // TODO Restriction
 // TODO Version, Exif with Statusbar hint (lightblue background
 // TODO Banner
@@ -41,7 +42,23 @@ public partial class FolderView : UserControl
         var oldView = CollectionViewSource.GetDefaultView(ColumnView.ListView.ItemsSource) as ListCollectionView;
         var view = new ListCollectionView(items.ToList())
         {
-            CustomSort = oldView?.CustomSort
+            CustomSort = oldView?.CustomSort,
+            Filter = item =>
+            {
+                if (item is Item i)
+                {
+                    if (i is ParentItem)
+                        return true;
+                    else if (i is DirectoryItem di)
+                        return !di.IsHidden;
+                    else if (i is FileItem fi)
+                        return !fi.IsHidden;
+                    else
+                        return false;
+                }
+                else
+                    return false;
+            }
         };
         ColumnView.ListView.ItemsSource = view;
     }
