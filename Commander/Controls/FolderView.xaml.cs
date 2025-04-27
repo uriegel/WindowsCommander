@@ -10,7 +10,7 @@ using Commander.Controllers.Root;
 
 namespace Commander.Controls;
 
-// TODO Sorting
+// TODO Sorting: folderView.ColumnView.ListView.ItemsSource = new ListCollectionView in ColumnView
 // TODO Filter hidden, Status bar update
 // TODO Restriction
 // TODO Version, Exif with Statusbar hint (lightblue background

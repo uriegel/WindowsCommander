@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 using Commander.Controls;
 using Commander.Controls.ColumnViewHeader;
@@ -31,11 +32,11 @@ class DirectoryController : IController
             .Select(FileItem.Create)
             .ToArray();
 
-        folderView.ColumnView.ListView.ItemsSource =
+        folderView.ColumnView.ListView.ItemsSource = new ListCollectionView(
             ConcatEnumerables(
                 [new ParentItem() as Item],
                 directories,
-                files);
+                files).ToList());
         var oldPos = folderView.ColumnView
                         .ListView
                         .Items

@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
+using Commander.Controllers.Directory;
 using Commander.Extensions;
 using Commander.RoutedEvents;
 
@@ -102,9 +103,9 @@ public partial class ColumnView : UserControl
 
     void Headers_SortChanged(object sender, SortChangedEventArgs e)
     {
-        var view = (CollectionView)CollectionViewSource.GetDefaultView(ListView.ItemsSource);
-        view.SortDescriptions.Clear();
-        view.SortDescriptions.Add(new SortDescription("DateTime", e.Descending ? ListSortDirection.Descending : ListSortDirection.Ascending));
+        var view = (ListCollectionView)CollectionViewSource.GetDefaultView(ListView.ItemsSource);
+        view.CustomSort = new DirectoryComparer(e.Index, e.Descending);
+        view.Refresh();
     }
 }
 
