@@ -50,9 +50,9 @@ class RootController : IController
         folderView.ColumnView.Headers.ColumnViewContext = ctx;
         folderView.ColumnView.Headers.HeaderItems =
         [
-            new HeaderItem("Name"),
-            new HeaderItem("Beschreibung"),
-            new HeaderItem("Größe", TextAlignment.Right)
+            new HeaderItem("Name") { SortType = SortType.Disabled },
+            new HeaderItem("Beschreibung") { SortType = SortType.Disabled },
+            new HeaderItem("Größe", TextAlignment.Right) { SortType = SortType.Disabled }
         ];
     }
 

@@ -166,6 +166,24 @@ public partial class ColumnViewHeaders : UserControl
         }
     }
 
+    void Border_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is DependencyObject dO)
+        {
+            var index = (int)dO.GetValue(Grid.ColumnProperty);
+            if (HeaderItems[index].SortType == SortType.Disabled)
+                return;
+            bool desc = HeaderItems[index].SortType == SortType.Ascending;
+            foreach (var item in HeaderItems)
+            {
+                if (item.SortType != SortType.Disabled)
+                    item.SortType = SortType.None;
+                item.SortType = SortType.None;
+            }
+            HeaderItems[index].SortType = desc ? SortType.Descending : SortType.Ascending;
+        }
+    }
+
     bool dragging;
 }
 

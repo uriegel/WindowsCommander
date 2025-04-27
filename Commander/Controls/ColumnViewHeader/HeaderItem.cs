@@ -1,13 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows;
 
 namespace Commander.Controls.ColumnViewHeader;
 
-public record HeaderItem(string Name, TextAlignment Alignment = TextAlignment.Left)
+public record HeaderItem(string Name, TextAlignment Alignment = TextAlignment.Left) : INotifyPropertyChanged
 {
     public int Index { get; set; }
+
+    public SortType SortType
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnChanged(nameof(SortType));
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    void OnChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
 };

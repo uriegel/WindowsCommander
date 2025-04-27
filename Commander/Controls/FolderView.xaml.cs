@@ -11,12 +11,12 @@ using Commander.Controllers.Root;
 namespace Commander.Controls;
 
 // TODO Sorting
-// Version, Exif with Statusbar hint
+// TODO Version, Exif with Statusbar hint (lightblue background
 // TODO Filter hidden, Status bar update
 // TODO Restriction
 // TODO Banner
 // TODO Selection
-// Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
+// TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
 
 public partial class FolderView : UserControl
 {

@@ -82,7 +82,7 @@ class DirectoryController : IController
         folderView.ColumnView.Headers.ColumnViewContext = ctx;
         folderView.ColumnView.Headers.HeaderItems =
         [
-            new HeaderItem("Name"),
+            new HeaderItem("Name") { SortType = SortType.Ascending },
             new HeaderItem("Datum"),
             new HeaderItem("Größe", TextAlignment.Right)
         ];

@@ -14,7 +14,6 @@ public class Context : INotifyPropertyChanged
         }
     } = [];
 
-
     public event PropertyChangedEventHandler? PropertyChanged;
 
     void OnChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
