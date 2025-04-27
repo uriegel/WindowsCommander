@@ -6,11 +6,26 @@ using System.Windows.Input;
 using Commander.Controllers;
 using Commander.Controls.ColumnViewHeader;
 using Commander.Extensions;
+using Commander.RoutedEvents;
 
 namespace Commander.Controls;
 
 public partial class ColumnViewHeaders : UserControl
 {
+    #region Routed Events
+
+    public static readonly RoutedEvent SortChangedEvent =
+        EventManager.RegisterRoutedEvent("SortChanged", RoutingStrategy.Bubble, typeof(SortChangedEventHandler),
+            typeof(ColumnViewHeaders));
+
+    public event SortChangedEventHandler SortChanged
+    {
+        add { AddHandler(SortChangedEvent, value); }
+        remove { RemoveHandler(SortChangedEvent, value); }
+    }
+
+    #endregion 
+
     #region Attached Properties
 
     public static readonly DependencyProperty ColumnsProperty = DependencyProperty.RegisterAttached(
@@ -181,6 +196,11 @@ public partial class ColumnViewHeaders : UserControl
                 item.SortType = SortType.None;
             }
             HeaderItems[index].SortType = desc ? SortType.Descending : SortType.Ascending;
+            RaiseEvent(new SortChangedEventArgs(index, desc)
+            {
+                RoutedEvent = SortChangedEvent,
+                Source = this
+            });
         }
     }
 

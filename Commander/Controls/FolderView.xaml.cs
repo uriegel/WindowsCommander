@@ -11,9 +11,9 @@ using Commander.Controllers.Root;
 namespace Commander.Controls;
 
 // TODO Sorting
-// TODO Version, Exif with Statusbar hint (lightblue background
 // TODO Filter hidden, Status bar update
 // TODO Restriction
+// TODO Version, Exif with Statusbar hint (lightblue background
 // TODO Banner
 // TODO Selection
 // TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)

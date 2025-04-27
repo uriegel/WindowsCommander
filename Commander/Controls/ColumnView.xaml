@@ -12,7 +12,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <local:ColumnViewHeaders Grid.Row="0" x:Name="Headers" />
+        <local:ColumnViewHeaders Grid.Row="0" x:Name="Headers" SortChanged="Headers_SortChanged" />
         <ListView Grid.Row="1" x:Name="ListView" 
                   VirtualizingPanel.VirtualizationMode="Recycling" 
                   HorizontalContentAlignment="Stretch"

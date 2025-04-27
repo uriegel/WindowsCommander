@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 using Commander.Extensions;
@@ -96,6 +98,13 @@ public partial class ColumnView : UserControl
                 });
                 break;
         }
+    }
+
+    void Headers_SortChanged(object sender, SortChangedEventArgs e)
+    {
+        var view = (CollectionView)CollectionViewSource.GetDefaultView(ListView.ItemsSource);
+        view.SortDescriptions.Clear();
+        view.SortDescriptions.Add(new SortDescription("DateTime", e.Descending ? ListSortDirection.Descending : ListSortDirection.Ascending));
     }
 }
 
