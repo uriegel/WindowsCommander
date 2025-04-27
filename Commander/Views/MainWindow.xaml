@@ -15,9 +15,12 @@
     <Window.CommandBindings>
         <CommandBinding Command="local:MainWindow.SelectCurrentCommand"
                         Executed="SelectCurrent_Executed" />
+        <CommandBinding Command="local:MainWindow.ShowHiddenCommand"
+                        Executed="ShowHidden_Executed" />
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="Insert" Command="local:MainWindow.SelectCurrentCommand" />
+        <KeyBinding Key="H" Modifiers="Ctrl" Command="local:MainWindow.ShowHiddenCommand" />
     </Window.InputBindings>
 
     <DockPanel>
@@ -73,6 +76,13 @@
                           InputGestureText="Num-" />
             </MenuItem>
             <MenuItem Header = "_Ansicht" >
+                <MenuItem Header="Versteckte _Dateien"
+                          x:Name="ShowHidden"
+                          IsCheckable="True"
+                          Checked="Hidden_Checked"
+                          Unchecked="Hidden_Unchecked"
+                          InputGestureText="Ctrl+H" />
+                <Separator />
                 <MenuItem Header="_Vorschau"
                           Command="{Binding Preview}"
                           InputGestureText="F3" />

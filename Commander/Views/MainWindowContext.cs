@@ -6,6 +6,8 @@ namespace Commander.Views;
 
 public class MainWindowContext : INotifyPropertyChanged
 {
+    public static MainWindowContext Instance { get; private set; } = new();
+    
     public FolderViewContext? ActiveFolderView
     {
         get => field;
@@ -17,7 +19,22 @@ public class MainWindowContext : INotifyPropertyChanged
                 OnChanged(nameof(ActiveFolderView));
             }
         }
-    } 
+    }
+
+    public bool ShowHidden
+    {
+        get => field;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                OnChanged(nameof(ShowHidden));
+            }
+        }
+    }
+
+    public MainWindowContext() => MainWindowContext.Instance = this;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     

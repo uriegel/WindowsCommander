@@ -10,11 +10,15 @@ public partial class MainWindow : Window
     #region Routed Commands
 
     public static RoutedUICommand SelectCurrentCommand { get; } = new("SelectCurrent", "SelectCurrent", typeof(MainWindow));
+    public static RoutedUICommand ShowHiddenCommand { get; } = new("ShowHidden", "ShowHidden", typeof(MainWindow));
 
     #endregion
 
     #region Command Bindings
-    
+
+    void ShowHidden_Executed(object sender, ExecutedRoutedEventArgs e)
+        => ShowHidden.IsChecked = !ShowHidden.IsChecked;
+
     void SelectCurrent_Executed(object sender, ExecutedRoutedEventArgs e)
     {
         //var element = FocusManager.GetFocusedElement(this);
@@ -104,4 +108,10 @@ public partial class MainWindow : Window
         if (DataContext is MainWindowContext mwc && RightView.DataContext is FolderViewContext fvc)
             mwc.ActiveFolderView = fvc;
     }
+
+    void Hidden_Checked(object sender, RoutedEventArgs e)
+        => MainWindowContext.Instance.ShowHidden = true;
+
+    void Hidden_Unchecked(object sender, RoutedEventArgs e)
+        => MainWindowContext.Instance.ShowHidden = false;
 }

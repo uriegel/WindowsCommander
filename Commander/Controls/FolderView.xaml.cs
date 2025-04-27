@@ -9,10 +9,10 @@ using Commander.Controllers;
 using Commander.Controllers.Directory;
 using Commander.Controllers.Root;
 using Commander.Controls.ColumnViewHeader;
+using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO Filter hidden
 // TODO Filter hidden: Status bar update
 // TODO Restriction
 // TODO Version, Exif with Statusbar hint (lightblue background
@@ -26,6 +26,7 @@ public partial class FolderView : UserControl
     {
         InitializeComponent();
         Controller = new RootController(this);
+        MainWindowContext.Instance.PropertyChanged += Instance_PropertyChanged;
     }
 
     public void SetColumnViewContext(ColumnViewContext ctx)
@@ -50,9 +51,9 @@ public partial class FolderView : UserControl
                     if (i is ParentItem)
                         return true;
                     else if (i is DirectoryItem di)
-                        return !di.IsHidden;
+                        return MainWindowContext.Instance.ShowHidden || !di.IsHidden;
                     else if (i is FileItem fi)
-                        return !fi.IsHidden;
+                        return MainWindowContext.Instance.ShowHidden || !fi.IsHidden;
                     else
                         return false;
                 }
@@ -141,6 +142,15 @@ public partial class FolderView : UserControl
             }
             else
                 return false;
+        }
+    }
+
+    void Instance_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainWindowContext.ShowHidden))
+        {
+            var view = CollectionViewSource.GetDefaultView(ColumnView.ListView.ItemsSource) as ListCollectionView;
+            view?.Refresh();
         }
     }
 
