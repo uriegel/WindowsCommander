@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
@@ -7,10 +8,10 @@ using System.Windows.Threading;
 using Commander.Controllers;
 using Commander.Controllers.Directory;
 using Commander.Controllers.Root;
+using Commander.Controls.ColumnViewHeader;
 
 namespace Commander.Controls;
 
-// TODO Sorting: folderView.ColumnView.ListView.ItemsSource = new ListCollectionView in ColumnView
 // TODO Filter hidden, Status bar update
 // TODO Restriction
 // TODO Version, Exif with Statusbar hint (lightblue background
@@ -25,6 +26,30 @@ public partial class FolderView : UserControl
         InitializeComponent();
         Controller = new RootController(this);
     }
+
+    public void SetColumnViewContext(ColumnViewContext ctx)
+    {
+        ColumnView.DataContext = ctx;
+        ColumnView.Headers.ColumnViewContext = ctx;
+    }
+
+    public void SetHeaders(HeaderItem[] headers)
+        => ColumnView.Headers.HeaderItems = headers;
+
+    public void SetItemsSource(IEnumerable<Item> items)
+    {
+        var oldView = CollectionViewSource.GetDefaultView(ColumnView.ListView.ItemsSource) as ListCollectionView;
+        var view = new ListCollectionView(items.ToList())
+        {
+            CustomSort = oldView?.CustomSort
+        };
+        ColumnView.ListView.ItemsSource = view;
+    }
+
+    public IEnumerable<Item> GetItems()
+        => ColumnView.ListView.ItemsSource is ListCollectionView view
+            ? view.Cast<Item>()
+            : [];
 
     public async void ChangePath(string? path, bool saveHistory, bool dontFocus = false)
     {

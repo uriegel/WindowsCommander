@@ -24,7 +24,7 @@ class RootController : IController
                 .Select(RootItem.Create)
                 .OrderByDescending(n => n.IsMounted)
                 .ThenBy(n => n.Name);
-        folderView.ColumnView.ListView.ItemsSource = drives;
+        folderView.SetItemsSource(drives);
         if (folderView.DataContext is FolderViewContext fvc)
         {
             fvc.CurrentPath = "root";
@@ -46,14 +46,13 @@ class RootController : IController
     public RootController(FolderView folderView)
     {
         var ctx = new ColumnViewContext();
-        folderView.ColumnView.DataContext = ctx;
-        folderView.ColumnView.Headers.ColumnViewContext = ctx;
-        folderView.ColumnView.Headers.HeaderItems =
+        folderView.SetColumnViewContext(ctx);
+        folderView.SetHeaders(
         [
             new HeaderItem("Name") { SortType = SortType.Disabled },
             new HeaderItem("Beschreibung") { SortType = SortType.Disabled },
             new HeaderItem("Größe", TextAlignment.Right) { SortType = SortType.Disabled }
-        ];
+        ]);
     }
 
     public void Refresh() { }

@@ -2,7 +2,6 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 using Commander.Controls;
 using Commander.Controls.ColumnViewHeader;
@@ -32,15 +31,13 @@ class DirectoryController : IController
             .Select(FileItem.Create)
             .ToArray();
 
-        folderView.ColumnView.ListView.ItemsSource = new ListCollectionView(
+        folderView.SetItemsSource(
             ConcatEnumerables(
                 [new ParentItem() as Item],
                 directories,
-                files).ToList());
-        var oldPos = folderView.ColumnView
-                        .ListView
-                        .Items
-                        .Cast<Item>()
+                files));
+        var oldPos = folderView
+                        .GetItems()
                         .Index()
                         .FirstOrDefault(n => n.Item.Name == (folderView.DataContext as FolderViewContext)?.CurrentPath?.SubstringAfterLast('\\'));
         if (folderView.DataContext is FolderViewContext fvc)
@@ -79,14 +76,13 @@ class DirectoryController : IController
     public DirectoryController(FolderView folderView)
     {
         var ctx = new ColumnViewContext();
-        folderView.ColumnView.DataContext = ctx;
-        folderView.ColumnView.Headers.ColumnViewContext = ctx;
-        folderView.ColumnView.Headers.HeaderItems =
+        folderView.SetColumnViewContext(ctx);
+        folderView.SetHeaders(
         [
             new HeaderItem("Name") { SortType = SortType.Ascending },
             new HeaderItem("Datum"),
             new HeaderItem("Größe", TextAlignment.Right)
-        ];
+        ]);
     }
 
     public void Refresh()  { }
