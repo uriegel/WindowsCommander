@@ -25,8 +25,7 @@ class RootController : IController
                 .OrderByDescending(n => n.IsMounted)
                 .ThenBy(n => n.Name);
         folderView.SetItemsSource(drives);
-        if (folderView.DataContext is FolderViewContext fvc)
-            fvc.CurrentPath = "root";
+        folderView.Context.CurrentPath = "root";
 
         return 0.ToAsync();
     }

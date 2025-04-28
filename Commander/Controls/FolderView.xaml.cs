@@ -1,5 +1,6 @@
-﻿using System.IO;
-using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -12,8 +13,6 @@ using Commander.Controllers.Root;
 using Commander.Controls.ColumnViewHeader;
 using Commander.Views;
 
-using static System.Net.WebRequestMethods;
-
 namespace Commander.Controls;
 
 // TODO Restriction
@@ -24,6 +23,8 @@ namespace Commander.Controls;
 
 public partial class FolderView : UserControl
 {
+    public FolderViewContext Context { get => (DataContext as FolderViewContext)!; }
+
     public FolderView()
     {
         InitializeComponent();
@@ -79,8 +80,8 @@ public partial class FolderView : UserControl
             Controller.RemoveAll();
             ColumnView.ListView.UpdateLayout();
             var lastPos = await Controller.Fill(path, this);
-            if (saveHistory && DataContext is FolderViewContext fvc && fvc.CurrentPath != null)
-                history.Set(fvc.CurrentPath);
+            if (saveHistory && Context.CurrentPath != null)
+                history.Set(Context.CurrentPath);
             var view = CollectionViewSource.GetDefaultView(ColumnView.ListView.ItemsSource) as ListCollectionView;
             var items = view?.Cast<Item>();
             if (!dontFocus)
@@ -91,11 +92,12 @@ public partial class FolderView : UserControl
                     ColumnView.ListView.UpdateLayout();
                     listViewItem?.Focus();
                 });
-            if (DataContext is FolderViewContext fvc1)
-            {
-                fvc1.DirectoriesCount = items?.Where(n => n is DirectoryItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
-                fvc1.FilesCount = items?.Where(n => n is FileItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0; 
-            }
+            Context.DirectoriesCount = 
+                items
+                    ?.Where(n => n is DirectoryItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
+            Context.FilesCount = 
+                items
+                    ?.Where(n => n is FileItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0; 
         }
         catch (UnauthorizedAccessException)
         {
@@ -150,7 +152,7 @@ public partial class FolderView : UserControl
         }
     }
 
-    void Instance_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    void Instance_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(MainWindowContext.ShowHidden))
         {
@@ -158,15 +160,18 @@ public partial class FolderView : UserControl
             view?.Refresh();
 
             var items = view?.Cast<Item>();
-            if (DataContext is FolderViewContext fvc && items != null)
+            if (items != null)
             {
-                fvc.DirectoriesCount = items.Where(n => n is DirectoryItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
-                fvc.FilesCount = items?.Where(n => n is FileItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
+                Context.DirectoriesCount = items.Where(n => n is DirectoryItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
+                Context.FilesCount = items?.Where(n => n is FileItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
             }
+            var active = MainWindow.Instance.GetActiveView();
+            MainWindow.Instance.GetInactiveView().ColumnView.FocusCurrentItem();
+            active.ColumnView.FocusCurrentItem();
         }
     }
 
-    void TextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    void TextBox_KeyDown(object sender, KeyEventArgs e)
     {
         switch (e.Key)
         {
@@ -199,7 +204,7 @@ public partial class FolderView : UserControl
         }
     }
 
-    void TextBox_GotFocus(object sender, System.Windows.RoutedEventArgs e)
+    void TextBox_GotFocus(object sender, RoutedEventArgs e)
     {
         Dispatcher.BeginInvoke(() => (sender as TextBox)?.SelectAll());
         e.Handled = true;
@@ -209,13 +214,10 @@ public partial class FolderView : UserControl
         => Controller.OnSelectionChanged(ColumnView.ListView.SelectedItems, e);
 
     void ColumnView_CurrentItemChanged(object sender, RoutedEvents.CurrentItemChangedEventArgs e)
-    {
-        if (DataContext is FolderViewContext fvc)
-            fvc.CurrentItemPath = Controller.GetCurrentPath(fvc.CurrentPath, e.CurrentItem?.DataContext as Item) ?? "";   
-    }
+        => Context.CurrentItemPath = Controller.GetCurrentPath(Context.CurrentPath, e.CurrentItem?.DataContext as Item) ?? "";   
 
     void ColumnView_OnEnter(object sender, System.Windows.RoutedEventArgs e)
-        =>  ChangePath((DataContext as FolderViewContext)?.CurrentItemPath, true);
+        =>  ChangePath(Context.CurrentItemPath, true);
 
     void ColumnView_KeyDown(object sender, KeyEventArgs e)
     {
@@ -242,8 +244,7 @@ public partial class FolderView : UserControl
         set
         {
             field = value;
-            if (DataContext is FolderViewContext fvc)
-                fvc.OnChanged();
+            Context.OnChanged();
         }
     }
 

@@ -107,16 +107,16 @@
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
             <StatusBarItem>
-                <TextBlock Text="{Binding ActiveFolderView.CurrentItemPath}" />
+                <TextBlock Text="{Binding ActiveFolderContext.CurrentItemPath}" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="2">
-                <TextBlock Text="{Binding ActiveFolderView.DirectoriesCount}" />
+                <TextBlock Text="{Binding ActiveFolderContext.DirectoriesCount}" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="3">
                 <TextBlock Margin="0, 0, 5, 0" Text="Verz." />
             </StatusBarItem>
             <StatusBarItem Grid.Column="4">
-                <TextBlock Text="{Binding ActiveFolderView.FilesCount}" />
+                <TextBlock Text="{Binding ActiveFolderContext.FilesCount}" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="5">
                 <TextBlock Text="Dateien" />

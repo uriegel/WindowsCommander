@@ -16,6 +16,18 @@ public partial class MainWindow : Window
 
     #region Command Bindings
 
+    public static MainWindow Instance { get; private set; } = null!;
+
+    public FolderView GetActiveView()
+        => activeFolderView == LeftView
+            ? LeftView
+            : RightView;
+
+    public FolderView GetInactiveView()
+        => activeFolderView == LeftView
+            ? RightView
+            : LeftView;
+
     void ShowHidden_Executed(object sender, ExecutedRoutedEventArgs e)
         => ShowHidden.IsChecked = !ShowHidden.IsChecked;
 
@@ -59,6 +71,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        activeFolderView = LeftView;
+        Instance = this;
         LeftView.ChangePath(Properties.Settings.Default.LeftPath ?? "root", true, true);
         RightView.ChangePath(Properties.Settings.Default.RightPath ?? "root", true, true);
     }
@@ -88,8 +102,8 @@ public partial class MainWindow : Window
         Properties.Settings.Default.WindowWidth = Width;
         Properties.Settings.Default.WindowHeight = Height;
         Properties.Settings.Default.WindowState = WindowState;
-        Properties.Settings.Default.LeftPath = (LeftView.DataContext as FolderViewContext)?.CurrentPath ?? Properties.Settings.Default.LeftPath;
-        Properties.Settings.Default.RightPath = (RightView.DataContext as FolderViewContext)?.CurrentPath ?? Properties.Settings.Default.RightPath;
+        Properties.Settings.Default.LeftPath = LeftView.Context.CurrentPath ?? Properties.Settings.Default.LeftPath;
+        Properties.Settings.Default.RightPath = RightView.Context.CurrentPath ?? Properties.Settings.Default.RightPath;
 
         Properties.Settings.Default.Save();
         base.OnClosing(e);
@@ -98,20 +112,16 @@ public partial class MainWindow : Window
     void Window_Loaded(object sender, RoutedEventArgs e) {}
 
     void LeftView_GotFocus(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is MainWindowContext mwc && LeftView.DataContext is FolderViewContext fvc)
-            mwc.ActiveFolderView = fvc;
-    }
+        => MainWindowContext.Instance.ActiveFolderContext = LeftView.Context;
 
     void RightView_GotFocus(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is MainWindowContext mwc && RightView.DataContext is FolderViewContext fvc)
-            mwc.ActiveFolderView = fvc;
-    }
+        => MainWindowContext.Instance.ActiveFolderContext = RightView.Context;
 
     void Hidden_Checked(object sender, RoutedEventArgs e)
         => MainWindowContext.Instance.ShowHidden = true;
 
     void Hidden_Unchecked(object sender, RoutedEventArgs e)
         => MainWindowContext.Instance.ShowHidden = false;
+
+    FolderView activeFolderView;
 }

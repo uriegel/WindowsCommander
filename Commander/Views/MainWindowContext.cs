@@ -8,7 +8,7 @@ public class MainWindowContext : INotifyPropertyChanged
 {
     public static MainWindowContext Instance { get; private set; } = new();
     
-    public FolderViewContext? ActiveFolderView
+    public FolderViewContext? ActiveFolderContext
     {
         get => field;
         set
@@ -16,7 +16,7 @@ public class MainWindowContext : INotifyPropertyChanged
             if (field != value)
             {
                 field = value;
-                OnChanged(nameof(ActiveFolderView));
+                OnChanged(nameof(ActiveFolderContext));
             }
         }
     }
@@ -34,7 +34,7 @@ public class MainWindowContext : INotifyPropertyChanged
         }
     }
 
-    public MainWindowContext() => MainWindowContext.Instance = this;
+    public MainWindowContext() => Instance = this;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     

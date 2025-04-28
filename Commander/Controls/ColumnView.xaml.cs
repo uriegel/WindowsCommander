@@ -1,10 +1,8 @@
-﻿using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-using Commander.Controllers;
 using Commander.Controllers.Directory;
 using Commander.Extensions;
 using Commander.RoutedEvents;
@@ -49,6 +47,17 @@ public partial class ColumnView : UserControl
 
     public ColumnView() => InitializeComponent();
 
+    public void FocusCurrentItem()
+    {
+        if (currentItem != null)
+        {
+            ListView.ScrollIntoView(currentItem);
+            UpdateLayout();
+            var listViewItem = (ListViewItem)ListView.ItemContainerGenerator.ContainerFromItem(currentItem);
+            listViewItem?.Focus();
+        }
+    }
+
     void ListView_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         if (Keyboard.Modifiers != ModifierKeys.Control)
@@ -83,6 +92,8 @@ public partial class ColumnView : UserControl
     void ListView_GotFocus(object sender, RoutedEventArgs e)
     {
         var lbi = e.OriginalSource as ListBoxItem;
+        if (lbi != null)
+            currentItem = lbi.DataContext;
         RaiseEvent(new CurrentItemChangedEventArgs(lbi)
         {
             RoutedEvent = CurrentItemChangedEvent,
@@ -108,11 +119,9 @@ public partial class ColumnView : UserControl
         var view = (ListCollectionView)CollectionViewSource.GetDefaultView(ListView.ItemsSource);
         view.CustomSort = new DirectoryComparer(e.Index, e.Descending);
         view.Refresh();
-
-        UpdateLayout();
-        var listViewItem = (ListViewItem)ListView.ItemContainerGenerator.ContainerFromIndex(0);
-        ListView.ScrollIntoView(view.GetItemAt(0));
-        listViewItem?.Focus();
+        FocusCurrentItem();
     }
+
+    object? currentItem;
 }
 
