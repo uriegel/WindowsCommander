@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>WinExe</OutputType>
+        <OutputType>Exe</OutputType>
         <TargetFramework>net9.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -29,7 +29,7 @@
 
     <ItemGroup>
         <PackageReference Include="CsTools" Version="7.25.5" />
-	    <PackageReference Include="ClrWinApi" Version="2.5.1" />
+	    <PackageReference Include="ClrWinApi" Version="2.5.2" />
     </ItemGroup>
 
     <ItemGroup>

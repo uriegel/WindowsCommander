@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+
+using ClrWinApi;
 
 using Commander.Controllers;
 using Commander.Controllers.Directory;
@@ -219,8 +222,17 @@ public partial class FolderView : UserControl
     void ColumnView_OnEnter(object sender, System.Windows.RoutedEventArgs e)
         =>  ChangePath(Context.CurrentItemPath, true);
 
+    void ColumnView_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        //if (e.Key == Key.Space)  // TODO and Restriction
+        //    e.Handled = true;
+    }
+
     void ColumnView_KeyDown(object sender, KeyEventArgs e)
     {
+        var affe = GetCharFromKey(e.Key);
+        Console.WriteLine($"affe: {affe}");
+
         switch (e.Key)
         {
             case Key.Tab when (Keyboard.Modifiers == ModifierKeys.Shift):
@@ -246,6 +258,23 @@ public partial class FolderView : UserControl
             field = value;
             Context.OnChanged();
         }
+    }
+
+    static char GetCharFromKey(Key key)
+    {
+        if (key == Key.Space)
+            return ' ';
+        var virtualKey = (uint)KeyInterop.VirtualKeyFromKey(key);
+        var keyboardState = new byte[256];
+        Api.GetKeyboardState(keyboardState);
+        var scanCode = Api.MapVirtualKey(virtualKey, MapType.Vsc);
+        var stringBuilder = new StringBuilder(2);
+
+        return Api.ToUnicode(virtualKey, scanCode, keyboardState, stringBuilder, stringBuilder.Capacity, 0) switch
+        {
+            1 => stringBuilder[0],
+            _ => (char)0,
+        };
     }
 
     readonly History history = new();
