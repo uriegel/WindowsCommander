@@ -62,6 +62,7 @@ public partial class FolderView : UserControl
 
     public async void ChangePath(string? path, bool saveHistory, bool dontFocus = false)
     {
+        Context.Restriction = null;
         DetectController(path);
         try
         {
