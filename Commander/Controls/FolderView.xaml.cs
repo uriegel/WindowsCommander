@@ -19,7 +19,6 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO Restriction
 // TODO Version, Exif with Statusbar hint (lightblue background
 // TODO Banner
 // TODO Selection
@@ -51,22 +50,7 @@ public partial class FolderView : UserControl
         var view = new ListCollectionView(items.ToList())
         {
             CustomSort = oldView?.CustomSort,
-            Filter = item =>
-            {
-                if (item is Item i)
-                {
-                    if (i is ParentItem)
-                        return true;
-                    else if (i is DirectoryItem di)
-                        return MainWindowContext.Instance.ShowHidden || !di.IsHidden;
-                    else if (i is FileItem fi)
-                        return MainWindowContext.Instance.ShowHidden || !fi.IsHidden;
-                    else
-                        return true;
-                }
-                else
-                    return false;
-            }
+            Filter = i => FilterHidden(i) && FilterRestriction(i),
         };
         ColumnView.ListView.ItemsSource = view;
     }
@@ -230,6 +214,7 @@ public partial class FolderView : UserControl
         if (e.Key == Key.Space && Context.Restriction != null)
         { 
             Context.Restriction += " ";
+            RefreshRestrictionView();
             e.Handled = true;
         }
     }
@@ -255,6 +240,7 @@ public partial class FolderView : UserControl
                         Context.Restriction = Context.Restriction[..^1];
                         if (Context.Restriction.Length == 0)
                             Context.Restriction = null;
+                        RefreshRestrictionView();
                     }
                     e.Handled = true;
                 }
@@ -263,24 +249,20 @@ public partial class FolderView : UserControl
                 if (Context.Restriction != null)
                 {
                     Context.Restriction = null;
+                    RefreshRestrictionView();
                     e.Handled = true;
                 }
                 break;
             default:
                 var chr = GetCharFromKey(e.Key);
                 if (chr.HasValue)
+                {
                     Context.Restriction += chr.ToString();
+                    if (ColumnView.ListView.Items.Count == 0)
+                        Context.Restriction = Context.Restriction[..^1];
+                    RefreshRestrictionView();
+                }
                 break;
-        }
-    }
-
-    IController Controller 
-    {
-        get => field; 
-        set
-        {
-            field = value;
-            Context.OnChanged();
         }
     }
 
@@ -299,6 +281,50 @@ public partial class FolderView : UserControl
             1 => stringBuilder[0],
             _ => null,
         };
+    }
+
+    static bool FilterHidden(object item)
+    {
+        if (item is Item i)
+        {
+            if (i is ParentItem)
+                return true;
+            else if (i is DirectoryItem di)
+                return MainWindowContext.Instance.ShowHidden || !di.IsHidden;
+            else if (i is FileItem fi)
+                return MainWindowContext.Instance.ShowHidden || !fi.IsHidden;
+            else
+                return true;
+        }
+        else
+            return false;
+    }
+
+    bool FilterRestriction(object item)
+        => Context.Restriction == null 
+            || item is Item i && i.Name.StartsWith(Context.Restriction, StringComparison.CurrentCultureIgnoreCase);
+
+    void RefreshRestrictionView()
+    {
+        var view = (ListCollectionView)CollectionViewSource.GetDefaultView(ColumnView.ListView.ItemsSource);
+        view.Refresh();
+        ColumnView.FocusCurrentItem();
+        if (ColumnView.ListView.Items.Count == 0 && Context.Restriction?.Length > 0)
+        {
+            Context.Restriction = Context.Restriction[..^1];
+            view.Refresh();
+            ColumnView.FocusCurrentItem();
+        }
+    }
+
+    IController Controller
+    {
+        get => field;
+        set
+        {
+            field = value;
+            Context.OnChanged();
+        }
     }
 
     readonly History history = new();

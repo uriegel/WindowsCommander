@@ -49,13 +49,18 @@ public partial class ColumnView : UserControl
 
     public void FocusCurrentItem()
     {
-        if (currentItem != null)
+        if (ListView.Items.Count > 0)
         {
+            if (!ListView.Items.Contains(currentItem) && ListView.Items.Count > 0)
+                currentItem = ListView.Items[0];
+
             ListView.ScrollIntoView(currentItem);
             UpdateLayout();
             var listViewItem = (ListViewItem)ListView.ItemContainerGenerator.ContainerFromItem(currentItem);
             listViewItem?.Focus();
         }
+        else
+            ListView.Focus();
     }
 
     void ListView_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
