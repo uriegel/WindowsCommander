@@ -112,10 +112,16 @@ public partial class MainWindow : Window
     void Window_Loaded(object sender, RoutedEventArgs e) {}
 
     void LeftView_GotFocus(object sender, RoutedEventArgs e)
-        => MainWindowContext.Instance.ActiveFolderContext = LeftView.Context;
+    {
+        activeFolderView = LeftView;
+        MainWindowContext.Instance.ActiveFolderContext = LeftView.Context;
+    }
 
     void RightView_GotFocus(object sender, RoutedEventArgs e)
-        => MainWindowContext.Instance.ActiveFolderContext = RightView.Context;
+    {
+        activeFolderView = RightView;
+        MainWindowContext.Instance.ActiveFolderContext = RightView.Context;
+    }
 
     void Hidden_Checked(object sender, RoutedEventArgs e)
         => MainWindowContext.Instance.ShowHidden = true;

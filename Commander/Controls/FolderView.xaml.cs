@@ -169,6 +169,8 @@ public partial class FolderView : UserControl
                 Context.FilesCount = items?.Where(n => n is FileItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
             }
             var active = MainWindow.Instance.GetActiveView();
+            MainWindow.Instance.GetActiveView().ColumnView.FocusCurrentItem();
+            active.ColumnView.FocusCurrentItem();
             MainWindow.Instance.GetInactiveView().ColumnView.FocusCurrentItem();
             active.ColumnView.FocusCurrentItem();
         }
