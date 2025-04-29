@@ -26,6 +26,16 @@ public class FolderViewContext : INotifyPropertyChanged
         }
     } = "";
 
+    public string? Restriction
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnChanged(nameof(Restriction));
+        }
+    }
+    
     public int DirectoriesCount
     {
         get => field;

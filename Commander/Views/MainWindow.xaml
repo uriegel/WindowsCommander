@@ -9,6 +9,9 @@
         Icon="/Resources/Kirk.ico"
         Title="Commander" Width="600" Height="800"
         Loaded="Window_Loaded">
+    <Window.Resources>
+        <local:StatusBarConverter x:Key="StatusBarConverter" />
+    </Window.Resources>
     <Window.DataContext>
         <local:MainWindowContext />
     </Window.DataContext>
@@ -104,7 +107,14 @@
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
             <StatusBarItem>
-                <TextBlock Text="{Binding ActiveFolderContext.CurrentItemPath}" />
+                <TextBlock>
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource StatusBarConverter}">
+                            <Binding Path="ActiveFolderContext.CurrentItemPath" />
+                            <Binding Path="ActiveFolderContext.Restriction" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StatusBarItem>
             <StatusBarItem Grid.Column="2">
                 <TextBlock>

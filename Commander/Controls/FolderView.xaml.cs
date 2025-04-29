@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Dynamic;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -226,15 +227,15 @@ public partial class FolderView : UserControl
 
     void ColumnView_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-        //if (e.Key == Key.Space)  // TODO and Restriction
-        //    e.Handled = true;
+        if (e.Key == Key.Space && Context.Restriction != null)
+        { 
+            Context.Restriction += " ";
+            e.Handled = true;
+        }
     }
 
     void ColumnView_KeyDown(object sender, KeyEventArgs e)
     {
-        var affe = GetCharFromKey(e.Key);
-        Console.WriteLine($"affe: {affe}");
-
         switch (e.Key)
         {
             case Key.Tab when (Keyboard.Modifiers == ModifierKeys.Shift):
@@ -243,11 +244,32 @@ public partial class FolderView : UserControl
                 break;
             case Key.Back:
                 {
-                    var path = history?.Get(Keyboard.Modifiers == ModifierKeys.Shift);
-                    if (path != null)
-                        ChangePath(path, false);
+                    if (Context.Restriction == null)
+                    {
+                        var path = history?.Get(Keyboard.Modifiers == ModifierKeys.Shift);
+                        if (path != null)
+                            ChangePath(path, false);
+                    }
+                    else
+                    {
+                        Context.Restriction = Context.Restriction[..^1];
+                        if (Context.Restriction.Length == 0)
+                            Context.Restriction = null;
+                    }
                     e.Handled = true;
                 }
+                break;
+            case Key.Escape:
+                if (Context.Restriction != null)
+                {
+                    Context.Restriction = null;
+                    e.Handled = true;
+                }
+                break;
+            default:
+                var chr = GetCharFromKey(e.Key);
+                if (chr.HasValue)
+                    Context.Restriction += chr.ToString();
                 break;
         }
     }
@@ -262,10 +284,10 @@ public partial class FolderView : UserControl
         }
     }
 
-    static char GetCharFromKey(Key key)
+    static char? GetCharFromKey(Key key)
     {
-        if (key == Key.Space)
-            return ' ';
+        if (key == Key.Tab || key == Key.Enter || key == Key.Back)
+            return null;    
         var virtualKey = (uint)KeyInterop.VirtualKeyFromKey(key);
         var keyboardState = new byte[256];
         Api.GetKeyboardState(keyboardState);
@@ -275,7 +297,7 @@ public partial class FolderView : UserControl
         return Api.ToUnicode(virtualKey, scanCode, keyboardState, stringBuilder, stringBuilder.Capacity, 0) switch
         {
             1 => stringBuilder[0],
-            _ => (char)0,
+            _ => null,
         };
     }
 
