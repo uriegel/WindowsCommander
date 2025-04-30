@@ -39,7 +39,7 @@ class DirectoryController : IController
         var oldPos = folderView
                         .GetItems()
                         .Index()
-                        .FirstOrDefault(n => n.Item.Name == folderView.Context.CurrentPath?.SubstringAfterLast('\\'));
+                        .FirstOrDefault(n => n.Item.Name == folderView.Context.CurrentPath.SubstringAfterLast('\\'));
         folderView.Context.CurrentPath = directoryInfo.FullName;
         return oldPos.Index.ToAsync();
     }

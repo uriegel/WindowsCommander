@@ -19,6 +19,16 @@ public class DirectoryItem : Item
         }
     }
 
+    public DateTime? ExifTime
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnChanged(nameof(ExifTime));
+        }
+    }
+
     public static DirectoryItem Create(DirectoryInfo info)
         => new()
         {

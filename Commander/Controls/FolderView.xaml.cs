@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Dynamic;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -16,6 +15,9 @@ using Commander.Controllers.Directory;
 using Commander.Controllers.Root;
 using Commander.Controls.ColumnViewHeader;
 using Commander.Views;
+
+using CsTools;
+using CsTools.Extensions;
 
 namespace Commander.Controls;
 
@@ -63,30 +65,34 @@ public partial class FolderView : UserControl
     public async void ChangePath(string? path, bool saveHistory, bool dontFocus = false)
     {
         Context.Restriction = null;
+        cancellation.Cancel();
+        cancellation = new();
         DetectController(path);
         try
         {
             Controller.RemoveAll();
             ColumnView.ListView.UpdateLayout();
             var lastPos = await Controller.Fill(path, this);
-            if (saveHistory && Context.CurrentPath != null)
-                history.Set(Context.CurrentPath);
             var view = CollectionViewSource.GetDefaultView(ColumnView.ListView.ItemsSource) as ListCollectionView;
             var items = view?.Cast<Item>();
-            if (!dontFocus)
-                await Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
-                {
-                    ColumnView.ListView.ScrollIntoView(items?.Skip(lastPos).FirstOrDefault());
-                    var listViewItem = (ListViewItem)ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(lastPos);
-                    ColumnView.ListView.UpdateLayout();
-                    listViewItem?.Focus();
-                });
-            Context.DirectoriesCount = 
-                items
-                    ?.Where(n => n is DirectoryItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
-            Context.FilesCount = 
-                items
-                    ?.Where(n => n is FileItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0; 
+            if (items != null)
+            {
+                StartExifResolving(items.Cast<DirectoryItem>());
+                if (saveHistory && Context.CurrentPath != null)
+                    history.Set(Context.CurrentPath);
+                if (!dontFocus)
+                    await Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+                    {
+                        ColumnView.ListView.ScrollIntoView(items.Skip(lastPos).FirstOrDefault());
+                        var listViewItem = (ListViewItem)ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(lastPos);
+                        ColumnView.ListView.UpdateLayout();
+                        listViewItem.Focus();
+                    });
+                Context.DirectoriesCount =
+                    items.Where(n => n is DirectoryItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
+                Context.FilesCount =
+                    items.Where(n => n is FileItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
+            }
         }
         catch (UnauthorizedAccessException)
         {
@@ -318,6 +324,29 @@ public partial class FolderView : UserControl
         }
     }
 
+    void StartExifResolving(IEnumerable<DirectoryItem> items)
+    {
+        var token = cancellation.Token;
+        Task.Run(() =>
+        {
+            Context.BackgroundAction = "Erweiterte Dateiinformationen werden ermittelt...";
+            try
+            {
+                foreach (var item in items
+                                        .Where(item => !token.IsCancellationRequested
+                                                && (item.Name.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
+                                                    || item.Name.EndsWith(".jpeg", StringComparison.InvariantCultureIgnoreCase)
+                                                    || item.Name.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase))))
+                    item.ExifTime = ExifReader.GetExifData(Context.CurrentPath.AppendPath(item.Name))?.DateTime ?? item.ExifTime;
+            }
+            finally
+            {
+                Context.BackgroundAction = null;
+            }
+        });
+    }
+
+
     IController Controller
     {
         get => field;
@@ -329,4 +358,5 @@ public partial class FolderView : UserControl
     }
 
     readonly History history = new();
+    CancellationTokenSource cancellation = new();
 }
