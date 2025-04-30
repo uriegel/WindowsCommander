@@ -21,7 +21,7 @@ using CsTools.Extensions;
 
 namespace Commander.Controls;
 
-// TODO Version, Exif with Statusbar hint (lightblue background
+// TODO Version, Exif 
 // TODO Banner
 // TODO Selection
 // TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
@@ -77,7 +77,7 @@ public partial class FolderView : UserControl
             var items = view?.Cast<Item>();
             if (items != null)
             {
-                StartExifResolving(items.Cast<DirectoryItem>());
+                StartExifResolving(items);
                 if (saveHistory && Context.CurrentPath != null)
                     history.Set(Context.CurrentPath);
                 if (!dontFocus)
@@ -324,26 +324,31 @@ public partial class FolderView : UserControl
         }
     }
 
-    void StartExifResolving(IEnumerable<DirectoryItem> items)
+    async void StartExifResolving(IEnumerable<Item> items)
     {
         var token = cancellation.Token;
-        Task.Run(() =>
+        Context.BackgroundAction = "Erweiterte Dateiinformationen werden ermittelt...";
+        var path = Context.CurrentPath;
+        await Task.Delay(5000);
+        var exifItems = await Task<FileItem[]>.Run(() =>
         {
-            Context.BackgroundAction = "Erweiterte Dateiinformationen werden ermittelt...";
             try
             {
-                foreach (var item in items
-                                        .Where(item => !token.IsCancellationRequested
-                                                && (item.Name.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
-                                                    || item.Name.EndsWith(".jpeg", StringComparison.InvariantCultureIgnoreCase)
-                                                    || item.Name.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase))))
-                    item.ExifTime = ExifReader.GetExifData(Context.CurrentPath.AppendPath(item.Name))?.DateTime ?? item.ExifTime;
+                return items
+                        .SelectFilterNull(n => n is FileItem di ? di : null)
+                        .Where(item => !token.IsCancellationRequested
+                                        && (item.Name.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
+                                        || item.Name.EndsWith(".jpeg", StringComparison.InvariantCultureIgnoreCase)
+                                        || item.Name.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase)))
+                        .SelectFilterNull(item => {
+                            var exif = ExifReader.GetExifData(path.AppendPath(item.Name))?.DateTime;
+                            return exif.HasValue ? item with { ExifTime = exif } : null;
+                        })
+                    .ToArray();
             }
-            finally
-            {
-                Context.BackgroundAction = null;
-            }
+            catch { return []; }
         });
+        Context.BackgroundAction = null;
     }
 
 

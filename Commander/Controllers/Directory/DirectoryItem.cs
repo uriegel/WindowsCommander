@@ -5,7 +5,7 @@ using Commander.Extensions;
 
 namespace Commander.Controllers.Directory;
 
-public class DirectoryItem : Item
+public record DirectoryItem : Item
 {
     public ImageSource? Icon { get; set; }
 
@@ -16,16 +16,6 @@ public class DirectoryItem : Item
         {
             field = value;
             OnChanged(nameof(DateTime));
-        }
-    }
-
-    public DateTime? ExifTime
-    {
-        get => field;
-        set
-        {
-            field = value;
-            OnChanged(nameof(ExifTime));
         }
     }
 

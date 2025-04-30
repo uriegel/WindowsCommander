@@ -2,7 +2,7 @@
 
 namespace Commander.Controllers;
 
-public class Item : INotifyPropertyChanged
+public record Item : INotifyPropertyChanged
 {
     public string Name
     {

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Commander.Controllers.Directory;
 
-public class FileItem : Item
+public record FileItem : Item
 {
     public string? IconPath { get; init; }
 
@@ -14,6 +14,16 @@ public class FileItem : Item
         {
             field = value;
             OnChanged(nameof(DateTime));
+        }
+    }
+
+    public DateTime? ExifTime
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnChanged(nameof(ExifTime));
         }
     }
 

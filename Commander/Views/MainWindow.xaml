@@ -11,6 +11,7 @@
         Loaded="Window_Loaded">
     <Window.Resources>
         <local:StatusBarConverter x:Key="StatusBarConverter" />
+        <local:InfoConverter x:Key="InfoConverter" />
     </Window.Resources>
     <Window.DataContext>
         <local:MainWindowContext />
@@ -94,7 +95,7 @@
                           InputGestureText="CTRL+F3" />
             </MenuItem>
         </Menu>
-        <StatusBar DockPanel.Dock="Bottom" Background="Transparent" Padding="0">
+        <StatusBar DockPanel.Dock="Bottom" Padding="0" Background="{Binding ActiveFolderContext.BackgroundAction, Converter={StaticResource InfoConverter}}">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
@@ -112,6 +113,7 @@
                         <MultiBinding Converter="{StaticResource StatusBarConverter}">
                             <Binding Path="ActiveFolderContext.CurrentItemPath" />
                             <Binding Path="ActiveFolderContext.Restriction" />
+                            <Binding Path="ActiveFolderContext.BackgroundAction" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>

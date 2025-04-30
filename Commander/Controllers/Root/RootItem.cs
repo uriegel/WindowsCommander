@@ -5,7 +5,7 @@ using Commander.Extensions;
 
 namespace Commander.Controllers.Root;
 
-public class RootItem : Item
+public record RootItem : Item
 {
     public ImageSource? Icon { get; set; }
 

@@ -3,5 +3,5 @@ using System.IO;
 
 namespace Commander.Controllers.Directory;
 
-public class ParentItem : Item { }
+public record ParentItem : Item { }
 

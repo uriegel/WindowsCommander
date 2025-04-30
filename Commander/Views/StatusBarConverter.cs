@@ -7,8 +7,10 @@ public class StatusBarConverter : IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         =>  values[1] is string str
-                ? $"Einschränkung auf: {str}"
-                : values[0];
+            ? $"Einschränkung auf: {str}"
+            : values[2] is string ba
+            ? ba
+            : values[0];
 
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }
