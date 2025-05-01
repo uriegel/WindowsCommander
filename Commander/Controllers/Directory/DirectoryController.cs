@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using Commander.Controls;
 using Commander.Controls.ColumnViewHeader;
 
+using CsTools;
 using CsTools.Extensions;
 
 using static CsTools.Extensions.Core;
@@ -66,6 +67,27 @@ class DirectoryController : IController
                 : null);
     }
 
+    public async void StartResolvingExtendedInfos(Item[] items, FolderViewContext folderViewContext, CancellationToken cancellation)
+    {
+        folderViewContext.BackgroundAction = "Erweiterte Dateiinformationen werden ermittelt...";
+        var path = folderViewContext.CurrentPath;
+        var exifItems = await Task.Run<ExifItem[]>(() =>
+        {
+            try
+            {
+                return [.. items.SelectFilterNull((n, i) => GetExifItem(n, i, path, cancellation))];
+            }
+            catch { return []; }
+        });
+        if (!cancellation.IsCancellationRequested)
+            foreach (var exifItem in exifItems)
+            {
+                if (items[exifItem.Index] is FileItem originalItem)
+                    originalItem.ExifTime = exifItem.Exif;
+            }
+        folderViewContext.BackgroundAction = null;
+    }
+
     #endregion
 
     public DirectoryController(FolderView folderView)
@@ -81,4 +103,21 @@ class DirectoryController : IController
     }
 
     public void Refresh()  { }
+
+    static ExifItem? GetExifItem(Item item, int idx, string path, CancellationToken token)
+    {
+        if (item is FileItem fileItem
+            && !token.IsCancellationRequested
+            && (fileItem.Name.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
+                || fileItem.Name.EndsWith(".jpeg", StringComparison.InvariantCultureIgnoreCase)
+                || fileItem.Name.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase)))
+        {
+            var exif = ExifReader.GetExifData(path.AppendPath(fileItem.Name))?.DateTime;
+            return exif.HasValue ? new(idx, exif.Value) : null;
+        }
+        else
+            return null;
+    }
 }
+
+record ExifItem(int Index, DateTime Exif);

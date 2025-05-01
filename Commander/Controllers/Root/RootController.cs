@@ -36,6 +36,8 @@ class RootController : IController
     public string? GetCurrentPath(string? parentPath, Item? item)
         => item?.Name;
 
+    public void StartResolvingExtendedInfos(Item[] items, FolderViewContext folderViewContext, CancellationToken cancellation) { }
+    
     #endregion
 
     public RootController(FolderView folderView)

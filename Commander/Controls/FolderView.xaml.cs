@@ -16,12 +16,9 @@ using Commander.Controllers.Root;
 using Commander.Controls.ColumnViewHeader;
 using Commander.Views;
 
-using CsTools;
-using CsTools.Extensions;
-
 namespace Commander.Controls;
 
-// TODO Version, Exif 
+// TODO Version
 // TODO Banner
 // TODO Selection
 // TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
@@ -77,7 +74,7 @@ public partial class FolderView : UserControl
             var items = view?.Cast<Item>();
             if (items != null)
             {
-                StartExifResolving(items);
+                Controller.StartResolvingExtendedInfos(items.ToArray(), Context, cancellation.Token);
                 if (saveHistory && Context.CurrentPath != null)
                     history.Set(Context.CurrentPath);
                 if (!dontFocus)
@@ -324,34 +321,6 @@ public partial class FolderView : UserControl
         }
     }
 
-    async void StartExifResolving(IEnumerable<Item> items)
-    {
-        var token = cancellation.Token;
-        Context.BackgroundAction = "Erweiterte Dateiinformationen werden ermittelt...";
-        var path = Context.CurrentPath;
-        await Task.Delay(5000);
-        var exifItems = await Task<FileItem[]>.Run(() =>
-        {
-            try
-            {
-                return items
-                        .SelectFilterNull(n => n is FileItem di ? di : null)
-                        .Where(item => !token.IsCancellationRequested
-                                        && (item.Name.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
-                                        || item.Name.EndsWith(".jpeg", StringComparison.InvariantCultureIgnoreCase)
-                                        || item.Name.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase)))
-                        .SelectFilterNull(item => {
-                            var exif = ExifReader.GetExifData(path.AppendPath(item.Name))?.DateTime;
-                            return exif.HasValue ? item with { ExifTime = exif } : null;
-                        })
-                    .ToArray();
-            }
-            catch { return []; }
-        });
-        Context.BackgroundAction = null;
-    }
-
-
     IController Controller
     {
         get => field;
@@ -365,3 +334,4 @@ public partial class FolderView : UserControl
     readonly History history = new();
     CancellationTokenSource cancellation = new();
 }
+ 

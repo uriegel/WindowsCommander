@@ -20,7 +20,7 @@ class DirectoryComparer(int index, bool descending) : IComparer
             return index switch
             {
                 0 => file1.Name.CompareTo(file2.Name),
-                1 => file1.DateTime.CompareTo(file2.DateTime),
+                1 => GetDateTime(file1).CompareTo(GetDateTime(file2)),
                 2 => (int)(file1.Size!.Value - (file2.Size!.Value)),
                 _ => 0
             } * (descending ? -1 : 1);
@@ -28,4 +28,9 @@ class DirectoryComparer(int index, bool descending) : IComparer
         else
             return 0;
     }
+
+    DateTime GetDateTime(FileItem item)
+        => item.ExifTime != null
+            ? item.ExifTime.Value
+            : item.DateTime;   
 }
