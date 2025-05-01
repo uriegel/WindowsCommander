@@ -18,10 +18,11 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO Version sorting
 // TODO Banner
 // TODO Selection
 // TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
+// TODO Sorting by file extension
+// TODO Header dragging flickers
 
 public partial class FolderView : UserControl
 {

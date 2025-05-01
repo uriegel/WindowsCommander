@@ -36,7 +36,7 @@ public record FileItem : Item
         }
     }
 
-    public long? Size
+    public long Size
     {
         get => field;
         set

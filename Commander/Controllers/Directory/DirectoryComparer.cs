@@ -21,13 +21,27 @@ class DirectoryComparer(int index, bool descending) : IComparer
             {
                 0 => file1.Name.CompareTo(file2.Name),
                 1 => GetDateTime(file1).CompareTo(GetDateTime(file2)),
-                2 => (int)(file1.Size!.Value - (file2.Size!.Value)),
+                2 => (int)(file1.Size - file2.Size),
+                3 => CompareVersion(file1, file2),
                 _ => 0
             } * (descending ? -1 : 1);
         }
         else
             return 0;
     }
+
+    static int CompareVersion(FileItem item1, FileItem item2)
+        => item1.FileVersion == null
+            ? -1
+            : item2.FileVersion == null
+            ? 1
+            : item1.FileVersion!.Major != item2.FileVersion.Major
+            ? item1.FileVersion.Major - item2.FileVersion.Major
+            : item1.FileVersion.Minor != item2.FileVersion.Minor
+            ? item1.FileVersion.Minor - item2.FileVersion.Minor
+            : item1.FileVersion.Patch != item2.FileVersion.Patch
+            ? item1.FileVersion.Patch - item2.FileVersion.Patch
+            : item1.FileVersion.Build - item2.FileVersion.Build;
 
     static DateTime GetDateTime(FileItem item)
         => item.ExifTime != null

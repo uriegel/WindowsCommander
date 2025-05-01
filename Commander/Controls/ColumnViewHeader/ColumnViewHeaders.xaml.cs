@@ -187,7 +187,7 @@ public partial class ColumnViewHeaders : UserControl
     {
         if (sender is DependencyObject dO)
         {
-            var border = dO?.FindAncestorOrSelf<Border>();
+            var border = dO.FindAncestorOrSelf<Border>();
             var index = (int)dO.GetValue(Grid.ColumnProperty);
             if (HeaderItems[index].SortType == SortType.Disabled || border?.Cursor == Cursors.ScrollWE)
                 return;
