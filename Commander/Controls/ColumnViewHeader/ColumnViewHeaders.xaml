@@ -44,7 +44,7 @@
 
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <Grid local:ColumnViewHeaders.Columns="{Binding}">
+                <Grid Name="ColumnViewHeaderGrid" local:ColumnViewHeaders.Columns="{Binding}">
                 </Grid>
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>

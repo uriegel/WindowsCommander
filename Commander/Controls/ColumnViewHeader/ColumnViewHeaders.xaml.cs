@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -157,7 +158,7 @@ public partial class ColumnViewHeaders : UserControl
 
             void InitializeDrag()
             {
-                var grid = dO?.FindAncestorOrSelf<Grid>();
+                var grid = dO?.FindAncestorOrSelf<Grid>("ColumnViewHeaderGrid");
                 var cols = grid?.Children.Cast<ContentPresenter>()?.ToArray();
                 border.CaptureMouse();
                 border.MouseLeftButtonUp += OnMouseUp;
@@ -186,8 +187,9 @@ public partial class ColumnViewHeaders : UserControl
     {
         if (sender is DependencyObject dO)
         {
+            var border = dO?.FindAncestorOrSelf<Border>();
             var index = (int)dO.GetValue(Grid.ColumnProperty);
-            if (HeaderItems[index].SortType == SortType.Disabled)
+            if (HeaderItems[index].SortType == SortType.Disabled || border?.Cursor == Cursors.ScrollWE)
                 return;
             bool desc = HeaderItems[index].SortType == SortType.Ascending;
             foreach (var item in HeaderItems)

@@ -21,13 +21,13 @@ public static class DependencyObjectExtensions
 
     #region Extension Methods
 
-    public static AncestorType FindAncestorOrSelf<AncestorType>(this DependencyObject element)
-        where AncestorType : DependencyObject
+    public static AncestorType? FindAncestorOrSelf<AncestorType>(this DependencyObject element, string? name = null)
+        where AncestorType : FrameworkElement
     {
         while (element != null)
         {
-            if (element is AncestorType)
-                break;
+            if (element is AncestorType at && (name == null || at.Name == name))
+                return at;
 
             if (element is Visual)
                 element = VisualTreeHelper.GetParent(element);
@@ -37,7 +37,7 @@ public static class DependencyObjectExtensions
                 // Visual/Visual3D to get us back to Visual Land.
                 element = LogicalTreeHelper.GetParent(element);
         }
-        return (element as AncestorType)!;
+        return null;
     }
 
     public static AncestorType FindAncestor<AncestorType>(this DependencyObject element)

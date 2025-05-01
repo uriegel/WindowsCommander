@@ -19,7 +19,6 @@ using Commander.Views;
 namespace Commander.Controls;
 
 // TODO Version sorting
-// TODO Header dragging
 // TODO Banner
 // TODO Selection
 // TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
