@@ -81,7 +81,8 @@ public partial class ColumnViewHeaders : UserControl
             var idx = 0;
             foreach (var item in field)
                 item.Index = idx++;
-
+            if (DataContext is Context ctx)
+                ctx.StarLength = [.. field.Select(n => 1)];
             Headers.ItemsSource = field;
             Headers.MouseMove += OnMouseMove;
             // border.SetResourceReference(Border.BorderBrushProperty, "MyBorderBrush");
@@ -90,7 +91,7 @@ public partial class ColumnViewHeaders : UserControl
 
     public ColumnViewHeaders()
     {
-        DataContext = new Context { StarLength = [1, 1, 1] };
+        DataContext = new Context { StarLength = [] };
         InitializeComponent();
     }
 

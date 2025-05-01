@@ -26,6 +26,16 @@ public record FileItem : Item
         }
     }
 
+    public FileVersion? FileVersion
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnChanged(nameof(FileVersion));
+        }
+    }
+
     public long? Size
     {
         get => field;
@@ -49,3 +59,7 @@ public record FileItem : Item
         };
 }
 
+public record FileVersion(int Major, int Minor, int Patch, int Build)
+{
+    public override string ToString() => $"{Major}.{Minor}.{Patch}.{Build}";
+}

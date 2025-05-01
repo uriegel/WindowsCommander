@@ -29,8 +29,9 @@ class DirectoryComparer(int index, bool descending) : IComparer
             return 0;
     }
 
-    DateTime GetDateTime(FileItem item)
+    static DateTime GetDateTime(FileItem item)
         => item.ExifTime != null
             ? item.ExifTime.Value
-            : item.DateTime;   
+            : item.DateTime;
 }
+

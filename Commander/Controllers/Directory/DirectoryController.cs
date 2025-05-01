@@ -1,10 +1,12 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
 using Commander.Controls;
 using Commander.Controls.ColumnViewHeader;
+using Commander.Extensions;
 
 using CsTools;
 using CsTools.Extensions;
@@ -71,7 +73,7 @@ class DirectoryController : IController
     {
         folderViewContext.BackgroundAction = "Erweiterte Dateiinformationen werden ermittelt...";
         var path = folderViewContext.CurrentPath;
-        var exifItems = await Task.Run<ExifItem[]>(() =>
+        var exifItems = await Task.Run<ExtendedItem[]>(() =>
         {
             try
             {
@@ -83,7 +85,12 @@ class DirectoryController : IController
             foreach (var exifItem in exifItems)
             {
                 if (items[exifItem.Index] is FileItem originalItem)
-                    originalItem.ExifTime = exifItem.Exif;
+                {
+                    if (exifItem.Exif.HasValue)
+                        originalItem.ExifTime = exifItem.Exif.Value;
+                    if (exifItem.FileVersion != null)
+                        originalItem.FileVersion = exifItem.FileVersion;
+                }
             }
         folderViewContext.BackgroundAction = null;
     }
@@ -98,26 +105,40 @@ class DirectoryController : IController
         [
             new HeaderItem("Name") { SortType = SortType.Ascending },
             new HeaderItem("Datum"),
-            new HeaderItem("Größe", TextAlignment.Right)
+            new HeaderItem("Größe", TextAlignment.Right),
+            new HeaderItem("Version")
         ]);
     }
 
     public void Refresh()  { }
 
-    static ExifItem? GetExifItem(Item item, int idx, string path, CancellationToken token)
+    static ExtendedItem? GetExifItem(Item item, int idx, string path, CancellationToken token)
     {
-        if (item is FileItem fileItem
-            && !token.IsCancellationRequested
-            && (fileItem.Name.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
-                || fileItem.Name.EndsWith(".jpeg", StringComparison.InvariantCultureIgnoreCase)
-                || fileItem.Name.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase)))
+        if (item is FileItem fileItem && !token.IsCancellationRequested)
         {
-            var exif = ExifReader.GetExifData(path.AppendPath(fileItem.Name))?.DateTime;
-            return exif.HasValue ? new(idx, exif.Value) : null;
+            var exif = fileItem.Name.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
+                        || fileItem.Name.EndsWith(".jpeg", StringComparison.InvariantCultureIgnoreCase)
+                        || fileItem.Name.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase)
+                ? ExifReader.GetExifData(path.AppendPath(fileItem.Name))?.DateTime
+                : null;
+            var version = fileItem.Name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase)
+                        || fileItem.Name.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase)
+                ? GetVersion(path.AppendPath(fileItem.Name))
+                : null;
+            return exif.HasValue || version != null 
+                ? new(idx, exif, version) 
+                : null;
         }
         else
             return null;
     }
+
+    static FileVersion? GetVersion(string file)
+        => file.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase) || file.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase)
+            ? FileVersionInfo
+                    .GetVersionInfo(file)
+                    .MapVersion()
+            : null;
 }
 
-record ExifItem(int Index, DateTime Exif);
+record ExtendedItem(int Index, DateTime? Exif, FileVersion? FileVersion);
