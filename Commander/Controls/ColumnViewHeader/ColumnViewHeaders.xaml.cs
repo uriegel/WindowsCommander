@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -62,8 +61,8 @@ public partial class ColumnViewHeaders : UserControl
 
     #endregion 
 
-    public ColumnViewContext? ColumnViewContext { 
-        get => field; 
+    public ColumnViewContext? ColumnViewContext {
+        get => field;
         set
         {
             field = value;
@@ -72,8 +71,8 @@ public partial class ColumnViewHeaders : UserControl
         }
     }
 
-    public HeaderItem[] HeaderItems 
-    { 
+    public HeaderItem[] HeaderItems
+    {
         get => field;
         set
         {
@@ -96,10 +95,12 @@ public partial class ColumnViewHeaders : UserControl
         InitializeComponent();
     }
 
-    double start = 0;
-    int startIndex = 0;
+    double start;
+    int startIndex;
     double[] stars = [];
     bool first;
+    double startPos;
+    double[] initialStars = [];
 
     void OnMouseMove(object? sender, MouseEventArgs e)
     {
@@ -121,6 +122,7 @@ public partial class ColumnViewHeaders : UserControl
                         first = false;
                         startIndex = item.Index - 1;
                         start = pos.X;
+                        startPos = border.TransformToAncestor(Headers).Transform(new Point(0, 0)).X;
                     }
                 }
                 else if (pos.X > border.ActualWidth - 10 && item.Index < ctx.StarLength.Length - 1)
@@ -132,6 +134,7 @@ public partial class ColumnViewHeaders : UserControl
                         first = true;
                         startIndex = item.Index;
                         start = pos.X;
+                        startPos = -1;
                     }
                 }
                 else
@@ -140,15 +143,15 @@ public partial class ColumnViewHeaders : UserControl
             else 
             {
                 border.Cursor = Cursors.ScrollWE;
-                var pos = e.GetPosition(border);
+
                 var newStars = new double[ctx.StarLength.Length];
                 if (first)
                     stars.CopyTo(newStars);
                 else
                     ctx.StarLength.CopyTo(newStars);
-                var factor = (pos.X - start);
-                newStars[startIndex] += factor;
-                newStars[startIndex + 1] -= factor;
+                var diff = startPos == -1 ? e.GetPosition(border).X - start : e.GetPosition(Headers).X - startPos;
+                newStars[startIndex] = initialStars[startIndex] + diff;
+                newStars[startIndex+1] = initialStars[startIndex+1] - diff;
                 if (newStars[startIndex] > 10 && newStars[startIndex + 1] > 10 && ColumnViewContext != null)
                 {
                     ctx.StarLength = newStars;
@@ -163,10 +166,12 @@ public partial class ColumnViewHeaders : UserControl
                 border.CaptureMouse();
                 border.MouseLeftButtonUp += OnMouseUp;
                 stars = new double[ctx.StarLength.Length];
+                initialStars = new double[ctx.StarLength.Length];
                 ctx.StarLength.CopyTo(stars);
                 for (var i = 0; i < stars.Length; i++)
                     stars[i] = cols?[i].ActualWidth ?? 0;
                 ctx.StarLength = stars;
+                ctx.StarLength.CopyTo(initialStars);
                 dragging = true;
             }
 

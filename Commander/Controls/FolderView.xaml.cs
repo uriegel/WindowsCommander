@@ -22,7 +22,6 @@ namespace Commander.Controls;
 // TODO Selection
 // TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
 // TODO Sorting by file extension
-// TODO Header dragging flickers
 
 public partial class FolderView : UserControl
 {
