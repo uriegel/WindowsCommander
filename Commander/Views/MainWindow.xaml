@@ -129,6 +129,7 @@
                 </TextBlock>
             </StatusBarItem>
         </StatusBar>
+        <controls:Banner DockPanel.Dock="Top" BannerText="{Binding ErrorText}" />
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="15" />

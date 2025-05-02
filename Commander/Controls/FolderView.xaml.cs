@@ -18,7 +18,7 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO Banner
+// TODO Banner: Icon, Background, Text from Exception, Dismiss
 // TODO Selection
 // TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
 // TODO Sorting by file extension

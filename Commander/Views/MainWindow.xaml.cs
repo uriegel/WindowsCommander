@@ -29,7 +29,13 @@ public partial class MainWindow : Window
             : LeftView;
 
     void ShowHidden_Executed(object sender, ExecutedRoutedEventArgs e)
-        => ShowHidden.IsChecked = !ShowHidden.IsChecked;
+    //=> ShowHidden.IsChecked = !ShowHidden.IsChecked;
+
+
+    {
+        ShowHidden.IsChecked = !ShowHidden.IsChecked;
+        MainWindowContext.Instance.ErrorText = ShowHidden.IsChecked ? "Das ist ein ganz besonders blöder Fäler" : null;
+    }
 
     void SelectCurrent_Executed(object sender, ExecutedRoutedEventArgs e)
     {

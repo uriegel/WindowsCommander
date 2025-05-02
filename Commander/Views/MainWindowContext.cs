@@ -34,6 +34,19 @@ public class MainWindowContext : INotifyPropertyChanged
         }
     }
 
+    public string? ErrorText
+    {
+        get => field;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                OnChanged(nameof(ErrorText));
+            }
+        }
+    }
+
     public MainWindowContext() => Instance = this;
 
     public event PropertyChangedEventHandler? PropertyChanged;
