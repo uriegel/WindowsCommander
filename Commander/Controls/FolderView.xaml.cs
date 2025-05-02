@@ -18,9 +18,9 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO Banner info
 // TODO Selection
 // TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
+// TODO Banner info
 // TODO Sorting by file extension
 // TODO %systemroot%\system32\imageres.dll
 
