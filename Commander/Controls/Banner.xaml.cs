@@ -35,6 +35,7 @@ public partial class Banner : UserControl
     {
         BannerControl.Visibility = Visibility.Visible;
         var fade = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(transitionInMillis));
+
         BannerControl.BeginAnimation(OpacityProperty, fade);
         var heightAnimation = new DoubleAnimation(0, 40, TimeSpan.FromMilliseconds(transitionInMillis))
         {
@@ -45,25 +46,22 @@ public partial class Banner : UserControl
 
     void HideBanner()
     {
-        var fade = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(transitionInMillis));
-        BannerControl.BeginAnimation(OpacityProperty, fade);
-        var slide = new DoubleAnimation(0, -20, TimeSpan.FromMilliseconds(2000))
+        if (BannerControl.Visibility == Visibility.Visible)
         {
-            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
-        };
-        fade.Completed += (s, _) => BannerControl.Visibility = Visibility.Collapsed;
-        
-        var heightAnimation = new DoubleAnimation(BannerControl.ActualHeight, 0, TimeSpan.FromMilliseconds(transitionInMillis))
-        {
-            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
-        };
-        BannerControl.BeginAnimation(HeightProperty, heightAnimation);
+            var fade = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(transitionInMillis));
+            fade.Completed += (s, _) => BannerControl.Visibility = Visibility.Collapsed;
+            BannerControl.BeginAnimation(OpacityProperty, fade);
+
+            var heightAnimation = new DoubleAnimation(BannerControl.ActualHeight, 0, TimeSpan.FromMilliseconds(transitionInMillis))
+            {
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+            };
+            BannerControl.BeginAnimation(HeightProperty, heightAnimation);
+        }
     }
 
     void Dismiss_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
+        => HideBanner();
 
     int transitionInMillis = 200;
 }

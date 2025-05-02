@@ -15,7 +15,6 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Icon -->
             <TextBlock Grid.Column="0"
                    FontFamily="Segoe MDL2 Assets"
                    Text="&#xE946;"
@@ -23,13 +22,11 @@
                    Margin="0,0,10,0"
                    VerticalAlignment="Center"/>
 
-            <!-- Message -->
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <TextBlock Text="Fehler" FontWeight="Bold"/>
                 <TextBlock Text="{Binding BannerText, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Banner}}}" Foreground="Gray"/>
             </StackPanel>
 
-            <!-- Dismiss Button -->
             <Button Grid.Column="2"
                 Content="✖"
                 Background="Transparent"
