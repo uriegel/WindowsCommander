@@ -6,8 +6,13 @@
              xmlns:local="clr-namespace:Commander.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Border x:Name="BannerControl" Background="#D9EDF7" BorderBrush="#BCE8F1" BorderThickness="1" CornerRadius="8" Padding="5"
-            Height="0" Margin="5" Visibility="Collapsed" Opacity="0">
+    <!--Background="#D9EDF7"-->
+    <!--BorderBrush="#BCE8F1"-->
+    <Border x:Name="BannerControl" BorderThickness="1" CornerRadius="8" Padding="5"
+            Height="0" Margin="5" Visibility="Collapsed" Opacity="0"
+            BorderBrush="#66FF0000"
+            Background="#22FF0000"
+            >
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -15,12 +20,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0"
-                   FontFamily="Segoe MDL2 Assets"
-                   Text="&#xE946;"
-                   FontSize="20"
-                   Margin="0,0,10,0"
-                   VerticalAlignment="Center"/>
+            <Image Source="/Resources/Error.ico" Width="24" Height="24" Margin="0,0,10,0"/>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <TextBlock Text="Fehler" FontWeight="Bold"/>

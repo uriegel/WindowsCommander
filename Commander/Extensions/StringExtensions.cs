@@ -1,9 +1,6 @@
 ﻿using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-using CsTools.Functional;
-using static CsTools.Functional.Memoization;
-
 namespace Commander.Extensions;
 static class StringExtensions
 {

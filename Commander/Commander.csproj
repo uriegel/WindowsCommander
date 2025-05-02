@@ -13,13 +13,19 @@
 
     <ItemGroup>
       <None Remove="Resources\Drive.ico" />
+      <None Remove="Resources\Error.ico" />
       <None Remove="Resources\Folder.ico" />
+      <None Remove="Resources\Info.ico" />
       <None Remove="Resources\NetworkShare.ico" />
       <None Remove="Resources\RemovableDrive.ico" />
+      <None Remove="Resources\Warning.ico" />
       <None Remove="Resources\WindowsDrive.ico" />
     </ItemGroup>
 
     <ItemGroup>
+      <Resource Include="Resources\Error.ico" />
+      <Resource Include="Resources\Info.ico" />
+      <Resource Include="Resources\Warning.ico" />
       <Resource Include="Resources\WindowsDrive.ico" />
     </ItemGroup>
 
