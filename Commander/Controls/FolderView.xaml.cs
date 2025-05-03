@@ -18,6 +18,7 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
+// TODO ChangePath extended items must preserve selection when refreshed!!!!
 // TODO Copy before copy refresh
 // TODO Copy (move): create test folder, copy
 // TODO Copy (move): create test copy to folder with no access
@@ -120,7 +121,7 @@ public partial class FolderView : UserControl
     public async Task Refresh()
     {
         var currentItem = ColumnView.CurrentItem as Item;
-        var selectedItems = ColumnView.ListView.SelectedItems.Cast<Item>().Select(n => n.Name);
+        var selectedItemsNames = ColumnView.ListView.SelectedItems.Cast<Item>().Select(n => n.Name);
         await ChangePathAsync(Context.CurrentPath, false);
         if (currentItem != null)
         {
@@ -129,10 +130,10 @@ public partial class FolderView : UserControl
             ColumnView.ListView.UpdateLayout();
             listViewItem?.Focus();
         }
-        if (selectedItems.Any())
+        if (selectedItemsNames.Any())
         {
             var items = GetItems();
-            var newSelectedItems = items.Index().Select(n => n.Item.Name).Intersect(selectedItems).ToArray();
+            var newSelectedItems = items.Where(n => selectedItemsNames.Contains(n.Name));
             foreach (var selectedItem in newSelectedItems)
                 ColumnView.ListView.SelectedItems.Add(selectedItem);
         }
