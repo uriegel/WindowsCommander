@@ -18,8 +18,6 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO ChangePath extended items must preserve selection when refreshed!!!!
-// TODO Copy before copy refresh
 // TODO Copy (move): create test folder, copy
 // TODO Copy (move): create test copy to folder with no access
 // TODO Copy (move): create test copy from network to folder with no access
@@ -30,7 +28,7 @@ namespace Commander.Controls;
 
 // TODO Rename with ShellExecute and SH-UI (UAC)
 
-// TODO Conflict dialog before copying
+// TODO Conflict dialog before copying, refresh selected items
 
 // TODO Banner info
 // TODO Sorting by file extension
