@@ -273,7 +273,7 @@ public partial class FolderView : UserControl
 
     static char? GetCharFromKey(Key key)
     {
-        if (key == Key.Tab || key == Key.Enter || key == Key.Back)
+        if (Keyboard.Modifiers != ModifierKeys.None || key == Key.Tab || key == Key.Enter || key == Key.Back)
             return null;    
         var virtualKey = (uint)KeyInterop.VirtualKeyFromKey(key);
         var keyboardState = new byte[256];
@@ -317,6 +317,8 @@ public partial class FolderView : UserControl
         if (ColumnView.ListView.Items.Count == 0 && Context.Restriction?.Length > 0)
         {
             Context.Restriction = Context.Restriction[..^1];
+            if (Context.Restriction.Length == 0)
+                Context.Restriction = null;
             view.Refresh();
             ColumnView.FocusCurrentItem();
         }
