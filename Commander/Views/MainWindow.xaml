@@ -17,14 +17,20 @@
         <local:MainWindowContext />
     </Window.DataContext>
     <Window.CommandBindings>
-        <CommandBinding Command="local:MainWindow.SelectCurrentCommand"
-                        Executed="SelectCurrent_Executed" />
-        <CommandBinding Command="local:MainWindow.ShowHiddenCommand"
-                        Executed="ShowHidden_Executed" />
+        <CommandBinding Command="local:MainWindow.ShowHiddenCommand" Executed="ShowHidden_Executed" />
+        <CommandBinding Command="local:MainWindow.SelectAllCommand" Executed="SelectAll_Executed" />
+        <CommandBinding Command="local:MainWindow.SelectNoneCommand" Executed="SelectNone_Executed" />
+        <CommandBinding Command="local:MainWindow.ToggleCurrentSelectionCommand" Executed="ToggleCurrentSelection_Executed" />
+        <CommandBinding Command="local:MainWindow.SelectTillHereCommand" Executed="SelectTillHere_Executed" />
+        <CommandBinding Command="local:MainWindow.SelectTillEndCommand" Executed="SelectTillEnd_Executed" />
     </Window.CommandBindings>
     <Window.InputBindings>
-        <KeyBinding Key="Insert" Command="local:MainWindow.SelectCurrentCommand" />
+        <KeyBinding Key="Insert" Command="local:MainWindow.ToggleCurrentSelectionCommand" />
         <KeyBinding Key="H" Modifiers="Ctrl" Command="local:MainWindow.ShowHiddenCommand" />
+        <KeyBinding Key="Add" Command="local:MainWindow.SelectAllCommand" />
+        <KeyBinding Key="Subtract" Command="local:MainWindow.SelectNoneCommand" />
+        <KeyBinding Key="Home" Modifiers="Shift" Command="local:MainWindow.SelectTillHereCommand" />
+        <KeyBinding Key="End" Modifiers="Shift" Command="local:MainWindow.SelectTillEndCommand" />
     </Window.InputBindings>
 
     <DockPanel>
@@ -69,15 +75,21 @@
                           InputGestureText="F9" />
             </MenuItem>
             <MenuItem Header = "_Selektion" >
-                <MenuItem Header="Selektiere markierten Eintrag"
-                          Command="local:MainWindow.SelectCurrentCommand"
+                <MenuItem Header="_Markierten Eintrag wechseln"
+                          Command="local:MainWindow.ToggleCurrentSelectionCommand"
                           InputGestureText="Einfg" />
                 <MenuItem Header="Selektiere _Alles"
-                          Command="{Binding SelectAll}"
+                          Command="local:MainWindow.SelectAllCommand"
                           InputGestureText="Num+" />
-                <MenuItem Header="Selektiere _Selektion entfernen"
-                          Command="{Binding SelectNone}"
+                <MenuItem Header="_Selektion entfernen"
+                          Command="local:MainWindow.SelectNoneCommand"
                           InputGestureText="Num-" />
+                <MenuItem Header="Selektion bis _Ende"
+                          Command="local:MainWindow.SelectTillEndCommand"
+                          InputGestureText="Umschalt+Ende" />
+                <MenuItem Header="Selektion bis _hier"
+                          Command="local:MainWindow.SelectTillHereCommand"
+                          InputGestureText="Umschalt+Pos1" />
             </MenuItem>
             <MenuItem Header = "_Ansicht" >
                 <MenuItem Header="Versteckte _Dateien"

@@ -45,18 +45,20 @@ public partial class ColumnView : UserControl
 
     #endregion
 
+    public object? CurrentItem { get; private set; }
+
     public ColumnView() => InitializeComponent();
 
     public void FocusCurrentItem()
     {
         if (ListView.Items.Count > 0)
         {
-            if (!ListView.Items.Contains(currentItem) && ListView.Items.Count > 0)
-                currentItem = ListView.Items[0];
+            if (!ListView.Items.Contains(CurrentItem) && ListView.Items.Count > 0)
+                CurrentItem = ListView.Items[0];
 
-            ListView.ScrollIntoView(currentItem);
+            ListView.ScrollIntoView(CurrentItem);
             UpdateLayout();
-            var listViewItem = (ListViewItem)ListView.ItemContainerGenerator.ContainerFromItem(currentItem);
+            var listViewItem = ListView.ItemContainerGenerator.ContainerFromItem(CurrentItem) as ListViewItem;
             listViewItem?.Focus();
         }
         else
@@ -98,7 +100,7 @@ public partial class ColumnView : UserControl
     {
         var lbi = e.OriginalSource as ListBoxItem;
         if (lbi != null)
-            currentItem = lbi.DataContext;
+            CurrentItem = lbi.DataContext;
         RaiseEvent(new CurrentItemChangedEventArgs(lbi)
         {
             RoutedEvent = CurrentItemChangedEvent,
@@ -126,7 +128,5 @@ public partial class ColumnView : UserControl
         view.Refresh();
         FocusCurrentItem();
     }
-
-    object? currentItem;
 }
 

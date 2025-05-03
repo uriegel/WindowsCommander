@@ -19,8 +19,6 @@ class DirectoryController : IController
 {
     #region IController
 
-    public void RemoveAll() { }
-
     public Task<int> Fill(string? path, FolderView folderView)
     {
         var directoryInfo = new DirectoryInfo(path ?? @"c:\");
@@ -69,6 +67,11 @@ class DirectoryController : IController
                 : null);
     }
 
+    public void SelectAll(Item[] items, Action<IEnumerable<Item>> setSelectedItems)
+        => setSelectedItems(items.Where(n => n is not ParentItem));
+
+    #endregion
+
     public async void StartResolvingExtendedInfos(Item[] items, FolderViewContext folderViewContext, CancellationToken cancellation)
     {
         folderViewContext.BackgroundAction = "Erweiterte Dateiinformationen werden ermittelt...";
@@ -94,8 +97,6 @@ class DirectoryController : IController
             }
         folderViewContext.BackgroundAction = null;
     }
-
-    #endregion
 
     public DirectoryController(FolderView folderView)
     {

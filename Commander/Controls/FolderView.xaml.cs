@@ -18,7 +18,6 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO Selection
 // TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
 // TODO Banner info
 // TODO Sorting by file extension
@@ -82,9 +81,9 @@ public partial class FolderView : UserControl
                     await Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
                     {
                         ColumnView.ListView.ScrollIntoView(items.Skip(lastPos).FirstOrDefault());
-                        var listViewItem = (ListViewItem)ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(lastPos);
+                        var listViewItem = ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(lastPos) as ListViewItem;
                         ColumnView.ListView.UpdateLayout();
-                        listViewItem.Focus();
+                        listViewItem?.Focus();
                     });
                 Context.DirectoriesCount =
                     items.Where(n => n is DirectoryItem di && (MainWindowContext.Instance.ShowHidden || !di.IsHidden))?.Count() ?? 0;
@@ -116,6 +115,49 @@ public partial class FolderView : UserControl
         {
             //OnError(e);
             //MainContext.Instance.ErrorText = "Ordner konnte nicht gewechselt werden";
+        }
+    }
+
+    public void SelectAll() => ColumnView.ListView.SelectAll();
+
+    public void SelectNone() => ColumnView.ListView.SelectedItems.Clear();
+
+    public void SelectTillHere()
+    {
+        ColumnView.ListView.SelectedItems.Clear();
+        var currentItem = ColumnView.CurrentItem as Item;
+        if (currentItem != null)
+        {
+            var index = GetItems().Index().FirstOrDefault(n => n.Item == currentItem).Index;
+            foreach (var item in GetItems().Take(index + 1))
+                ColumnView.ListView.SelectedItems.Add(item);
+        }
+    }
+    public void SelectTillEnd()
+    {
+        ColumnView.ListView.SelectedItems.Clear();
+        var currentItem = ColumnView.CurrentItem as Item;
+        if (currentItem != null)
+        {
+            var index = GetItems().Index().FirstOrDefault(n => n.Item == currentItem).Index;
+            foreach (var item in GetItems().Skip(index))
+               ColumnView.ListView.SelectedItems.Add(item);
+        }
+    }
+
+    public void ToggleCurrentSelection()
+    {
+        var currentItem = ColumnView.CurrentItem as Item;
+        if (currentItem != null)
+        {
+            if (ColumnView.ListView.SelectedItems.Contains(currentItem))
+                ColumnView.ListView.SelectedItems.Remove(currentItem);
+            else
+                ColumnView.ListView.SelectedItems.Add(currentItem);
+            var index = GetItems().Index().FirstOrDefault(n => n.Item == currentItem).Index;
+            var listViewItem = ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(index + 1) as ListViewItem;
+            ColumnView.ListView.UpdateLayout();
+            listViewItem?.Focus();
         }
     }
 
@@ -217,9 +259,19 @@ public partial class FolderView : UserControl
     void ColumnView_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Space && Context.Restriction != null)
-        { 
+        {
             Context.Restriction += " ";
             RefreshRestrictionView();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.End && Keyboard.Modifiers == ModifierKeys.Shift)
+        {
+            SelectTillEnd();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Home && Keyboard.Modifiers == ModifierKeys.Shift)
+        {
+            SelectTillHere();
             e.Handled = true;
         }
     }

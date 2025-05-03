@@ -9,14 +9,46 @@ public partial class MainWindow : Window
 {
     #region Routed Commands
 
-    public static RoutedUICommand SelectCurrentCommand { get; } = new("SelectCurrent", "SelectCurrent", typeof(MainWindow));
+    public static RoutedUICommand SelectAllCommand { get; } = new("SelectAll", "SelectAll", typeof(MainWindow));
+    public static RoutedUICommand SelectNoneCommand { get; } = new("SelectNone", "SelectNone", typeof(MainWindow));
+    public static RoutedUICommand ToggleCurrentSelectionCommand { get; } = new("ToggleCurrentSelection", "ToggleCurrentSelection", typeof(MainWindow));
+    public static RoutedUICommand SelectTillHereCommand { get; } = new("SelectTillHere", "SelectTillHere", typeof(MainWindow));
+    public static RoutedUICommand SelectTillEndCommand { get; } = new("SelectTillEnd", "SSelectTillEnd", typeof(MainWindow));
     public static RoutedUICommand ShowHiddenCommand { get; } = new("ShowHidden", "ShowHidden", typeof(MainWindow));
 
     #endregion
 
     #region Command Bindings
 
+    void ShowHidden_Executed(object sender, ExecutedRoutedEventArgs e)
+    //=> ShowHidden.IsChecked = !ShowHidden.IsChecked;
+
+    {
+        ShowHidden.IsChecked = !ShowHidden.IsChecked;
+        MainWindowContext.Instance.ErrorText = ShowHidden.IsChecked ? "Das ist ein ganz besonders blöder Fäler" : null;
+    }
+
+    void SelectAll_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectAll();
+    
+    void SelectNone_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectNone();
+    
+    void ToggleCurrentSelection_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().ToggleCurrentSelection();
+
+    void SelectTillHere_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectTillHere();
+    void SelectTillEnd_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectTillEnd();
+
+    #endregion
+
     public static MainWindow Instance { get; private set; } = null!;
+
+    public MainWindow()
+    {
+        InitializeComponent();
+        activeFolderView = LeftView;
+        Instance = this;
+        LeftView.ChangePath(Properties.Settings.Default.LeftPath ?? "root", true, true);
+        RightView.ChangePath(Properties.Settings.Default.RightPath ?? "root", true, true);
+    }
 
     public FolderView GetActiveView()
         => activeFolderView == LeftView
@@ -27,61 +59,6 @@ public partial class MainWindow : Window
         => activeFolderView == LeftView
             ? RightView
             : LeftView;
-
-    void ShowHidden_Executed(object sender, ExecutedRoutedEventArgs e)
-    //=> ShowHidden.IsChecked = !ShowHidden.IsChecked;
-
-
-    {
-        ShowHidden.IsChecked = !ShowHidden.IsChecked;
-        MainWindowContext.Instance.ErrorText = ShowHidden.IsChecked ? "Das ist ein ganz besonders blöder Fäler" : null;
-    }
-
-    void SelectCurrent_Executed(object sender, ExecutedRoutedEventArgs e)
-    {
-        //var element = FocusManager.GetFocusedElement(this);
-        //if (element is ListViewItem lvi)
-        //{
-        //    if (LeftView.PeopleListView.SelectedItems.Contains(lvi.DataContext))
-        //    {
-        //        LeftView.PeopleListView.SelectedItems.Remove(lvi.DataContext);
-        //        lvi.IsSelected = false;
-        //    }
-        //    else
-        //    {
-        //        LeftView.PeopleListView.SelectedItems.Add(lvi.DataContext);
-        //        lvi.IsSelected = true;
-        //    }
-
-
-        //    int index = LeftView.PeopleListView.ItemContainerGenerator.IndexFromContainer(lvi);
-        //    int nextIndex = index + 1;
-
-        //    if (nextIndex < LeftView.PeopleListView.ItemsSource.Cast<Item>().Count())
-        //    {
-        //        var nextItem = LeftView.PeopleListView.Items[nextIndex];
-
-        //        LeftView.PeopleListView.ScrollIntoView(nextItem); // Optional: ensure it's visible
-        //        LeftView.PeopleListView.UpdateLayout(); // Ensure container is generated
-
-        //        var nextContainer = (ListViewItem)LeftView.PeopleListView.ItemContainerGenerator.ContainerFromItem(nextItem);
-        //        if (nextContainer != null)
-        //            Keyboard.Focus(nextContainer); // Focus with visible focus rectangle
-        //    }
-        //}
-
-    }
-
-    #endregion
-
-    public MainWindow()
-    {
-        InitializeComponent();
-        activeFolderView = LeftView;
-        Instance = this;
-        LeftView.ChangePath(Properties.Settings.Default.LeftPath ?? "root", true, true);
-        RightView.ChangePath(Properties.Settings.Default.RightPath ?? "root", true, true);
-    }
 
     protected override void OnSourceInitialized(EventArgs e)
     {
