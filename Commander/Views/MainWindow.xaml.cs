@@ -15,6 +15,10 @@ public partial class MainWindow : Window
     public static RoutedUICommand SelectTillHereCommand { get; } = new("SelectTillHere", "SelectTillHere", typeof(MainWindow));
     public static RoutedUICommand SelectTillEndCommand { get; } = new("SelectTillEnd", "SSelectTillEnd", typeof(MainWindow));
     public static RoutedUICommand ShowHiddenCommand { get; } = new("ShowHidden", "ShowHidden", typeof(MainWindow));
+    public static RoutedUICommand RefreshCommand { get; } = new("Refresh", "Refresh", typeof(MainWindow));
+    public static RoutedUICommand CopyItemsCommand { get; } = new("CopyItems", "CopyItems", typeof(MainWindow));
+    public static RoutedUICommand MoveItemsCommand { get; } = new("MoveItems", "MoveItems", typeof(MainWindow));
+    public static RoutedUICommand DeleteItemsCommand { get; } = new("DeleteItems", "DeleteItems", typeof(MainWindow));
 
     #endregion
 
@@ -29,13 +33,14 @@ public partial class MainWindow : Window
     }
 
     void SelectAll_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectAll();
-    
     void SelectNone_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectNone();
-    
     void ToggleCurrentSelection_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().ToggleCurrentSelection();
-
     void SelectTillHere_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectTillHere();
     void SelectTillEnd_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectTillEnd();
+    async void Refresh_Executed(object sender, ExecutedRoutedEventArgs e) => await GetActiveView().Refresh();
+    void CopyItems_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().CopyItems();
+    void MoveItems_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().MoveItems();
+    void DeleteItems_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().DeleteItems();
 
     #endregion
 

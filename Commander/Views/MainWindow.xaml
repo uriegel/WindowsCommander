@@ -23,6 +23,10 @@
         <CommandBinding Command="local:MainWindow.ToggleCurrentSelectionCommand" Executed="ToggleCurrentSelection_Executed" />
         <CommandBinding Command="local:MainWindow.SelectTillHereCommand" Executed="SelectTillHere_Executed" />
         <CommandBinding Command="local:MainWindow.SelectTillEndCommand" Executed="SelectTillEnd_Executed" />
+        <CommandBinding Command="local:MainWindow.RefreshCommand" Executed="Refresh_Executed" />
+        <CommandBinding Command="local:MainWindow.CopyItemsCommand" Executed="CopyItems_Executed" />
+        <CommandBinding Command="local:MainWindow.MoveItemsCommand" Executed="MoveItems_Executed" />
+        <CommandBinding Command="local:MainWindow.DeleteItemsCommand" Executed="DeleteItems_Executed" />
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="Insert" Command="local:MainWindow.ToggleCurrentSelectionCommand" />
@@ -31,6 +35,10 @@
         <KeyBinding Key="Subtract" Command="local:MainWindow.SelectNoneCommand" />
         <KeyBinding Key="Home" Modifiers="Shift" Command="local:MainWindow.SelectTillHereCommand" />
         <KeyBinding Key="End" Modifiers="Shift" Command="local:MainWindow.SelectTillEndCommand" />
+        <KeyBinding Key="R" Modifiers="Ctrl" Command="local:MainWindow.RefreshCommand" />
+        <KeyBinding Key="F5" Command="local:MainWindow.CopyItemsCommand" />
+        <KeyBinding Key="F6" Command="local:MainWindow.MoveItemsCommand" />
+        <KeyBinding Key="Delete" Command="local:MainWindow.DeleteItemsCommand" />
     </Window.InputBindings>
 
     <DockPanel>
@@ -50,13 +58,13 @@
                           InputGestureText="F2" />
                 <Separator />
                 <MenuItem Header="_Kopieren"
-                          Command="{Binding Copy}"
+                          Command="local:MainWindow.CopyItemsCommand"
                           InputGestureText="F5" />
                 <MenuItem Header="_Verschieben"
-                          Command="{Binding Move}"
+                          Command="local:MainWindow.MoveItemsCommand"
                           InputGestureText="F6" />
                 <MenuItem Header="_Löschen"
-                          Command="{Binding Delete}"
+                          Command="local:MainWindow.DeleteItemsCommand"
                           InputGestureText="Entf" />
                 <MenuItem Header="_Ordner anlegen"
                           Command="{Binding CreateFolder}"
@@ -98,6 +106,10 @@
                           Checked="Hidden_Checked"
                           Unchecked="Hidden_Unchecked"
                           InputGestureText="Ctrl+H" />
+                <Separator />
+                <MenuItem Header="Aktualisieren"
+                          Command="local:MainWindow.RefreshCommand"
+                          InputGestureText="Strg+R" />
                 <Separator />
                 <MenuItem Header="_Vorschau"
                           Command="{Binding Preview}"

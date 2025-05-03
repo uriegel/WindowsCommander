@@ -18,7 +18,19 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO Copy, Move, Delete, Rename with ShellExecute and SH-UI (UAC)
+// TODO Copy before copy refresh
+// TODO Copy (move): create test folder, copy
+// TODO Copy (move): create test copy to folder with no access
+// TODO Copy (move): create test copy from network to folder with no access
+// TODO Copy (move): create test many files (UI) 
+// TODO Copy (move): create test big files (UI)
+
+// TODO Delete
+
+// TODO Rename with ShellExecute and SH-UI (UAC)
+
+// TODO Conflict dialog before copying
+
 // TODO Banner info
 // TODO Sorting by file extension
 // TODO %systemroot%\system32\imageres.dll
@@ -59,7 +71,82 @@ public partial class FolderView : UserControl
             ? view.Cast<Item>()
             : [];
 
-    public async void ChangePath(string? path, bool saveHistory, bool dontFocus = false)
+    public async void ChangePath(string? path, bool saveHistory, bool dontFocus = false) 
+        => await ChangePathAsync(path, saveHistory, dontFocus);
+    
+    public void SelectAll() => ColumnView.ListView.SelectAll();
+
+    public void SelectNone() => ColumnView.ListView.SelectedItems.Clear();
+
+    public void SelectTillHere()
+    {
+        ColumnView.ListView.SelectedItems.Clear();
+        var currentItem = ColumnView.CurrentItem as Item;
+        if (currentItem != null)
+        {
+            var index = GetItems().Index().FirstOrDefault(n => n.Item == currentItem).Index;
+            foreach (var item in GetItems().Take(index + 1))
+                ColumnView.ListView.SelectedItems.Add(item);
+        }
+    }
+    public void SelectTillEnd()
+    {
+        ColumnView.ListView.SelectedItems.Clear();
+        var currentItem = ColumnView.CurrentItem as Item;
+        if (currentItem != null)
+        {
+            var index = GetItems().Index().FirstOrDefault(n => n.Item == currentItem).Index;
+            foreach (var item in GetItems().Skip(index))
+               ColumnView.ListView.SelectedItems.Add(item);
+        }
+    }
+
+    public void ToggleCurrentSelection()
+    {
+        var currentItem = ColumnView.CurrentItem as Item;
+        if (currentItem != null)
+        {
+            if (ColumnView.ListView.SelectedItems.Contains(currentItem))
+                ColumnView.ListView.SelectedItems.Remove(currentItem);
+            else
+                ColumnView.ListView.SelectedItems.Add(currentItem);
+            var index = GetItems().Index().FirstOrDefault(n => n.Item == currentItem).Index;
+            var listViewItem = ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(index + 1) as ListViewItem;
+            ColumnView.ListView.UpdateLayout();
+            listViewItem?.Focus();
+        }
+    }
+
+    public async Task Refresh()
+    {
+        var currentItem = ColumnView.CurrentItem as Item;
+        var selectedItems = ColumnView.ListView.SelectedItems.Cast<Item>().Select(n => n.Name);
+        await ChangePathAsync(Context.CurrentPath, false);
+        if (currentItem != null)
+        {
+            var index = GetItems().Index().FirstOrDefault(n => n.Item.Name == currentItem.Name).Index;
+            var listViewItem = ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(index) as ListViewItem;
+            ColumnView.ListView.UpdateLayout();
+            listViewItem?.Focus();
+        }
+        if (selectedItems.Any())
+        {
+            var items = GetItems();
+            var newSelectedItems = items.Index().Select(n => n.Item.Name).Intersect(selectedItems).ToArray();
+            foreach (var selectedItem in newSelectedItems)
+                ColumnView.ListView.SelectedItems.Add(selectedItem);
+        }
+    }
+
+    public async void CopyItems()
+    {
+        await Refresh();
+    }
+
+    public void MoveItems() { }
+    public void DeleteItems() { }
+
+    async Task ChangePathAsync(string? path, bool saveHistory, bool dontFocus = false)
     {
         Context.Restriction = null;
         cancellation.Cancel();
@@ -117,50 +204,7 @@ public partial class FolderView : UserControl
             //MainContext.Instance.ErrorText = "Ordner konnte nicht gewechselt werden";
         }
     }
-
-    public void SelectAll() => ColumnView.ListView.SelectAll();
-
-    public void SelectNone() => ColumnView.ListView.SelectedItems.Clear();
-
-    public void SelectTillHere()
-    {
-        ColumnView.ListView.SelectedItems.Clear();
-        var currentItem = ColumnView.CurrentItem as Item;
-        if (currentItem != null)
-        {
-            var index = GetItems().Index().FirstOrDefault(n => n.Item == currentItem).Index;
-            foreach (var item in GetItems().Take(index + 1))
-                ColumnView.ListView.SelectedItems.Add(item);
-        }
-    }
-    public void SelectTillEnd()
-    {
-        ColumnView.ListView.SelectedItems.Clear();
-        var currentItem = ColumnView.CurrentItem as Item;
-        if (currentItem != null)
-        {
-            var index = GetItems().Index().FirstOrDefault(n => n.Item == currentItem).Index;
-            foreach (var item in GetItems().Skip(index))
-               ColumnView.ListView.SelectedItems.Add(item);
-        }
-    }
-
-    public void ToggleCurrentSelection()
-    {
-        var currentItem = ColumnView.CurrentItem as Item;
-        if (currentItem != null)
-        {
-            if (ColumnView.ListView.SelectedItems.Contains(currentItem))
-                ColumnView.ListView.SelectedItems.Remove(currentItem);
-            else
-                ColumnView.ListView.SelectedItems.Add(currentItem);
-            var index = GetItems().Index().FirstOrDefault(n => n.Item == currentItem).Index;
-            var listViewItem = ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(index + 1) as ListViewItem;
-            ColumnView.ListView.UpdateLayout();
-            listViewItem?.Focus();
-        }
-    }
-
+    
     bool DetectController(string? path)
     {
         return path switch
