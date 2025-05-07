@@ -2,7 +2,6 @@
                     xmlns:localDir="clr-namespace:Commander.Controllers.Directory" 
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <localDir:FileIconConverter x:Key="FileIconConverter" />
     <localDir:DateTimeExifConverter x:Key="DateTimeExifConverter" />
     <localDir:ExifColorConverter x:Key="ExifColorConverter" />
 
@@ -28,7 +27,7 @@
                         UseLayoutRounding="True"
                         SnapsToDevicePixels="False"
                         RenderOptions.BitmapScalingMode="NearestNeighbor"
-                        Background="{Binding IconPath, Converter={StaticResource FileIconConverter}}" VerticalAlignment="Center" />
+                        Background="{Binding Icon}" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </Grid>
 
