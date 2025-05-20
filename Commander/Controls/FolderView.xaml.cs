@@ -139,6 +139,12 @@ public partial class FolderView : UserControl
 
     public async void CopyItems()
     {
+        // TODO Copy only files to test folder
+        // TODO Copy only files to test folder with no access
+        // TODO Copy (move): create test many files (UI) 
+        // TODO Copy (move): create test big files (UI)
+        // TODO Copy directories to test folder
+        // TODO Conflict dialog before copying, refresh selected items
         await Refresh();
     }
 
