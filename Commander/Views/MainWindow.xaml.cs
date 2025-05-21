@@ -38,8 +38,10 @@ public partial class MainWindow : Window
     void SelectTillHere_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectTillHere();
     void SelectTillEnd_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectTillEnd();
     async void Refresh_Executed(object sender, ExecutedRoutedEventArgs e) => await GetActiveView().Refresh();
-    void CopyItems_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().CopyItems();
-    void MoveItems_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().MoveItems();
+    void CopyItems_Executed(object sender, ExecutedRoutedEventArgs e) 
+        => GetActiveView().CopyItems(GetInactiveView().Context.CurrentPath, GetInactiveView().Refresh, false);
+    void MoveItems_Executed(object sender, ExecutedRoutedEventArgs e)
+        => GetActiveView().CopyItems(GetInactiveView().Context.CurrentPath, GetInactiveView().Refresh, true);
     void DeleteItems_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().DeleteItems();
 
     #endregion

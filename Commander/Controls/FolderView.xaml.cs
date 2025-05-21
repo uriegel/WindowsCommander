@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
@@ -16,16 +17,12 @@ using Commander.Controllers.Root;
 using Commander.Controls.ColumnViewHeader;
 using Commander.Views;
 
+using CsTools.Extensions;
+
 namespace Commander.Controls;
 
-// TODO Copy (move): create test folder, copy
-// TODO Copy (move): create test copy to folder with no access
 // TODO Copy (move): create test copy from network to folder with no access
-// TODO Copy (move): create test many files (UI) 
-// TODO Copy (move): create test big files (UI)
-
 // TODO Delete
-
 // TODO Rename with ShellExecute and SH-UI (UAC)
 
 // TODO Conflict dialog before copying, refresh selected items
@@ -138,19 +135,31 @@ public partial class FolderView : UserControl
         }
     }
 
-    public async void CopyItems()
+    public async void CopyItems(string targetPath, Func<Task> refresh, bool move)
     {
-        // TODO Copy only files to test folder
-        // TODO Copy only files to test folder with no access
-        // TODO Copy (move): create test many files (UI) 
-        // TODO Copy (move): create test big files (UI)
-        // TODO Copy directories to test folder
+        // TODO Copy only files to test folder from remote to no access
         // TODO Conflict dialog before copying, refresh selected items
-        var files = ColumnView.ListView.SelectedItems.OfType<FileItem>().ToArray().Select(n => n.Name);
-        Console.WriteLine("=================");
-        foreach (var file in files)
-            Console.WriteLine(file);
-        await Refresh();
+        // TODO Copy directories to test folder
+        var files = ColumnView
+                        .ListView
+                        .SelectedItems
+                        .OfType<FileItem>()
+                        .Select(n => n.Name)
+                        .ToArray();
+
+        var op = new ShFileOPStruct()
+        {
+            Hwnd = new WindowInteropHelper(Window.GetWindow(this)).Handle,
+            Flags = FileOpFlags.NOCONFIRMATION | FileOpFlags.MULTIDESTFILES | FileOpFlags.ALLOWUNDO | FileOpFlags.FILESONLY,
+            From = string.Join("\0", files.Select(Context.CurrentPath.AppendPath)) + "\0",
+            To = string.Join("\0", files.Select(targetPath.AppendPath)) + "\0",
+            Func = move ? FileFuncFlags.MOVE : FileFuncFlags.COPY,
+            ProgressTitle = move ? "Verschiebe Dateien" : "Kopiere Dateien"
+        };
+        var res = Api.SHFileOperation(op);
+        if (move)
+            await Refresh();
+        await refresh();
     }
 
     public void MoveItems() { }
