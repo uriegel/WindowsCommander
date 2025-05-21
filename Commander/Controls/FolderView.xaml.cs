@@ -119,7 +119,8 @@ public partial class FolderView : UserControl
     public async Task Refresh()
     {
         var currentItem = ColumnView.CurrentItem as Item;
-        var selectedItemsNames = ColumnView.ListView.SelectedItems.Cast<Item>().Select(n => n.Name);
+        var selectedItemsNames = ColumnView.ListView.SelectedItems.Cast<Item>().Select(n => n.Name).ToArray();
+        ColumnView.ListView.SelectedItems.Clear();
         await ChangePathAsync(Context.CurrentPath, false);
         if (currentItem != null)
         {
@@ -128,7 +129,7 @@ public partial class FolderView : UserControl
             ColumnView.ListView.UpdateLayout();
             listViewItem?.Focus();
         }
-        if (selectedItemsNames.Any())
+        if (selectedItemsNames.Length != 0)
         {
             var items = GetItems();
             var newSelectedItems = items.Where(n => selectedItemsNames.Contains(n.Name));
@@ -145,6 +146,10 @@ public partial class FolderView : UserControl
         // TODO Copy (move): create test big files (UI)
         // TODO Copy directories to test folder
         // TODO Conflict dialog before copying, refresh selected items
+        var files = ColumnView.ListView.SelectedItems.OfType<FileItem>().ToArray().Select(n => n.Name);
+        Console.WriteLine("=================");
+        foreach (var file in files)
+            Console.WriteLine(file);
         await Refresh();
     }
 
