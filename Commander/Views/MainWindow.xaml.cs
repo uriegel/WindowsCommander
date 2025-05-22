@@ -51,6 +51,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
         activeFolderView = LeftView;
         Instance = this;
         LeftView.ChangePath(Properties.Settings.Default.LeftPath ?? "root", true, true);

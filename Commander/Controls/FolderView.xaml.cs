@@ -137,6 +137,9 @@ public partial class FolderView : UserControl
 
     public async void CopyItems(string targetPath, Func<Task> refresh, bool move)
     {
+        //MessageBox.Show("Copying files to test folder", "Copy", MessageBoxButton.OK, MessageBoxImage.Information);
+        var ccd = new CopyConflictDialog();  
+        ccd.ShowDialog();
         // TODO Copy only files to test folder from remote to no access
         // TODO Conflict dialog before copying, refresh selected items
         // TODO Copy directories to test folder
