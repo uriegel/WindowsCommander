@@ -34,5 +34,17 @@ public partial class CopyConflictDialog : Window
         var ctx = new ColumnViewContext();
         ColumnView.DataContext = ctx;
         ColumnView.Headers.ColumnViewContext = ctx;
+
+        CancelButton.IsDefault = true;
+    }
+
+    void Button_Click(object sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+
+    void CancelButton_Click(object sender, RoutedEventArgs e)
+    {
+        Close();
     }
 }

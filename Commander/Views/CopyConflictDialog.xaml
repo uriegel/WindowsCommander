@@ -61,7 +61,29 @@
             </Grid>
         </DataTemplate>
     </Window.Resources>
-    <Grid>
+    <DockPanel>
+        <Label Content="Existierende Einträge überschreiben?"  DockPanel.Dock="Top" 
+               Margin="10" Padding="5" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="18" />
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type ButtonBase}}">
+                    <Style.Triggers>
+                            <Trigger Property="IsDefault" Value="True">
+                                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                        </Trigger>
+                    </Style.Triggers>
+                    <Setter Property="Margin" Value="10"/>
+                    <Setter Property="Padding" Value="5,2"/>
+                </Style>
+            </StackPanel.Resources>
+            <Button x:Name="OkButton" Width="{Binding ActualWidth, ElementName=CancelButton, Mode=Default}" Click="Button_Click">Ok</Button>
+            <Button x:Name="CancelButton" Click="CancelButton_Click">Abbrechen</Button>
+        </StackPanel>
         <controls:ColumnView x:Name="ColumnView" x:FieldModifier="private"/>
-    </Grid>
+    </DockPanel>
 </Window>
