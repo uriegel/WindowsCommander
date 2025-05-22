@@ -10,7 +10,7 @@
 		<UseWPF>true</UseWPF>
 		<LangVersion>Preview</LangVersion>
 	</PropertyGroup>
-
+	
     <ItemGroup>
       <None Remove="Resources\Drive.ico" />
       <None Remove="Resources\Error.ico" />
