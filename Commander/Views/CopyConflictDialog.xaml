@@ -7,13 +7,14 @@
         xmlns:localDir="clr-namespace:Commander.Controllers.Directory" 
         xmlns:controls="clr-namespace:Commander.Controls"
         mc:Ignorable="d"
-        Height="450" Width="800" WindowStartupLocation="CenterOwner">
+        Title="Commander"
+        Height="800" Width="800" WindowStartupLocation="CenterOwner">
     <Window.Resources>
 
         <localDir:DateTimeExifConverter x:Key="DateTimeExifConverter" />
         <localDir:ExifColorConverter x:Key="ExifColorConverter" />
 
-        <DataTemplate DataType="{x:Type localDir:FileItem}">
+        <DataTemplate DataType="{x:Type controls:CopyItem}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, 
@@ -22,6 +23,8 @@
                                 Path=DataContext.ColumnWidths[1]}" />
                     <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, 
                                 Path=DataContext.ColumnWidths[2]}" />
+                    <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, 
+                                Path=DataContext.ColumnWidths[3]}" />
                 </Grid.ColumnDefinitions>
 
                 <Grid Margin="2, 0, 5, 0"  >
@@ -38,30 +41,14 @@
                     <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                 </Grid>
 
-                <TextBlock Margin="0, 0, 5, 0" Grid.Column="1" TextTrimming="CharacterEllipsis" >
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ExifTime, Converter={StaticResource NotNullValueConverter}}" Value="True">
-                                    <Setter Property="Foreground" Value="{DynamicResource ExifColor}"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource DateTimeExifConverter}">
-                            <Binding Path ="DateTime" />
-                            <Binding Path ="ExifTime" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
+                <TextBlock Margin="0, 0, 5, 0" Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding Date}" />
                 <TextBlock Margin="5, 0" Grid.Column="2" TextAlignment="Right" TextTrimming="CharacterEllipsis"
                             Text="{Binding Size}" />
                 <TextBlock Grid.Column="3" TextTrimming="CharacterEllipsis" Text="{Binding FileVersion}" />
             </Grid>
         </DataTemplate>
     </Window.Resources>
-    <DockPanel>
+    <DockPanel KeyDown="DockPanel_KeyDown" >
         <Label Content="Existierende Einträge überschreiben?"  DockPanel.Dock="Top" 
                Margin="10" Padding="5" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="18" />
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -81,8 +68,8 @@
                     <Setter Property="Padding" Value="5,2"/>
                 </Style>
             </StackPanel.Resources>
-            <Button x:Name="OkButton" Width="{Binding ActualWidth, ElementName=CancelButton, Mode=Default}" Click="Button_Click">Ok</Button>
-            <Button x:Name="CancelButton" Click="CancelButton_Click">Abbrechen</Button>
+            <Button x:Name="YesButton" Width="{Binding ActualWidth, ElementName=NoButton, Mode=Default}" Click="YesButton_Click">Ja</Button>
+            <Button x:Name="NoButton" Click="NoButton_Click">Nein</Button>
         </StackPanel>
         <controls:ColumnView x:Name="ColumnView" x:FieldModifier="private"/>
     </DockPanel>

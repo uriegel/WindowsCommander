@@ -160,8 +160,9 @@ public partial class FolderView : UserControl
         }
         else
         {
-            var ccd = new CopyConflictDialog();
-            ccd.ShowDialog();
+            var ccd = new CopyConflictDialog(move, copyItems);
+            if (ccd.ShowDialog() != true)
+                return;
         }
 
         var op = new ShFileOPStruct()
@@ -534,7 +535,7 @@ public partial class FolderView : UserControl
     readonly History history = new();
     CancellationTokenSource cancellation = new();
 }
- 
+
 record SelectedItems(Item[] Items, int DirCount, int FileCount);
-record CopyItem(string Name, long Size, DateTime Date, FileVersion? Version, Conflict? Conflict);
-record Conflict(long Size, DateTime Date, FileVersion? Version);
+public record CopyItem(string Name, long Size, DateTime Date, FileVersion? Version, Conflict? Conflict);
+public  record Conflict(long Size, DateTime Date, FileVersion? Version);
