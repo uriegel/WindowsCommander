@@ -9,22 +9,26 @@ namespace Commander.Views;
 
 public partial class MessageDialog : Window
 {
-    public MessageDialog()
+    public MessageDialog(string title, string message)
     {
         InitializeComponent();
 
         Owner = Application.Current.MainWindow;
 
-        Title = "Dateien kopieren";
+        Title = title;
+        Message.Content = message;
+        OkButton.Focus();
     }
 
     void Button_Click(object sender, RoutedEventArgs e)
     {
+        DialogResult = true;
         Close();
     }
 
     void CancelButton_Click(object sender, RoutedEventArgs e)
     {
+        DialogResult = false;
         Close();
     }
 }

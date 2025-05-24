@@ -20,7 +20,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Image Source="/Resources/Error.ico" Width="24" Height="24" Margin="0,0,10,0"/>
+            <Image Source="/Resources/Error.ico" Width="40" Height="40" Margin="0,0,10,0"/>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <TextBlock Text="Fehler" FontWeight="Bold"/>

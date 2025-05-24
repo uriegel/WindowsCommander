@@ -22,7 +22,6 @@ using CsTools.Extensions;
 namespace Commander.Controls;
 
 // TODO Copy (move): create test copy from network to folder with no access
-// TODO Delete
 // TODO Rename with ShellExecute and SH-UI (UAC)
 
 // TODO Conflict dialog before copying, refresh selected items
@@ -137,26 +136,40 @@ public partial class FolderView : UserControl
 
     public async void CopyItems(string targetPath, Func<Task> refresh, bool move)
     {
-        var md = new MessageDialog();
-        md.ShowDialog();
-        var ccd = new CopyConflictDialog();  
-        ccd.ShowDialog();
-        // TODO Copy only files to test folder from remote to no access
         // TODO Conflict dialog before copying, refresh selected items
-        // TODO Copy directories to test folder
-        var files = ColumnView
-                        .ListView
-                        .SelectedItems
-                        .OfType<FileItem>()
-                        .Select(n => n.Name)
-                        .ToArray();
+        var selItems = GetSelectedItems();
+        if (selItems.FileCount == 0 && selItems.DirCount == 0)
+            return;
+
+        var copyItems = selItems.Items.SelectFilterNull(CreateCopyItem).ToArray();
+        if (!copyItems.Any(n => n.Conflict != null))
+        {
+            var action = move ? "verschieben" : "kopieren";
+            var message = selItems.FileCount == 0 && selItems.DirCount == 1
+                    ? $"Möchtest du das Verzeichnis {action}?"
+                    : selItems.FileCount == 1 && selItems.DirCount == 0
+                    ? $"Möchtest du die Datei {action}?"
+                    : selItems.FileCount > 1 && selItems.DirCount == 0
+                    ? $"Möchtest du die Dateien {action}?"
+                    : selItems.FileCount == 0 && selItems.DirCount > 1
+                    ? $"Möchtest du die Verzeichnisse {action}?"
+                    : $"Möchtest du die Elemente {action}?";
+            var md = new MessageDialog($"Elemente {action}", message);
+            if (md.ShowDialog() != true)
+                return;
+        }
+        else
+        {
+            var ccd = new CopyConflictDialog();
+            ccd.ShowDialog();
+        }
 
         var op = new ShFileOPStruct()
         {
             Hwnd = new WindowInteropHelper(Window.GetWindow(this)).Handle,
-            Flags = FileOpFlags.NOCONFIRMATION | FileOpFlags.MULTIDESTFILES | FileOpFlags.ALLOWUNDO | FileOpFlags.FILESONLY,
-            From = string.Join("\0", files.Select(Context.CurrentPath.AppendPath)) + "\0",
-            To = string.Join("\0", files.Select(targetPath.AppendPath)) + "\0",
+            Flags = FileOpFlags.NOCONFIRMATION | FileOpFlags.MULTIDESTFILES | FileOpFlags.ALLOWUNDO,
+            From = string.Join("\0", copyItems.Select(n => Context.CurrentPath.AppendPath(n.Name))) + "\0",
+            To = string.Join("\0", copyItems.Select(n => targetPath.AppendPath(n.Name))) + "\0",
             Func = move ? FileFuncFlags.MOVE : FileFuncFlags.COPY,
             ProgressTitle = move ? "Verschiebe Dateien" : "Kopiere Dateien"
         };
@@ -164,10 +177,59 @@ public partial class FolderView : UserControl
         if (move)
             await Refresh();
         await refresh();
+
+        CopyItem? CreateCopyItem(Item item)
+        {
+            if (item is DirectoryItem dirItem)
+                return new CopyItem(dirItem.Name, 0, dirItem.DateTime, null, null);
+            else if (item is FileItem fileItem)
+            {
+                var info = new FileInfo(Context.CurrentPath.AppendPath(fileItem.Name));
+                if (info.Exists)
+                    return new CopyItem(fileItem.Name, info.Length, info.LastWriteTime, fileItem.FileVersion, CreateConflict(fileItem));
+            }
+            return null;
+        }
+
+        Conflict? CreateConflict(FileItem fileItem)
+        {
+            var info = new FileInfo(targetPath.AppendPath(fileItem.Name));
+            if (info.Exists)
+                return new Conflict(info.Length, info.LastWriteTime, fileItem.FileVersion);
+            return null;
+        }
     }
 
-    public void MoveItems() { }
-    public void DeleteItems() { }
+    public async void DeleteItems() 
+    {
+        var selItems = GetSelectedItems();
+        if (selItems.FileCount == 0 && selItems.DirCount == 0)
+            return;
+        var message = selItems.FileCount == 0 && selItems.DirCount == 1 
+                ? "Möchtest du das Verzeichnis löschen?"
+                : selItems.FileCount == 1 && selItems.DirCount == 0
+                ? "Möchtest du die Datei löschen?"
+                : selItems.FileCount > 1 && selItems.DirCount == 0
+                ? "Möchtest du die Dateien löschen?"
+                : selItems.FileCount == 0 && selItems.DirCount > 1
+                ? "Möchtest du die Verzeichnisse löschen?"
+                : "Möchtest du die Elemente löschen?";
+        var md = new MessageDialog("Elemente löschen", message); 
+        if (md.ShowDialog() == true)
+        {
+            var files = selItems.Items.Select(n => n.Name).ToArray();
+            var op = new ShFileOPStruct()
+            {
+                Hwnd = new WindowInteropHelper(Window.GetWindow(this)).Handle,
+                Flags = FileOpFlags.NOCONFIRMATION | FileOpFlags.ALLOWUNDO,
+                From = string.Join("\0", files.Select(Context.CurrentPath.AppendPath)) + "\0",
+                Func = FileFuncFlags.DELETE,
+                ProgressTitle = "Elemente löschen"
+            };
+            var res = Api.SHFileOperation(op);
+            await Refresh();
+        }
+    }
 
     async Task ChangePathAsync(string? path, bool saveHistory, bool dontFocus = false)
     {
@@ -390,6 +452,22 @@ public partial class FolderView : UserControl
         }
     }
 
+    SelectedItems GetSelectedItems()
+    {
+        var currentItem = ColumnView.CurrentItem as Item;
+        var files = ColumnView
+                        .ListView
+                        .SelectedItems
+                        .OfType<Item>()
+                        .Where(n => n is not ParentItem)
+                        .ToArray();
+        if (files.Length == 0 && currentItem != null)
+            files = [currentItem];
+        var filesCount = files.Count(n => n is FileItem);
+        var dirCount = files.Count(n => n is DirectoryItem);
+        return new SelectedItems(files, dirCount, filesCount);
+    }
+
     static char? GetCharFromKey(Key key)
     {
         if (Keyboard.Modifiers != ModifierKeys.None || key == Key.Tab || key == Key.Enter || key == Key.Back)
@@ -457,3 +535,6 @@ public partial class FolderView : UserControl
     CancellationTokenSource cancellation = new();
 }
  
+record SelectedItems(Item[] Items, int DirCount, int FileCount);
+record CopyItem(string Name, long Size, DateTime Date, FileVersion? Version, Conflict? Conflict);
+record Conflict(long Size, DateTime Date, FileVersion? Version);
