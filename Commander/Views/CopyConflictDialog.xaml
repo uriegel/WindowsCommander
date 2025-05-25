@@ -14,7 +14,7 @@
         <localDir:DateTimeExifConverter x:Key="DateTimeExifConverter" />
         <localDir:ExifColorConverter x:Key="ExifColorConverter" />
 
-        <DataTemplate DataType="{x:Type controls:CopyItem}">
+        <DataTemplate DataType="{x:Type localDir:CopyItem}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, 
@@ -36,15 +36,25 @@
                         UseLayoutRounding="True"
                         SnapsToDevicePixels="False"
                         RenderOptions.BitmapScalingMode="NearestNeighbor"
-                       Source="{Binding Icon}"
+                        Source="{Binding Icon1}"
                         VerticalAlignment="Center" />
                     <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                 </Grid>
 
-                <TextBlock Margin="0, 0, 5, 0" Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding Date}" />
-                <TextBlock Margin="5, 0" Grid.Column="2" TextAlignment="Right" TextTrimming="CharacterEllipsis"
-                            Text="{Binding Size}" />
-                <TextBlock Grid.Column="3" TextTrimming="CharacterEllipsis" Text="{Binding FileVersion}" />
+                <StackPanel Orientation="Vertical" Margin="0, 0, 5, 0" Grid.Column="1" >
+                    <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Date}" />
+                    <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Conflict.Date}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Margin="5, 0" Grid.Column="2">
+                    <TextBlock TextAlignment="Right" TextTrimming="CharacterEllipsis" Text="{Binding Size}" />
+                    <TextBlock TextAlignment="Right" TextTrimming="CharacterEllipsis" Text="{Binding Conflict.Size}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Column="3">
+                    <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Version}" />
+                    <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Conflict.Version}" />
+                </StackPanel>
             </Grid>
         </DataTemplate>
     </Window.Resources>

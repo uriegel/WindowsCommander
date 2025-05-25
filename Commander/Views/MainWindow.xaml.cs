@@ -31,7 +31,6 @@ public partial class MainWindow : Window
         ShowHidden.IsChecked = !ShowHidden.IsChecked;
         MainWindowContext.Instance.ErrorText = ShowHidden.IsChecked ? "Das ist ein ganz besonders blöder Fäler" : null;
     }
-
     void SelectAll_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectAll();
     void SelectNone_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectNone();
     void ToggleCurrentSelection_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().ToggleCurrentSelection();

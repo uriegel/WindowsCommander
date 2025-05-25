@@ -3,10 +3,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
+
+using ClrWinApi;
 
 using Commander.Controls;
 using Commander.Controls.ColumnViewHeader;
 using Commander.Extensions;
+using Commander.Views;
 
 using CsTools;
 using CsTools.Extensions;
@@ -111,7 +116,116 @@ class DirectoryController : IController
         ]);
     }
 
-    public void Refresh()  { }
+    public async void CopyItems(FolderView folderView, string targetPath, Func<Task> refresh, bool move)
+    {
+        var selectedItems = GetSelectedItems(folderView);
+        if (selectedItems.FileCount == 0 && selectedItems.DirCount == 0)
+            return;
+
+        var copyItems = selectedItems.Items.SelectFilterNull(CreateCopyItem).ToArray();
+        if (!copyItems.Any(n => n.Conflict != null))
+        {
+            var action = move ? "verschieben" : "kopieren";
+            var message = selectedItems.FileCount == 0 && selectedItems.DirCount == 1
+                    ? $"Möchtest du das Verzeichnis {action}?"
+                    : selectedItems.FileCount == 1 && selectedItems.DirCount == 0
+                    ? $"Möchtest du die Datei {action}?"
+                    : selectedItems.FileCount > 1 && selectedItems.DirCount == 0
+                    ? $"Möchtest du die Dateien {action}?"
+                    : selectedItems.FileCount == 0 && selectedItems.DirCount > 1
+                    ? $"Möchtest du die Verzeichnisse {action}?"
+                    : $"Möchtest du die Elemente {action}?";
+            var md = new MessageDialog($"Elemente {action}", message);
+            if (md.ShowDialog() != true)
+                return;
+        }
+        else
+        {
+            var ccd = new CopyConflictDialog(move, [.. copyItems.Where(n => n.Conflict != null)]);
+            if (ccd.ShowDialog() != true)
+                return;
+        }
+
+        var op = new ShFileOPStruct()
+        {
+            Hwnd = new WindowInteropHelper(Window.GetWindow(folderView)).Handle,
+            Flags = FileOpFlags.NOCONFIRMATION | FileOpFlags.MULTIDESTFILES | FileOpFlags.ALLOWUNDO,
+            From = string.Join("\0", copyItems.Select(n => folderView.Context.CurrentPath.AppendPath(n.Name))) + "\0",
+            To = string.Join("\0", copyItems.Select(n => targetPath.AppendPath(n.Name))) + "\0",
+            Func = move ? FileFuncFlags.MOVE : FileFuncFlags.COPY,
+            ProgressTitle = move ? "Verschiebe Dateien" : "Kopiere Dateien"
+        };
+        var res = Api.SHFileOperation(op);
+        if (move)
+            await folderView.Refresh();
+        await refresh();
+
+        CopyItem? CreateCopyItem(Item item)
+        {
+            if (item is DirectoryItem dirItem)
+                return new CopyItem(dirItem.Name, "", 0, dirItem.DateTime, null, null);
+            else if (item is FileItem fileItem)
+            {
+                var info = new FileInfo(folderView.Context.CurrentPath.AppendPath(fileItem.Name));
+                if (info.Exists)
+                    return new CopyItem(fileItem.Name, fileItem.Name, info.Length, info.LastWriteTime, fileItem.FileVersion, CreateConflict(fileItem));
+            }
+            return null;
+        }
+
+        Conflict? CreateConflict(FileItem fileItem)
+        {
+            var info = new FileInfo(targetPath.AppendPath(fileItem.Name));
+            if (info.Exists)
+                return new Conflict(info.Length, info.LastWriteTime, fileItem.FileVersion);
+            return null;
+        }
+    }
+
+    public async void DeleteItems(FolderView folderView)
+    {
+        var selectedItems = GetSelectedItems(folderView);
+        if (selectedItems.FileCount == 0 && selectedItems.DirCount == 0)
+            return;
+        var message = selectedItems.FileCount == 0 && selectedItems.DirCount == 1
+                ? "Möchtest du das Verzeichnis löschen?"
+                : selectedItems.FileCount == 1 && selectedItems.DirCount == 0
+                ? "Möchtest du die Datei löschen?"
+                : selectedItems.FileCount > 1 && selectedItems.DirCount == 0
+                ? "Möchtest du die Dateien löschen?"
+                : selectedItems.FileCount == 0 && selectedItems.DirCount > 1
+                ? "Möchtest du die Verzeichnisse löschen?"
+                : "Möchtest du die Elemente löschen?";
+        var md = new MessageDialog("Elemente löschen", message);
+        if (md.ShowDialog() == true)
+        {
+            var files = selectedItems.Items.Select(n => n.Name).ToArray();
+            var op = new ShFileOPStruct()
+            {
+                Hwnd = new WindowInteropHelper(Window.GetWindow(folderView)).Handle,
+                Flags = FileOpFlags.NOCONFIRMATION | FileOpFlags.ALLOWUNDO,
+                From = string.Join("\0", files.Select(folderView.Context.CurrentPath.AppendPath)) + "\0",
+                Func = FileFuncFlags.DELETE,
+                ProgressTitle = "Elemente löschen"
+            };
+            var res = Api.SHFileOperation(op);
+            await folderView.Refresh();
+        }
+    }
+
+    SelectedItems GetSelectedItems(FolderView folderView)
+    {
+        (var currentItem, var selectedItems) = folderView.GetSelectedItems();
+        var files = selectedItems
+                        .OfType<Item>()
+                        .Where(n => n is not ParentItem)
+                        .ToArray();
+        if (files.Length == 0 && currentItem != null)
+            files = [currentItem];
+        var filesCount = files.Count(n => n is FileItem);
+        var dirCount = files.Count(n => n is DirectoryItem);
+        return new SelectedItems(files, dirCount, filesCount);
+    }
 
     static ExtendedItem? GetExifItem(Item item, int idx, string path, CancellationToken token)
     {
@@ -143,3 +257,49 @@ class DirectoryController : IController
 }
 
 record ExtendedItem(int Index, DateTime? Exif, FileVersion? FileVersion);
+public record SelectedItems(Item[] Items, int DirCount, int FileCount);
+public record CopyItem(long Size, DateTime Date, FileVersion? Version, Conflict? Conflict) : Item
+{
+    public CopyItem(string name, string iconPath, long Size, DateTime Date, FileVersion? Version, Conflict? Conflict)
+        : this(Size, Date, Version, Conflict)
+    {
+        Name = name;
+        IconPath = iconPath;
+    }
+    public string? IconPath
+    {
+        get => field;
+        set
+        {
+            OnChanged(nameof(Icon1));
+            field = value;
+        }
+    }
+
+    public BitmapSource? Icon1
+    {
+        get
+        {
+            if (field == null)
+            {
+                GetIcon();
+                async void GetIcon()
+                {
+                    var bitmapSource = await FileIcon.Get(IconPath);
+                    if (bitmapSource != null)
+                    {
+                        field = bitmapSource;
+                        OnChanged(nameof(Icon1));
+                    }
+                }
+            }
+            return field;
+        }
+        set
+        {
+            OnChanged(nameof(Icon1));
+            field = value;
+        }
+    }
+}
+public record Conflict(long Size, DateTime Date, FileVersion? Version);
