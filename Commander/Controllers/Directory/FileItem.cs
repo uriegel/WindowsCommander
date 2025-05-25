@@ -106,5 +106,5 @@ public record FileItem : Item
 
 public record FileVersion(int Major, int Minor, int Patch, int Build)
 {
-    public override string ToString() => $"{Major}.{Minor}.{Patch}.{Build}";
+    public override string ToString() => $"{Major}.{Minor}.{Build}.{Patch}";
 }

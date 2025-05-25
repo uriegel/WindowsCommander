@@ -39,9 +39,9 @@ class DirectoryComparer(int index, bool descending) : IComparer
             ? item1.FileVersion.Major - item2.FileVersion.Major
             : item1.FileVersion.Minor != item2.FileVersion.Minor
             ? item1.FileVersion.Minor - item2.FileVersion.Minor
-            : item1.FileVersion.Patch != item2.FileVersion.Patch
-            ? item1.FileVersion.Patch - item2.FileVersion.Patch
-            : item1.FileVersion.Build - item2.FileVersion.Build;
+            : item1.FileVersion.Build != item2.FileVersion.Build
+            ? item1.FileVersion.Build - item2.FileVersion.Build
+            : item1.FileVersion.Patch - item2.FileVersion.Patch;
 
     static DateTime GetDateTime(FileItem item)
         => item.ExifTime != null

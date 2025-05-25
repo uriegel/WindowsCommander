@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
@@ -24,6 +23,7 @@ namespace Commander.Controls;
 // TODO Conflict dialog with directories
 // TODO Conflict dialog yes or no: remove conflicts if no, overwrite if yes, without confirmation
 // TODO No Conflict: with confirmation
+// TODO Conflict dialog: Versions: get targetVersion from targetFolderView
 
 // TODO Copy (move): create test copy from network to folder with no access
 // TODO Rename with ShellExecute and SH-UI (UAC)
