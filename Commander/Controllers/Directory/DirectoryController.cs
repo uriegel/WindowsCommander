@@ -168,7 +168,7 @@ class DirectoryController : IController
             {
                 var info = new FileInfo(folderView.Context.CurrentPath.AppendPath(fileItem.Name));
                 if (info.Exists)
-                    return new CopyItem(fileItem.Name, fileItem.Name, info.Length, info.LastWriteTime, fileItem.FileVersion, CreateConflict(fileItem));
+                    return new CopyItem(fileItem.Name, info.FullName, info.Length, info.LastWriteTime, fileItem.FileVersion, CreateConflict(fileItem));
             }
             return null;
         }

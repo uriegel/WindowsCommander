@@ -19,7 +19,6 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO file icons for exein conflicts
 // TODO Conflict dialog with directories
 // TODO Conflict dialog yes or no: remove conflicts if no, overwrite if yes, without confirmation
 // TODO No Conflict: with confirmation

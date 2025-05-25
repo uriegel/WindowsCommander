@@ -44,17 +44,19 @@ static class FileIcon
                 int size = SHIL_SMALL; // Choose SHIL_EXTRALARGE for high DPI
 
                 SHGetImageList(size, ref IID_IImageList, out var imageList);
-                var res = imageList.GetIcon(index, 0x00000001, out var hIcon); // ILD_TRANSPARENT                    
-
-                if (hIcon != 0)
+                if (imageList != null)
                 {
-                    bitmapSource = Imaging.CreateBitmapSourceFromHIcon(hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                    bitmapSource.Freeze();
-                    icons[name] = bitmapSource;
-                    return bitmapSource;
+                    var res = imageList.GetIcon(index, 0x00000001, out var hIcon); // ILD_TRANSPARENT                    
+
+                    if (hIcon != 0)
+                    {
+                        bitmapSource = Imaging.CreateBitmapSourceFromHIcon(hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                        bitmapSource.Freeze();
+                        icons[name] = bitmapSource;
+                        return bitmapSource;
+                    }
                 }
-                else
-                    return null;
+                return null;
             });
         }
         else
@@ -66,7 +68,7 @@ static class FileIcon
     static Guid IID_IImageList = new("46EB5926-582E-4017-9FDF-E8998DAA0950");
 
     [DllImport("shell32.dll")]
-    static extern int SHGetImageList(int iImageList, ref Guid riid, out IImageList ppv);
+    static extern int SHGetImageList(int iImageList, ref Guid riid, out IImageList? ppv);
 
     [ComImport]
     [Guid("46EB5926-582E-4017-9FDF-E8998DAA0950")]
