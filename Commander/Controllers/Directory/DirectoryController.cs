@@ -271,12 +271,12 @@ public record CopyItem(long Size, DateTime Date, FileVersion? Version, Conflict?
         get => field;
         set
         {
-            OnChanged(nameof(Icon1));
+            OnChanged(nameof(Icon));
             field = value;
         }
     }
 
-    public BitmapSource? Icon1
+    public BitmapSource? Icon
     {
         get
         {
@@ -289,7 +289,7 @@ public record CopyItem(long Size, DateTime Date, FileVersion? Version, Conflict?
                     if (bitmapSource != null)
                     {
                         field = bitmapSource;
-                        OnChanged(nameof(Icon1));
+                        OnChanged(nameof(Icon));
                     }
                 }
             }
@@ -297,9 +297,13 @@ public record CopyItem(long Size, DateTime Date, FileVersion? Version, Conflict?
         }
         set
         {
-            OnChanged(nameof(Icon1));
+            OnChanged(nameof(Icon));
             field = value;
         }
     }
+
+    public bool IsNewer { get => Conflict != null && Date > Conflict.Date; }
+    public bool IsOlder { get => Conflict != null && Date < Conflict.Date; }
+    public bool IsEqualSize { get => Conflict != null && Size == Conflict.Size; }
 }
 public record Conflict(long Size, DateTime Date, FileVersion? Version);
