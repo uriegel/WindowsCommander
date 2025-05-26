@@ -19,11 +19,9 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO Conflict dialog: set default button
-// TODO Conflict dialog yes or no: remove conflicts if no, overwrite if yes, without confirmation
-// TODO No Conflict: with confirmation
 // TODO Conflict dialog: Versions: get targetVersion from targetFolderView
 // TODO Conflict dialog: opacity if equal version, red or green if different
+// TODO Conflict dialog: set default button 
 
 // TODO Copy (move): create test copy from network to folder with no access
 // TODO Rename with ShellExecute and SH-UI (UAC)

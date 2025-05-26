@@ -122,6 +122,7 @@ class DirectoryController : IController
         if (selectedItems.FileCount == 0 && selectedItems.DirCount == 0)
             return;
 
+        bool noConfirmation = false;
         var copyItems = selectedItems.Items.SelectFilterNull(CreateCopyItem).ToArray();
         if (!copyItems.Any(n => n.Conflict != null))
         {
@@ -147,17 +148,22 @@ class DirectoryController : IController
                 return;
             if (ccd.Overwrite == false)
                 copyItems = [.. copyItems.Where(n => n.Conflict == null)];
+            else
+                noConfirmation = true;
         }
 
         var op = new ShFileOPStruct()
         {
             Hwnd = new WindowInteropHelper(Window.GetWindow(folderView)).Handle,
-            Flags = FileOpFlags.NOCONFIRMATION | FileOpFlags.MULTIDESTFILES | FileOpFlags.ALLOWUNDO,
+            Flags = FileOpFlags.MULTIDESTFILES | FileOpFlags.ALLOWUNDO,
             From = string.Join("\0", copyItems.Select(n => folderView.Context.CurrentPath.AppendPath(n.Name))) + "\0",
             To = string.Join("\0", copyItems.Select(n => targetPath.AppendPath(n.Name))) + "\0",
             Func = move ? FileFuncFlags.MOVE : FileFuncFlags.COPY,
             ProgressTitle = move ? "Verschiebe Dateien" : "Kopiere Dateien"
         };
+        if (noConfirmation)
+            op.Flags |= FileOpFlags.NOCONFIRMATION;
+        
         var res = Api.SHFileOperation(op);
         if (move)
             await folderView.Refresh();

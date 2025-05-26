@@ -19,6 +19,11 @@ public partial class CopyConflictDialog : Window
 
         Owner = Application.Current.MainWindow;
 
+        if (copyItems.Any(n => n.IsOlder))
+            NoButton.IsDefault = true;
+        else
+            YesButton.IsDefault = true;
+        
         Title = move ? "Dateien verschieben" : "Dateien kopieren";
 
         ColumnView.Headers.HeaderItems = 
@@ -53,8 +58,6 @@ public partial class CopyConflictDialog : Window
         var ctx = new ColumnViewContext();
         ColumnView.DataContext = ctx;
         ColumnView.Headers.ColumnViewContext = ctx;
-
-        NoButton.IsDefault = true;
     }
 
     void YesButton_Click(object sender, RoutedEventArgs e)
