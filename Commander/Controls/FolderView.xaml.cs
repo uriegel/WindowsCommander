@@ -19,6 +19,7 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
+// TODO Conflict dialog: set default button
 // TODO Conflict dialog yes or no: remove conflicts if no, overwrite if yes, without confirmation
 // TODO No Conflict: with confirmation
 // TODO Conflict dialog: Versions: get targetVersion from targetFolderView
