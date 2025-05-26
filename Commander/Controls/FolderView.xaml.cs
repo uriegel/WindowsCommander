@@ -113,18 +113,19 @@ public partial class FolderView : UserControl
         }
     }
 
-    public async Task Refresh()
+    public async Task Refresh(bool focus = true)
     {
         var currentItem = ColumnView.CurrentItem as Item;
         var selectedItemsNames = ColumnView.ListView.SelectedItems.Cast<Item>().Select(n => n.Name).ToArray();
         ColumnView.ListView.SelectedItems.Clear();
-        await ChangePathAsync(Context.CurrentPath, false);
+        await ChangePathAsync(Context.CurrentPath, false, !focus);
         if (currentItem != null)
         {
             var index = GetItems().Index().FirstOrDefault(n => n.Item.Name == currentItem.Name).Index;
             var listViewItem = ColumnView.ListView.ItemContainerGenerator.ContainerFromIndex(index) as ListViewItem;
             ColumnView.ListView.UpdateLayout();
-            listViewItem?.Focus();
+            if (focus)
+                listViewItem?.Focus();
         }
         if (selectedItemsNames.Length != 0)
         {
