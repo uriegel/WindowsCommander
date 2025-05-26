@@ -142,8 +142,11 @@ class DirectoryController : IController
         else
         {
             var ccd = new CopyConflictDialog(move, [.. copyItems.Where(n => n.Conflict != null)]);
-            if (ccd.ShowDialog() != true)
+            ccd.ShowDialog();
+            if (ccd.Overwrite == null)
                 return;
+            if (ccd.Overwrite == false)
+                copyItems = [.. copyItems.Where(n => n.Conflict == null)];
         }
 
         var op = new ShFileOPStruct()
@@ -165,8 +168,8 @@ class DirectoryController : IController
             if (item is DirectoryItem dirItem)
             {
                 var info = new DirectoryInfo(folderView.Context.CurrentPath.AppendPath(dirItem.Name));
-                if (info.Exists && new DirectoryInfo(targetPath.AppendPath(dirItem.Name)).Exists)
-                    return new CopyItem(dirItem.Name);
+                if (info.Exists)
+                    return new CopyItem(dirItem.Name, new DirectoryInfo(targetPath.AppendPath(dirItem.Name)).Exists ? new Conflict(null, null, null) : null);
                 else
                     return null;
             }
@@ -266,8 +269,8 @@ record ExtendedItem(int Index, DateTime? Exif, FileVersion? FileVersion);
 public record SelectedItems(Item[] Items, int DirCount, int FileCount);
 public record CopyItem(long? Size, DateTime? Date, FileVersion? Version, Conflict? Conflict) : Item
 {
-    public CopyItem(string name)
-        : this(null, null, null, new Conflict(null, null, null))
+    public CopyItem(string name, Conflict? conflict)
+        : this(null, null, null, conflict)
     {
         Name = name;
         Icon = "Resources/Folder.ico".IconFromResource();

@@ -11,6 +11,8 @@ namespace Commander.Views;
 
 public partial class CopyConflictDialog : Window
 {
+    public bool? Overwrite { get; private set; }
+
     public CopyConflictDialog(bool move, CopyItem[] copyItems)
     {
         InitializeComponent();
@@ -57,22 +59,19 @@ public partial class CopyConflictDialog : Window
 
     void YesButton_Click(object sender, RoutedEventArgs e)
     {
-        DialogResult = true;
+        Overwrite = true;
         Close();
     }
 
     void NoButton_Click(object sender, RoutedEventArgs e)
     {
-        DialogResult = true;
+        Overwrite = false;
         Close();
     }
 
     void DockPanel_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
     {
         if (e.Key == System.Windows.Input.Key.Escape)
-        {
-            DialogResult = false;
             Close();
-        }
     }
 }
