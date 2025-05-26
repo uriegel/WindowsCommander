@@ -92,7 +92,7 @@
                 </Style>
             </StackPanel.Resources>
             <Button x:Name="YesButton" Width="{Binding ActualWidth, ElementName=NoButton, Mode=Default}" Click="YesButton_Click">Ja</Button>
-            <Button x:Name="NoButton" Click="NoButton_Click">Nein</Button>
+            <Button x:Name="NoButton" MinWidth="80" Click="NoButton_Click">Nein</Button>
         </StackPanel>
         <controls:ColumnView x:Name="ColumnView" x:FieldModifier="private"/>
     </DockPanel>

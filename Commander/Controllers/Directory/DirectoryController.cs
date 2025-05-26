@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
-using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 using ClrWinApi;
 
@@ -163,7 +163,13 @@ class DirectoryController : IController
         CopyItem? CreateCopyItem(Item item)
         {
             if (item is DirectoryItem dirItem)
-                return new CopyItem(dirItem.Name, "", 0, dirItem.DateTime, null, null);
+            {
+                var info = new DirectoryInfo(folderView.Context.CurrentPath.AppendPath(dirItem.Name));
+                if (info.Exists && new DirectoryInfo(targetPath.AppendPath(dirItem.Name)).Exists)
+                    return new CopyItem(dirItem.Name);
+                else
+                    return null;
+            }
             else if (item is FileItem fileItem)
             {
                 var info = new FileInfo(folderView.Context.CurrentPath.AppendPath(fileItem.Name));
@@ -258,8 +264,15 @@ class DirectoryController : IController
 
 record ExtendedItem(int Index, DateTime? Exif, FileVersion? FileVersion);
 public record SelectedItems(Item[] Items, int DirCount, int FileCount);
-public record CopyItem(long Size, DateTime Date, FileVersion? Version, Conflict? Conflict) : Item
+public record CopyItem(long? Size, DateTime? Date, FileVersion? Version, Conflict? Conflict) : Item
 {
+    public CopyItem(string name)
+        : this(null, null, null, new Conflict(null, null, null))
+    {
+        Name = name;
+        Icon = "Resources/Folder.ico".IconFromResource();
+    }
+
     public CopyItem(string name, string iconPath, long Size, DateTime Date, FileVersion? Version, Conflict? Conflict)
         : this(Size, Date, Version, Conflict)
     {
@@ -276,7 +289,7 @@ public record CopyItem(long Size, DateTime Date, FileVersion? Version, Conflict?
         }
     }
 
-    public BitmapSource? Icon
+    public ImageSource? Icon
     {
         get
         {
@@ -306,4 +319,4 @@ public record CopyItem(long Size, DateTime Date, FileVersion? Version, Conflict?
     public bool IsOlder { get => Conflict != null && Date < Conflict.Date; }
     public bool IsEqualSize { get => Conflict != null && Size == Conflict.Size; }
 }
-public record Conflict(long Size, DateTime Date, FileVersion? Version);
+public record Conflict(long? Size, DateTime? Date, FileVersion? Version);
