@@ -19,7 +19,13 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
+// TODO F9 adapt
+// TODO CreateFolder
 // TODO Rename with ShellExecute and SH-UI (UAC)
+
+// TODO ShowProperties
+// TODO OpenFile
+// TODO OpenWith
 
 // TODO Banner info
 // TODO Sorting by file extension
