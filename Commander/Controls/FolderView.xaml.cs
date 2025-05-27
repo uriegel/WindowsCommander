@@ -19,8 +19,6 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO Conflict dialog: set default button when version is considered
-
 // TODO Rename with ShellExecute and SH-UI (UAC)
 
 // TODO Banner info

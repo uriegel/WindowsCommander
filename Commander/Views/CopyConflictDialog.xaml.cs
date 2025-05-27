@@ -19,7 +19,7 @@ public partial class CopyConflictDialog : Window
 
         Owner = Application.Current.MainWindow;
 
-        if (copyItems.Any(n => n.IsOlder))
+        if (copyItems.Any(n => n.IsOlder) || copyItems.Any(n => n.IsVersionOlder))
             NoButton.IsDefault = true;
         else
             YesButton.IsDefault = true;
