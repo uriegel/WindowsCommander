@@ -21,12 +21,14 @@ namespace Commander.Controls;
 
 // TODO Conflict dialog: set default button when version is considered
 
-// TODO Copy (move): create test copy from network to folder with no access
 // TODO Rename with ShellExecute and SH-UI (UAC)
 
 // TODO Banner info
 // TODO Sorting by file extension
+
 // TODO %systemroot%\system32\imageres.dll
+// TODO Copy (move): create test copy from network to folder with no access
+
 
 public partial class FolderView : UserControl
 {
