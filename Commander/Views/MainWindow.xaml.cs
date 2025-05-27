@@ -38,9 +38,9 @@ public partial class MainWindow : Window
     void SelectTillEnd_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().SelectTillEnd();
     async void Refresh_Executed(object sender, ExecutedRoutedEventArgs e) => await GetActiveView().Refresh();
     void CopyItems_Executed(object sender, ExecutedRoutedEventArgs e) 
-        => GetActiveView().CopyItems(GetInactiveView().Context.CurrentPath, () => GetInactiveView().Refresh(false), false);
+        => GetActiveView().CopyItems(GetInactiveView(), false);
     void MoveItems_Executed(object sender, ExecutedRoutedEventArgs e)
-        => GetActiveView().CopyItems(GetInactiveView().Context.CurrentPath, () => GetInactiveView().Refresh(false), true);
+        => GetActiveView().CopyItems(GetInactiveView(), true);
     void DeleteItems_Executed(object sender, ExecutedRoutedEventArgs e) => GetActiveView().DeleteItems();
 
     #endregion

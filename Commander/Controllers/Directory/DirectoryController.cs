@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -116,13 +117,18 @@ class DirectoryController : IController
         ]);
     }
 
-    public async void CopyItems(FolderView folderView, string targetPath, Func<Task> refresh, bool move)
+    public async void CopyItems(FolderView folderView, FolderView targetFolderView, bool move)
     {
         var selectedItems = GetSelectedItems(folderView);
         if (selectedItems.FileCount == 0 && selectedItems.DirCount == 0)
             return;
 
         bool noConfirmation = false;
+        var targetVersions = targetFolderView
+                                .GetItems()
+                                .OfType<FileItem>()
+                                .Where(n => n.FileVersion != null)
+                                .ToImmutableDictionary(n => n.Name, n => n.FileVersion!);
         var copyItems = selectedItems.Items.SelectFilterNull(CreateCopyItem).ToArray();
         if (!copyItems.Any(n => n.Conflict != null))
         {
@@ -157,7 +163,7 @@ class DirectoryController : IController
             Hwnd = new WindowInteropHelper(Window.GetWindow(folderView)).Handle,
             Flags = FileOpFlags.MULTIDESTFILES | FileOpFlags.ALLOWUNDO,
             From = string.Join("\0", copyItems.Select(n => folderView.Context.CurrentPath.AppendPath(n.Name))) + "\0",
-            To = string.Join("\0", copyItems.Select(n => targetPath.AppendPath(n.Name))) + "\0",
+            To = string.Join("\0", copyItems.Select(n => targetFolderView.Context.CurrentPath.AppendPath(n.Name))) + "\0",
             Func = move ? FileFuncFlags.MOVE : FileFuncFlags.COPY,
             ProgressTitle = move ? "Verschiebe Dateien" : "Kopiere Dateien"
         };
@@ -167,7 +173,7 @@ class DirectoryController : IController
         var res = Api.SHFileOperation(op);
         if (move)
             await folderView.Refresh();
-        await refresh();
+        await targetFolderView.Refresh(false);
 
         CopyItem? CreateCopyItem(Item item)
         {
@@ -175,7 +181,9 @@ class DirectoryController : IController
             {
                 var info = new DirectoryInfo(folderView.Context.CurrentPath.AppendPath(dirItem.Name));
                 if (info.Exists)
-                    return new CopyItem(dirItem.Name, new DirectoryInfo(targetPath.AppendPath(dirItem.Name)).Exists ? new Conflict(null, null, null) : null);
+                    return new CopyItem(dirItem.Name, new DirectoryInfo(targetFolderView.Context.CurrentPath.AppendPath(dirItem.Name)).Exists 
+                                                                            ? new Conflict(null, null, null) 
+                                                                            : null);
                 else
                     return null;
             }
@@ -190,9 +198,9 @@ class DirectoryController : IController
 
         Conflict? CreateConflict(FileItem fileItem)
         {
-            var info = new FileInfo(targetPath.AppendPath(fileItem.Name));
+            var info = new FileInfo(targetFolderView.Context.CurrentPath.AppendPath(fileItem.Name));
             if (info.Exists)
-                return new Conflict(info.Length, info.LastWriteTime, fileItem.FileVersion);
+                return new Conflict(info.Length, info.LastWriteTime, targetVersions.GetValue(fileItem.Name));
             return null;
         }
     }
@@ -327,5 +335,17 @@ public record CopyItem(long? Size, DateTime? Date, FileVersion? Version, Conflic
     public bool IsNewer { get => Conflict != null && Date > Conflict.Date; }
     public bool IsOlder { get => Conflict != null && Date < Conflict.Date; }
     public bool IsEqualSize { get => Conflict != null && Size == Conflict.Size; }
+    public bool IsVersionNewer
+    { 
+        get => Conflict?.Version != null 
+                                        && Version != null 
+                                        && DirectoryComparer.CompareVersion(Version, Conflict.Version) > 0; 
+    }
+    public bool IsVersionOlder
+    {
+        get => Conflict?.Version != null
+                                        && Version != null
+                                        && DirectoryComparer.CompareVersion(Version, Conflict.Version) < 0;
+    }
 }
 public record Conflict(long? Size, DateTime? Date, FileVersion? Version);

@@ -22,7 +22,7 @@ class DirectoryComparer(int index, bool descending) : IComparer
                 0 => file1.Name.CompareTo(file2.Name),
                 1 => GetDateTime(file1).CompareTo(GetDateTime(file2)),
                 2 => (int)(file1.Size - file2.Size),
-                3 => CompareVersion(file1, file2),
+                3 => CompareVersion(file1.FileVersion, file2.FileVersion),
                 _ => 0
             } * (descending ? -1 : 1);
         }
@@ -30,18 +30,18 @@ class DirectoryComparer(int index, bool descending) : IComparer
             return 0;
     }
 
-    static int CompareVersion(FileItem item1, FileItem item2)
-        => item1.FileVersion == null
+    public static int CompareVersion(FileVersion? version1, FileVersion? version2)
+        => version1 == null
             ? -1
-            : item2.FileVersion == null
+            : version2 == null
             ? 1
-            : item1.FileVersion!.Major != item2.FileVersion.Major
-            ? item1.FileVersion.Major - item2.FileVersion.Major
-            : item1.FileVersion.Minor != item2.FileVersion.Minor
-            ? item1.FileVersion.Minor - item2.FileVersion.Minor
-            : item1.FileVersion.Build != item2.FileVersion.Build
-            ? item1.FileVersion.Build - item2.FileVersion.Build
-            : item1.FileVersion.Patch - item2.FileVersion.Patch;
+            : version1!.Major != version2.Major
+            ? version1.Major - version2.Major
+            : version1.Minor != version2.Minor
+            ? version1.Minor - version2.Minor
+            : version1.Build !=version2.Build
+            ? version1.Build - version2.Build
+            : version1.Patch - version2.Patch;
 
     static DateTime GetDateTime(FileItem item)
         => item.ExifTime != null

@@ -19,9 +19,7 @@ using Commander.Views;
 
 namespace Commander.Controls;
 
-// TODO Conflict dialog: Versions: get targetVersion from targetFolderView
-// TODO Conflict dialog: opacity if equal version, red or green if different
-// TODO Conflict dialog: set default button 
+// TODO Conflict dialog: set default button when version is considered
 
 // TODO Copy (move): create test copy from network to folder with no access
 // TODO Rename with ShellExecute and SH-UI (UAC)
@@ -135,7 +133,7 @@ public partial class FolderView : UserControl
         }
     }
 
-    public void CopyItems(string targetPath, Func<Task> refresh, bool move) => Controller.CopyItems(this, targetPath, refresh, move);
+    public void CopyItems(FolderView targetFolderView, bool move) => Controller.CopyItems(this, targetFolderView, move);
 
     public void DeleteItems() => Controller.DeleteItems(this);
 

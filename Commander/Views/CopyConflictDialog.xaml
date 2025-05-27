@@ -52,7 +52,7 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Grid.Column="3">
-                    <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Version}" />
+                    <TextBlock x:Name="VersionText" TextTrimming="CharacterEllipsis" Text="{Binding Version}" />
                     <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Conflict.Version}" />
                 </StackPanel>
             </Grid>
@@ -67,6 +67,14 @@
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsEqualSize}" Value="True">
                     <Setter TargetName="SizePanel" Property="Opacity" Value="0.4"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsVersionNewer}" Value="True">
+                    <Setter TargetName="VersionText" Property="Background" Value="LightGreen"/>
+                    <Setter TargetName="VersionText" Property="Foreground" Value="black"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsVersionOlder}" Value="True">
+                    <Setter TargetName="VersionText" Property="Background" Value="red"/>
+                    <Setter TargetName="VersionText" Property="Foreground" Value="white"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
