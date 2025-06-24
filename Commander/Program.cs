@@ -6,12 +6,12 @@ WebView
     .Title("Web Window Net Core 👍")
     .InitialBounds(600, 800)
     .SaveBounds()
-    .DefaultContextMenuDisabled()
+    .DevTools()
+    //.DefaultContextMenuDisabled()
 #if Windows
     .ResourceIcon("icon")
 #endif
-    .DebugUrl("https://github.com/uriegel/WebWindowNetCore")
+    .DebugUrl("http://localhost:5173")
     .Url("https://github.com")
-    .QueryString("?param1=123&param2=456")
     .CanClose(() => true)
     .Run();
