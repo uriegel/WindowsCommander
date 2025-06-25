@@ -3,7 +3,7 @@ using WebWindowNetCore;
 WebView
     .Create()
     .AppId("de.uriegel.test")
-    .Title("Web Window Net Core 👍")
+    .Title("Commander")
     .InitialBounds(600, 800)
     .SaveBounds()
     .DevTools()
