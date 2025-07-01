@@ -26,11 +26,20 @@ export class Directory implements IController {
 
     async onEnter(enterData: EnterData): Promise<OnEnterResult> {
         
-        return {
-            processed: false,
-            pathToSet: this.appendPath(enterData.path, enterData.item.name),
-            latestPath: enterData.item.isParent ? enterData.path.extractSubPath() : undefined 
+        if (!enterData.item.isDirectory) {
+            // TODO await onEnter({ id: enterData.id ?? "", name: enterData.item.name, path: enterData.path })
+            return {
+                processed: true
+            }
         }
+        else
+            return {
+                processed: false,
+                pathToSet: enterData.item.isParent && (enterData.path.length == 3 || enterData.path.endsWith('$')) 
+                    ? "root" 
+                    : this.appendPath(enterData.path, enterData.item.name),
+                latestPath: enterData.item.isParent ? enterData.path.extractSubPath() : undefined 
+            }
     }
 
     sort(items: FolderViewItem[], sortIndex: number, sortDescending: boolean) {

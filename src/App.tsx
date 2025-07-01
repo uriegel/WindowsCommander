@@ -1,7 +1,7 @@
 import { useRef } from 'react'
-import './App.css'
-import Commander, { type CommanderHandle } from './components/Commander'
 import './themes/windows.css'
+import Commander, { type CommanderHandle } from './components/Commander'
+import './App.css'
 import WithDialog from 'web-dialog-react'
 
 const App = () => {
