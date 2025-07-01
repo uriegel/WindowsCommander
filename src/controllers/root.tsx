@@ -11,7 +11,6 @@ export class Root implements IController {
             columns: [
                 { name: "Name" },
                 { name: "Bezeichnung" },
-                { name: "Mountpoint" },
                 { name: "Größe", isRightAligned: true }
             ],
             getRowClasses,
@@ -26,8 +25,7 @@ export class Root implements IController {
     async onEnter(enterData: EnterData): Promise<OnEnterResult> {
         return {
             processed: false,
-            pathToSet: enterData.item.mountPoint || enterData.item.mountPoint!.length > 0 ? enterData.item.mountPoint : enterData.item.name,
-            mount: !enterData.item.mountPoint            
+            pathToSet: enterData.item.name,
         }
     }
 
@@ -54,16 +52,7 @@ const getRowClasses = (item: FolderViewItem) =>
         : []
 
 const renderRow = (item: FolderViewItem) => [
-    (<IconName namePart={item.name} type={
-        item.name == '~'
-        ? IconNameType.Home
-        : item.name == REMOTES
-        ? IconNameType.Remote
-        : item.name == FAVORITES
-        ? IconNameType.Favorite
-        : item.isEjectable ? IconNameType.RootEjectable : IconNameType.Root
-    } />),
+    (<IconName namePart={item.name} type={IconNameType.Root} />),
     item.description ?? "",
-    item.mountPoint ?? "",
     formatSize(item.size)
 ]
