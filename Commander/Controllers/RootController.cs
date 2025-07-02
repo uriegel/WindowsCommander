@@ -32,10 +32,8 @@ class RootController(string folderId) : Controller(folderId)
                    n.IsReady ? n.VolumeLabel : "",
                    n.IsReady ? n.TotalSize : -1,
                    true))
-                //                .OrderByDescending(n => n.IsMounted)
                 .ToArray()
                 .ToAsync();     
-        //.ThenBy(n => n.Name);
     }
 }
 

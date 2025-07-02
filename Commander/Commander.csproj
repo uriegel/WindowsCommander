@@ -15,6 +15,15 @@
     <EmbeddedResource Include="./Resources/folder.png">
       <LogicalName>folder</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="./Resources/drive.png">
+      <LogicalName>drive</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="./Resources/networkshare.png">
+      <LogicalName>networkshare</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="./Resources/windowsdrive.png">
+      <LogicalName>windowsdrive</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>    
 
   <ItemGroup>
