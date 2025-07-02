@@ -1,14 +1,9 @@
-using System.Text;
 using CsTools;
 using CsTools.Extensions;
 using WebServerLight;
-//using Commander.Settings;
 
-using static CsTools.Functional.Memoization;
-using static CsTools.ProcessCmd;
 using static Commander.Controllers.FolderController;
 using Commander.Controllers;
-using Commander.Enums;
 
 namespace Commander;
 
@@ -27,11 +22,13 @@ static class Requests
 
     public static async Task<bool> GetIconFromName(IRequest request)
     {
-        return true;
-    }
-
-    public static async Task<bool> GetIconFromExtension(IRequest request)
-    {
+        
+        var iconfile = Resources.Get(request.SubPath ?? "emtpy");
+        var stream = new MemoryStream();
+        iconfile!.CopyTo(stream);
+        stream.Position = 0;
+        request.AddResponseHeader("Expires", (DateTime.UtcNow + TimeSpan.FromHours(1)).ToString("r"));
+        await request.SendAsync(stream, stream.Length, "image/png");
         return true;
     }
 
@@ -125,7 +122,7 @@ static class Requests
         }
         return true;
     }
-
+    
     static IWebSocket? webSocket;
 }
 record ChangePathRequest(

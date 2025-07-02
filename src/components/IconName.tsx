@@ -9,7 +9,7 @@ interface IconNameProps {
 
 const IconName = ({ namePart, type, iconPath }: IconNameProps) => 
     (<span> { type == IconNameType.Folder
-        ? (<img className="image" src={`http://localhost:20000/iconfromname/folder-open`} alt="" />)
+        ? (<img className="image" src={`http://localhost:20000/iconfromname/folder`} alt="" />)
         : type == IconNameType.File
         ? (<img className="iconImage" src={`http://localhost:20000/iconfromextension/${iconPath}`} alt="" />)
         : type == IconNameType.Root

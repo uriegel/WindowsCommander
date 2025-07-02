@@ -12,6 +12,12 @@
 	</PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="./Resources/folder.png">
+      <LogicalName>folder</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>    
+
+  <ItemGroup>
     <PackageReference Include="WebWindowNetCore" Version="11.0.19-beta-19" />
     <PackageReference Include="WebServerLight" Version="1.0.3" />
   </ItemGroup>
