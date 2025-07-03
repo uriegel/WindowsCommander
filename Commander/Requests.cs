@@ -1,9 +1,16 @@
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using CsTools;
 using CsTools.Extensions;
 using WebServerLight;
+using Commander.Controllers;
 
 using static Commander.Controllers.FolderController;
-using Commander.Controllers;
+using static ClrWinApi.Api;
+using static CsTools.Core;
+using ClrWinApi;
+using CsTools.Async;
 
 namespace Commander;
 
@@ -22,12 +29,18 @@ static class Requests
 
     public static async Task<bool> GetIconFromName(IRequest request)
     {
-        
         var iconfile = Resources.Get(request.SubPath ?? "emtpy");
         var stream = new MemoryStream();
         iconfile!.CopyTo(stream);
         stream.Position = 0;
         request.AddResponseHeader("Expires", (DateTime.UtcNow + TimeSpan.FromHours(1)).ToString("r"));
+        await request.SendAsync(stream, stream.Length, "image/png");
+        return true;
+    }
+
+    public static async Task<bool> GetIconFromExtension(IRequest request)
+    {
+        var stream = await GetIconStream(request.SubPath ?? ".default");
         await request.SendAsync(stream, stream.Length, "image/png");
         return true;
     }
@@ -122,6 +135,30 @@ static class Requests
         }
         return true;
     }
+
+    static Task<Stream> GetIconStream(string iconHint)
+        => Try(() => iconHint.Contains('\\')
+            ? (Icon.ExtractAssociatedIcon(iconHint)?.Handle ?? 0).ToAsync()
+            : RepeatOnException(() =>
+                {
+                    var shinfo = new ShFileInfo();
+                    var handle = SHGetFileInfo(iconHint, ClrWinApi.FileAttributes.Normal, ref shinfo, Marshal.SizeOf(shinfo),
+                        SHGetFileInfoConstants.ICON | SHGetFileInfoConstants.SMALLICON | SHGetFileInfoConstants.USEFILEATTRIBUTES | SHGetFileInfoConstants.TYPENAME);
+                    return shinfo.IconHandle != IntPtr.Zero
+                        ? shinfo.IconHandle.ToAsync()
+                        : throw new Exception("Not found");
+                }, 3, TimeSpan.FromMilliseconds(40)), _ => Icon.ExtractAssociatedIcon(@"C:\Windows\system32\SHELL32.dll")!.Handle)
+            ?.Select(handle =>
+                {
+                    using var icon = Icon.FromHandle(handle);
+                    using var bitmap = icon.ToBitmap();
+                    var ms = new MemoryStream();
+                    bitmap.Save(ms, ImageFormat.Png);
+                    ms.Position = 0;
+                    DestroyIcon(handle);
+                    return ms as Stream;
+                })
+            ?? (new MemoryStream() as Stream).ToAsync();
     
     static IWebSocket? webSocket;
 }

@@ -18,9 +18,9 @@ var server =
             .Add(PathRoute
                 .New("/iconfromname")
                 .Request(Requests.GetIconFromName))
-            // .Add(PathRoute
-            //     .New("/iconfromextension")
-            //     .Request(Requests.GetIconFromExtension))
+            .Add(PathRoute
+                .New("/iconfromextension")
+                .Request(Requests.GetIconFromExtension))
             .Add(PathRoute
                 .New("/getfile")
                 .Request(Requests.GetFile))

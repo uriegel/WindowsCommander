@@ -1,4 +1,3 @@
-using Commander.Enums;
 using CsTools.Extensions;
 
 using static System.Console;
@@ -144,6 +143,7 @@ class DirectoryController(string folderId) : Controller(folderId)
 
 record DirectoryItem(
     string Name,
+    string? Icon,
     long Size,
     bool IsDirectory,
     bool IsParent,
@@ -156,6 +156,7 @@ record DirectoryItem(
     public static DirectoryItem CreateParentItem()
         => new(
             "..",
+            null,
             -1,
             true,
             true,
@@ -165,6 +166,7 @@ record DirectoryItem(
     public static DirectoryItem CreateDirItem(DirectoryInfo info)
         => new(
             info.Name,
+            null,
             -1,
             true,
             false,
@@ -174,6 +176,7 @@ record DirectoryItem(
     public static DirectoryItem CreateFileItem(FileInfo info)
         => new(
             info.Name,
+            GetIcon(info),
             info.Length,
             false,
             false,
@@ -183,11 +186,17 @@ record DirectoryItem(
     public static DirectoryItem CreateCopyFileItem(string name, FileInfo info)
         => new(
             name,
+            GetIcon(info),
             info.Length,
             false,
             false,
             (info.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden,
             info.LastWriteTime);
+
+    static string? GetIcon(FileInfo info) =>
+        info.Name.EndsWith("exe", StringComparison.InvariantCultureIgnoreCase)
+        ? info.FullName
+        : info.Name.GetFileExtension();
 };
 
 record DirFileInfo(

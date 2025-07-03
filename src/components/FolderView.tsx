@@ -51,6 +51,7 @@ export interface FolderViewItem extends SelectableItem {
     size?:        number
     isParent?:    boolean
     isDirectory?: boolean
+    icon?:        string
     // Root item
     description?: string
     mountPoint?:  string

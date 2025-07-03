@@ -90,9 +90,6 @@ export class Directory implements IController {
     }
 }
 
-// TODO const REMOTES = "remotes"
-// TODO const FAVORITES = "fav"
-
 const getRowClasses = (item: FolderViewItem) => 
 	item.isHidden
 		? ["hidden"]
@@ -105,7 +102,7 @@ const renderRow = (item: FolderViewItem) => [
 			: item.isDirectory
 			? IconNameType.Folder
 			: IconNameType.File}
-		iconPath={item.name.getExtension()} />),
+		iconPath={item.icon} />),
 	(<span className={item.exifData?.dateTime ? "exif" : "" } >{formatDateTime(item?.exifData?.dateTime ?? item?.time)}</span>),
 	formatSize(item.size)
 ]
