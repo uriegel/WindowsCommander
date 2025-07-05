@@ -23,6 +23,7 @@ static class Requests
             "changepath" => await ChangePath(request),
             "preparecopy" => await PrepareCopy(request),
             "copy" => await Copy(request),
+            "getextended" => await GetExtended(request),
             _ => false
         };
     }
@@ -136,6 +137,17 @@ static class Requests
         return true;
     }
 
+    static async Task<bool> GetExtended(IRequest request)
+    {
+        var data = await request.DeserializeAsync<GetExtendedRequest>();
+        if (data != null)
+        {
+            var response = await GetController(data.FolderId).GetExtended(data.Id);
+            await request.SendJsonAsync(response, response.GetType());
+        }
+        return true;
+    }
+
     static Task<Stream> GetIconStream(string iconHint)
         => Try(() => iconHint.Contains('\\')
             ? (Icon.ExtractAssociatedIcon(iconHint)?.Handle ?? 0).ToAsync()
@@ -193,6 +205,9 @@ record PrepareCopyResult(
 
 record CopyRequest(string Id);
 record CopyResult();
+
+record GetExtendedRequest(int Id, string FolderId);
+record GetExtendedResult();
 
 record ViewItem(
     string Name,

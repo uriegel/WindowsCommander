@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react"
 import './FolderView.css'
 import VirtualTable, { type OnSort, type SelectableItem, type TableColumns, type VirtualTableHandle } from "virtual-table-react"
-import { changePath as changePathRequest, prepareCopy } from "../requests/requests"
+import { changePath as changePathRequest, getExtended, prepareCopy } from "../requests/requests"
 import { getController, type IController } from "../controllers/controller"
 import { Root } from "../controllers/root"
 import { exifDataEvents, statusEvents } from "../requests/events"
@@ -116,6 +116,7 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
             setPath(result.path)
         const newItems = controller.current.sort(result.items, sortIndex.current, sortDescending.current)
         setItems(newItems, result.dirCount, result.fileCount)
+        getExtended({ id: result.id, folderId: id })
         const pos = latestPath
                     ? newItems.findIndex(n => n.name == latestPath)
                     : checkPosition

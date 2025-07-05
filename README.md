@@ -1,7 +1,5 @@
-// TODO Exif sometimes not fetched: websocket event is faster then getitems return value!
-// TODO Retrieve exif, await getexif
-// TODO trigger getexif after setitems
-// TODO do this for linux-commander too
+// TODO getExtended for linux-commander too
+// TODO request lambdas from linux-commander
 
 // TODO parent icon
 // TODO Commander icon
