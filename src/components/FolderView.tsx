@@ -84,6 +84,9 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
     
     const setItems = useCallback((items: FolderViewItem[], dirCount?: number, fileCount?: number) => {
         setStateItems(items)
+
+        console.log("state items set", items)
+
         refItems.current = items
         if (dirCount != undefined || fileCount != undefined) {
             itemCount.current = { dirCount: dirCount || 0, fileCount: fileCount || 0 }
