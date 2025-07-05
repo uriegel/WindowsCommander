@@ -42,7 +42,7 @@ WebView
     .SaveBounds()
     .DevTools()
     //.DefaultContextMenuDisabled()
-    //.ResourceIcon("icon")
+    .ResourceIcon("icon")
     .WithoutNativeTitlebar()
     .DebugUrl("http://localhost:5173")
     .Url("https://github.com")

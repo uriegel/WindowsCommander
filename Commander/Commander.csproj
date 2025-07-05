@@ -24,6 +24,12 @@
     <EmbeddedResource Include="./Resources/windowsdrive.png">
       <LogicalName>windowsdrive</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="./Resources/kirk.png">
+      <LogicalName>/windowicon</LogicalName>
+    </EmbeddedResource>    
+    <EmbeddedResource Include="./Resources/Kirk.ico">
+      <LogicalName>icon</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>    
 
   <ItemGroup>
