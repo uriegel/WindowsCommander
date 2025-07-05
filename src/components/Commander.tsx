@@ -159,29 +159,30 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	, [activeFolderId, statusTextLeft, statusTextRight])
 
 	const ViewerView = () => {
-		const ext = itemProperty
-					.path
-					.getExtension()
-					.toLocaleLowerCase()
-		
-		return ext == ".jpg" || ext == ".png" || ext == ".jpeg"
-		 	? previewMode == PreviewMode.Default
-			? (<PictureViewer path={itemProperty.path} latitude={itemProperty.latitude} longitude={itemProperty.longitude} />)
-			: previewMode == PreviewMode.Location && itemProperty.latitude && itemProperty.longitude
-			? (<LocationViewer latitude={itemProperty.latitude} longitude={itemProperty.longitude} />)
-			: itemProperty.latitude && itemProperty.longitude
-			? <div className='bothViewer'>
-					<PictureViewer path={itemProperty.path} latitude={itemProperty.latitude} longitude={itemProperty.longitude} />
-					<LocationViewer latitude={itemProperty.latitude} longitude={itemProperty.longitude} />
-				</div>	
-			:(<PictureViewer path={itemProperty.path} latitude={itemProperty.latitude} longitude={itemProperty.longitude} />)
-		 	: ext == ".mp3" || ext == ".mp4" || ext == ".mkv" || ext == ".wav"
-		 	? (<MediaPlayer path={itemProperty.path} />)
-		 	: ext == ".pdf"
-		 	? (<FileViewer path={itemProperty.path} />)
-		 	: ext == ".gpx"
-		 	? (<TrackViewer path={itemProperty.path} />)
-		 	: (<div></div>)
+		// const ext = itemProperty
+		// 			.path
+		// 			.getExtension()
+		// 			.toLocaleLowerCase()
+
+		return <div></div>
+		// return ext == ".jpg" || ext == ".png" || ext == ".jpeg"
+		//  	? previewMode == PreviewMode.Default
+		// 	? (<PictureViewer path={itemProperty.path} latitude={itemProperty.latitude} longitude={itemProperty.longitude} />)
+		// 	: previewMode == PreviewMode.Location && itemProperty.latitude && itemProperty.longitude
+		// 	? (<LocationViewer latitude={itemProperty.latitude} longitude={itemProperty.longitude} />)
+		// 	: itemProperty.latitude && itemProperty.longitude
+		// 	? <div className='bothViewer'>
+		// 			<PictureViewer path={itemProperty.path} latitude={itemProperty.latitude} longitude={itemProperty.longitude} />
+		// 			<LocationViewer latitude={itemProperty.latitude} longitude={itemProperty.longitude} />
+		// 		</div>	
+		// 	:(<PictureViewer path={itemProperty.path} latitude={itemProperty.latitude} longitude={itemProperty.longitude} />)
+		//  	: ext == ".mp3" || ext == ".mp4" || ext == ".mkv" || ext == ".wav"
+		//  	? (<MediaPlayer path={itemProperty.path} />)
+		//  	: ext == ".pdf"
+		//  	? (<FileViewer path={itemProperty.path} />)
+		//  	: ext == ".gpx"
+		//  	? (<TrackViewer path={itemProperty.path} />)
+		//  	: (<div></div>)
 	}
 
 	return (

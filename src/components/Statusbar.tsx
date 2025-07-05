@@ -7,7 +7,7 @@ export interface StatusbarProps {
     fileCount: number
     errorText: string | null
     setErrorText: (text: string | null) => void
-    statusText: string | null
+    statusText: string | undefined
 }
 
 const Statusbar = ({ path, dirCount, fileCount, errorText, setErrorText, statusText  }: StatusbarProps) => {
