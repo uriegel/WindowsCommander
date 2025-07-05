@@ -1,6 +1,7 @@
 // TODO Exif sometimes not fetched: websocket event is faster then getitems return value!
-// TODO check request id: getitemsresult with reqid n must not overwrite exif items with same reqid 
-
+// TODO Retrieve exif, await getexif
+// TODO trigger getexif after setitems
+// TODO do this for linux-commander too
 
 // TODO parent icon
 // TODO Commander icon
