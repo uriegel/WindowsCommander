@@ -7,6 +7,8 @@ import '../themes/windows.css'
 import "functional-extensions"
 import Statusbar from "./Statusbar"
 import { cmdEvents, cmdToggleEvents, type CmdToggleMsg } from "../requests/events"
+import Titlebar from "./Titlebar"
+import Menu from "./Menu"
 // import PictureViewer from "./PictureViewer"
 // import LocationViewer from "./LocationViewer"
 // import FileViewer from "./FileViewer"
@@ -184,6 +186,11 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 
 	return (
 		<>
+			<Titlebar menu={(
+				<Menu autoMode={false} onMenuAction={onMenuAction} />
+				// showHidden={ showHidden} toggleShowHidden={toggleShowHiddenAndRefresh}
+				// showViewer={showViewer} toggleShowViewer={toggleShowViewer} />
+			)} />			
 			<ViewSplit isHorizontal={true} firstView={VerticalSplitView} secondView={ViewerView} initialWidth={30} secondVisible={showViewer} />
 			<Statusbar path={itemProperty.path} dirCount={itemCount.dirCount} fileCount={itemCount.fileCount}
 					errorText={errorText} setErrorText={setErrorText} statusText={getStatusText()} />		

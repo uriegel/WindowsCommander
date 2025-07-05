@@ -103,50 +103,21 @@ static class Requests
         }
     }
 
-    static async Task<bool> ChangePath(IRequest request)
-    {
-        var data = await request.DeserializeAsync<ChangePathRequest>();
-        if (data != null)
+    static Task<bool> ChangePath(IRequest request)
+        => Request<ChangePathRequest, ChangePathResult>(request, n =>
         {
-            DetectController(data.Id, data.Path);
-            var response = await GetController(data.Id).ChangePathAsync(data.Path, data.ShowHidden);
-            await request.SendJsonAsync(response, response.GetType());
-        }
-        return true;
-    }
+            DetectController(n.Id, n.Path);
+            return GetController(n.Id).ChangePathAsync(n.Path, n.ShowHidden);
+        });
 
-    static async Task<bool> PrepareCopy(IRequest request)
-    {
-        var data = await request.DeserializeAsync<PrepareCopyRequest>();
-        if (data != null)
-        {
-            var response = await GetController(data.Id).PrepareCopy(data);
-            await request.SendJsonAsync(response, response.GetType());
-        }
-        return true;
-    }
-    
-    static async Task<bool> Copy(IRequest request)
-    {
-        var data = await request.DeserializeAsync<CopyRequest>();
-        if (data != null)
-        {
-            var response = await GetController(data.Id).Copy();
-        //     await request.SendJsonAsync(response, response.GetType());
-        }
-        return true;
-    }
+    static Task<bool> GetExtended(IRequest request)
+        => Request<GetExtendedRequest, GetExtendedResult>(request, n => GetController(n.FolderId).GetExtended(n.Id));
 
-    static async Task<bool> GetExtended(IRequest request)
-    {
-        var data = await request.DeserializeAsync<GetExtendedRequest>();
-        if (data != null)
-        {
-            var response = await GetController(data.FolderId).GetExtended(data.Id);
-            await request.SendJsonAsync(response, response.GetType());
-        }
-        return true;
-    }
+    static Task<bool> PrepareCopy(IRequest request)
+        => Request<PrepareCopyRequest, PrepareCopyResult>(request, n => GetController(n.Id).PrepareCopy(n));
+
+    static Task<bool> Copy(IRequest request)
+        => Request<CopyRequest, CopyResult>(request, n => GetController(n.Id).Copy());
 
     static Task<Stream> GetIconStream(string iconHint)
         => Try(() => iconHint.Contains('\\')
@@ -172,6 +143,18 @@ static class Requests
                 })
             ?? (new MemoryStream() as Stream).ToAsync();
     
+    static async Task<bool> Request<TRequest, TResponse>(IRequest request, Func<TRequest, Task<TResponse>> onRequest)
+        where TResponse: class
+    {
+        var data = await request.DeserializeAsync<TRequest>();
+        if (data != null)
+        {
+            var response = await onRequest(data);
+            await request.SendJsonAsync(response, response.GetType());
+        }
+        return true;
+    }
+
     static IWebSocket? webSocket;
 }
 record ChangePathRequest(
