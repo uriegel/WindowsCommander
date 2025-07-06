@@ -9,11 +9,9 @@ import Statusbar from "./Statusbar"
 import { cmdEvents, cmdToggleEvents, type CmdToggleMsg } from "../requests/events"
 import Titlebar from "./Titlebar"
 import Menu from "./Menu"
-// import PictureViewer from "./PictureViewer"
-// import LocationViewer from "./LocationViewer"
-// import FileViewer from "./FileViewer"
-// import MediaPlayer from "./MediaPlayer"
-// import TrackViewer from "./TrackViewer"
+import PictureViewer from "./PictureViewer"
+import MediaPlayer from "./MediaPlayer"
+import FileViewer from "./FileViewer"
 
 const ID_LEFT = "left"
 const ID_RIGHT = "right"
@@ -57,6 +55,9 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	const [activeFolderId, setActiveFolderId] = useState(ID_LEFT)
 	const onFocusLeft = () => setActiveFolderId(ID_LEFT)
 	const onFocusRight = () => setActiveFolderId(ID_RIGHT)
+
+	const showHiddenRef = useRef(false)
+	const showViewerRef = useRef(false)
 
 	const onKeyDown = (evt: React.KeyboardEvent) => {
 		if (evt.code == "Tab" && !evt.shiftKey) {
@@ -132,6 +133,18 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 		}
 	}, [onMenuAction, onMenuToggleAction])
 
+	const toggleShowHiddenAndRefresh = () => {
+		showHiddenRef.current = !showHiddenRef.current
+		setShowHidden(showHiddenRef.current)
+		folderLeft.current?.refresh(showHiddenRef.current)
+		folderRight.current?.refresh(showHiddenRef.current)
+	}
+	
+	const toggleShowViewer = () => {
+		showViewerRef.current = !showViewerRef.current
+		setShowViewer(showViewerRef.current)
+	}
+
 	const onItemChanged = useCallback(
 		(path: string, isDirectory: boolean, latitude?: number, longitude?: number) => 
 			setItemProperty({ path, isDirectory, latitude, longitude })
@@ -159,38 +172,28 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	, [activeFolderId, statusTextLeft, statusTextRight])
 
 	const ViewerView = () => {
-		// const ext = itemProperty
-		// 			.path
-		// 			.getExtension()
-		// 			.toLocaleLowerCase()
+		const ext = itemProperty
+					.path
+					.getExtension()
+					.toLocaleLowerCase()
 
-		return <div></div>
-		// return ext == ".jpg" || ext == ".png" || ext == ".jpeg"
-		//  	? previewMode == PreviewMode.Default
-		// 	? (<PictureViewer path={itemProperty.path} latitude={itemProperty.latitude} longitude={itemProperty.longitude} />)
-		// 	: previewMode == PreviewMode.Location && itemProperty.latitude && itemProperty.longitude
-		// 	? (<LocationViewer latitude={itemProperty.latitude} longitude={itemProperty.longitude} />)
-		// 	: itemProperty.latitude && itemProperty.longitude
-		// 	? <div className='bothViewer'>
-		// 			<PictureViewer path={itemProperty.path} latitude={itemProperty.latitude} longitude={itemProperty.longitude} />
-		// 			<LocationViewer latitude={itemProperty.latitude} longitude={itemProperty.longitude} />
-		// 		</div>	
-		// 	:(<PictureViewer path={itemProperty.path} latitude={itemProperty.latitude} longitude={itemProperty.longitude} />)
-		//  	: ext == ".mp3" || ext == ".mp4" || ext == ".mkv" || ext == ".wav"
-		//  	? (<MediaPlayer path={itemProperty.path} />)
-		//  	: ext == ".pdf"
-		//  	? (<FileViewer path={itemProperty.path} />)
-		//  	: ext == ".gpx"
-		//  	? (<TrackViewer path={itemProperty.path} />)
-		//  	: (<div></div>)
+		return ext == ".jpg" || ext == ".png" || ext == ".jpeg"
+		  	? previewMode == PreviewMode.Default
+		 	? (<PictureViewer path={itemProperty.path} latitude={itemProperty.latitude} longitude={itemProperty.longitude} />)
+		 	: previewMode == PreviewMode.Location && itemProperty.latitude && itemProperty.longitude
+		  	: ext == ".mp3" || ext == ".mp4" || ext == ".mkv" || ext == ".wav"
+		  	? (<MediaPlayer path={itemProperty.path} />)
+		  	: ext == ".pdf"
+		  	? (<FileViewer path={itemProperty.path} />)
+		  	: (<div></div>)
 	}
 
 	return (
 		<>
 			<Titlebar menu={(
-				<Menu autoMode={false} onMenuAction={onMenuAction} />
-				// showHidden={ showHidden} toggleShowHidden={toggleShowHiddenAndRefresh}
-				// showViewer={showViewer} toggleShowViewer={toggleShowViewer} />
+				<Menu autoMode={false} onMenuAction={onMenuAction} 
+				showHidden={ showHidden} toggleShowHidden={toggleShowHiddenAndRefresh}
+				showViewer={showViewer} toggleShowViewer={toggleShowViewer} />
 			)} />			
 			<ViewSplit isHorizontal={true} firstView={VerticalSplitView} secondView={ViewerView} initialWidth={30} secondVisible={showViewer} />
 			<Statusbar path={itemProperty.path} dirCount={itemCount.dirCount} fileCount={itemCount.fileCount}

@@ -42,6 +42,7 @@ static class Requests
     public static async Task<bool> GetIconFromExtension(IRequest request)
     {
         var stream = await GetIconStream(request.SubPath ?? ".default");
+        request.AddResponseHeader("Expires", (DateTime.UtcNow + TimeSpan.FromHours(1)).ToString("r"));
         await request.SendAsync(stream, stream.Length, "image/png");
         return true;
     }
@@ -50,7 +51,7 @@ static class Requests
     {
         if (request.SubPath == null)
             return false;
-        using var pic = File.OpenRead("/" + request.SubPath);
+        using var pic = File.OpenRead(request.SubPath);
         if (pic != null)
         {
             await request.SendAsync(pic, pic.Length, MimeType.Get(request.SubPath.GetFileExtension()) ?? MimeTypes.ImageJpeg);
