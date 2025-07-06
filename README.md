@@ -3,6 +3,9 @@
 // TODO Menu with shortcut ctrl: open as
 
 // TODO copy/move with progress with shellexecute without progress see WindowsCommander
+
+// TODO Menu open explorer here
+
 // TODO delete with shellexecute
 // TODO create folder: with shellexecute copy to new folder and remove the item
 
