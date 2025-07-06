@@ -1,4 +1,5 @@
 import { IconNameType } from "../controllers/controller"
+import Parent from "../svg/Parent"
 import "./IconName.css"
 
 interface IconNameProps {
@@ -24,7 +25,7 @@ const IconName = ({ namePart, type, iconPath }: IconNameProps) =>
         ? (<img className="image" src={`http://localhost:20000/iconfromname/network-server`} alt="" />)
         : type == IconNameType.Favorite
         ? (<img className="image" src={`http://localhost:20000/iconfromname/starred`} alt="" />)
-        : (<img className="image" src={`http://localhost:20000/iconfromname/go-up`} alt="" />)
+        : (<Parent />)
         }
         <span>{namePart}</span>
     </span>)
