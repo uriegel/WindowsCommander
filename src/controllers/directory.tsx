@@ -43,6 +43,8 @@ export class Directory implements IController {
             }
     }
 
+    getItems(): FolderViewItem[] { throw "not implemented" }
+
     sort(items: FolderViewItem[], sortIndex: number, sortDescending: boolean) {
         return sortItems(items, this.getSortFunction(sortIndex, sortDescending))     
     }

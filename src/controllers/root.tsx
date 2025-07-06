@@ -29,6 +29,8 @@ export class Root implements IController {
         }
     }
 
+    getItems(): FolderViewItem[] { throw "not implemented" }
+
     sort(items: FolderViewItem[]) { return items }
 
     itemsSelectable: boolean
@@ -49,7 +51,7 @@ const getRowClasses = (item: FolderViewItem) =>
         : []
 
 const renderRow = (item: FolderViewItem) => [
-    (<IconName namePart={item.name} type={IconNameType.Root} />),
+    (<IconName namePart={item.name} type={item.name != "fav" ? IconNameType.Root : IconNameType.Favorite } />),
     item.description ?? "",
     formatSize(item.size)
 ]

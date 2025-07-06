@@ -1,4 +1,6 @@
 import { IconNameType } from "../controllers/controller"
+import Favorite from "../svg/Favorite"
+import New from "../svg/New"
 import Parent from "../svg/Parent"
 import "./IconName.css"
 
@@ -24,7 +26,9 @@ const IconName = ({ namePart, type, iconPath }: IconNameProps) =>
         : type == IconNameType.Remote
         ? (<img className="image" src={`http://localhost:20000/iconfromname/network-server`} alt="" />)
         : type == IconNameType.Favorite
-        ? (<img className="image" src={`http://localhost:20000/iconfromname/starred`} alt="" />)
+        ? (<Favorite />)
+        : type == IconNameType.New
+        ? (<New />)
         : (<Parent />)
         }
         <span>{namePart}</span>

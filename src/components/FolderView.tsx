@@ -116,7 +116,8 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         }
         if (result.path)
             setPath(result.path)
-        const newItems = controller.current.sort(result.items, sortIndex.current, sortDescending.current)
+        const items = result.items && result.items?.length > 0 ? result.items : controller.current.getItems()        
+        const newItems = controller.current.sort(items, sortIndex.current, sortDescending.current)
         setItems(newItems, result.dirCount, result.fileCount)
         getExtended({ id: result.id, folderId: id })
         const pos = latestPath

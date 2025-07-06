@@ -3,6 +3,7 @@ import { Root } from "./root"
 import type { FolderViewItem } from "../components/FolderView"
 import { Directory } from "./directory"
 import type { PrepareCopyResponse } from "../requests/requests"
+import { Favorites } from "./favorites"
 
 export const IconNameType = {
     Parent: 'Parent',
@@ -36,6 +37,7 @@ export interface IController {
     id: string 
     getColumns(): TableColumns<FolderViewItem>
     appendPath(path: string, subPath: string): string
+    getItems: () => FolderViewItem[]
     onEnter: (data: EnterData) => Promise<OnEnterResult> 
     sort: (items: FolderViewItem[], sortIndex: number, sortDescending: boolean) => FolderViewItem[]
     itemsSelectable: boolean
@@ -46,6 +48,8 @@ export interface IController {
 export function getController(id: string): IController {
     return id == "ROOT"
         ? new Root()
+        : id == "FAV"
+        ? new Favorites()
         : new Directory()
 }
 
