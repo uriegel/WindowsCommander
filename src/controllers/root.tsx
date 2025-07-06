@@ -43,9 +43,6 @@ export class Root implements IController {
     }
 }
 
-const REMOTES = "remotes"
-const FAVORITES = "fav"
-
 const getRowClasses = (item: FolderViewItem) => 
     item.isMounted == false
         ? ["notMounted"]

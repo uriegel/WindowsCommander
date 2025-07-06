@@ -45,6 +45,6 @@ WebView
     .ResourceIcon("icon")
     .WithoutNativeTitlebar()
     .DebugUrl("http://localhost:5173")
-    .Url("https://github.com")
+    .Url("http://localhost:20000")
     .CanClose(() => true)
     .Run();

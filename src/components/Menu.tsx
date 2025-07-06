@@ -3,10 +3,10 @@ import Menubar, { MenuItemType } from 'menubar-react'
 export interface MenuProps {
     autoMode: boolean
     releaseMode?: boolean
-    showHidden?: boolean,
-    toggleShowHidden?: ()=>void,
-    showViewer?: boolean,
-    toggleShowViewer?: () => void,
+    showHidden: boolean,
+    toggleShowHidden: ()=>void,
+    showViewer: boolean,
+    toggleShowViewer: () => void,
     onMenuAction: (key: string)=>void
 }
 
@@ -119,11 +119,6 @@ const Menu = ({ autoMode, releaseMode, showHidden, toggleShowHidden, showViewer,
             checked: showViewer,
             toggleChecked: toggleShowViewer,
             shortcut: "F3"
-        }, {
-            name: "Vorschaumodus wechseln",
-            type: MenuItemType.MenuItem,
-            shortcut: "Strg+F3",
-            key: "TOGGLE_PREVIEW"
         }, {
             type: MenuItemType.Separator
         }, {

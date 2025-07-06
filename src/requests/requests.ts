@@ -35,10 +35,13 @@ interface Copy {
 }
 
 interface CopyResponse {
+    cancelled?: boolean
 }
 
 interface GetExtended { id: number, folderId: string }
-interface GetExtendedResponse {  }
+interface GetExtendedResponse { 
+    cancelled?: boolean
+}
 
 export const SelectedItemsType = {
     None: 0,

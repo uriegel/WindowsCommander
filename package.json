@@ -7,7 +7,7 @@
     "dev": "vite",
     "lint": "tsc --noEmit --project tsconfig.app.json && eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "build": "tsc --build && vite build && npm run copy",
-    "copy": "cp dist/assets/*.js Commander/Resources/website/script.js && cp dist/assets/*.css Commander/Resources/website/style.css"
+    "copy": "xcopy .\\dist\\assets\\*.js Commander\\resources\\website\\script.js /y &&  xcopy .\\dist\\assets\\*.css Commander\\resources\\website\\style.css /y"
   },
   "dependencies": {
     "functional-extensions": "^1.9.17",
