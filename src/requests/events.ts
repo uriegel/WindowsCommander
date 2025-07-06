@@ -14,18 +14,18 @@ export type StatusMsg = {
     requestId: number,
     text?: string
 }
-export type ExifMsg = {
+export type ExtendedInfo = {
     folderId: string,
     requestId: number,
     items: FolderViewItem[]
 }
 
 type WebSocketMsg = {
-    method: "cmd" | "cmdtoggle" | "status" | "exifinfo",
+    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo",
     cmdMsg?: CmdMsg,
     cmdToggleMsg?: CmdToggleMsg,
     statusMsg?: StatusMsg
-    exifMsg?: ExifMsg
+    extendedInfo?: ExtendedInfo
 }
 
 const socket = webSocket<WebSocketMsg>('ws://localhost:20000/events').pipe(share())
@@ -40,8 +40,8 @@ export const statusEvents = socket
                     .pipe(filter(n => n.method == "status"))
                     .pipe(map(n => n.statusMsg!))
 export const exifDataEvents = socket
-                    .pipe(filter(n => n.method == "exifinfo"))
-                    .pipe(map(n => n.exifMsg!))
+                    .pipe(filter(n => n.method == "extendedinfo"))
+                    .pipe(map(n => n.extendedInfo!))
 
 socket.subscribe({
     error: err => console.error('Subscription error:', err),

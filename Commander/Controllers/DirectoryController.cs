@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using CsTools.Extensions;
 
 using static System.Console;
@@ -16,7 +17,7 @@ class DirectoryController(string folderId) : Controller(folderId)
         {
             var cancellation = Cancellations.ChangePathCancellation(FolderId);
             var result = await Task.Run(() => GetFiles(path, showHidden, changePathId, cancellation));
-            GetExifData(changePathId, result.Items, path, cancellation);
+            GetExtendedInfo(changePathId, result.Items, path, cancellation);
             return result;
         }
         catch (UnauthorizedAccessException uae)
@@ -116,7 +117,7 @@ class DirectoryController(string folderId) : Controller(folderId)
                 .. dirFileInfo.Files]);
     }
 
-    async void GetExifData(int changePathId, DirectoryItem[] items, string path, CancellationToken cancellation)
+    async void GetExtendedInfo(int changePathId, DirectoryItem[] items, string path, CancellationToken cancellation)
     {
         try
         {
@@ -124,7 +125,7 @@ class DirectoryController(string folderId) : Controller(folderId)
             bool changed = false;
             await Task.Run(async () =>
             {
-                Requests.SendStatusBarInfo(FolderId, changePathId, "Ermittle EXIF-Informationen...");
+                Requests.SendStatusBarInfo(FolderId, changePathId, "Ermittle erweiterte Informationen...");
                 foreach (var item in items
                                         .Where(item => !cancellation.IsCancellationRequested
                                                 && (item.Name.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
@@ -136,10 +137,21 @@ class DirectoryController(string folderId) : Controller(folderId)
                     if (item.ExifData != null)
                         changed = true;
                 }
+                foreach (var item in items
+                                        .Where(item => !cancellation.IsCancellationRequested
+                                                && (item.Name.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase)
+                                                    || item.Name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))))
+                {
+                    cancellation.ThrowIfCancellationRequested();
+                    item.FileVersion = GetVersion(path.AppendPath(item.Name));
+                    if (item.FileVersion != null)
+                        changed = true;
+                }
                 if (changed)
                 {
                     await extendedReady;
-                    Requests.SendExifInfo(FolderId, changePathId, items);
+
+                    Requests.SendExtendedInfo(FolderId, changePathId, items);
                 }
             }, cancellation);
         }
@@ -159,6 +171,13 @@ class DirectoryController(string folderId) : Controller(folderId)
         return tcs.Task;
     }
 
+    static FileVersion? GetVersion(string file)
+        => file.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase) || file.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase)
+            ? FileVersionInfo
+                    .GetVersionInfo(file)
+                    .MapVersion()
+            : null;
+
     public static int ChangePathSeed = 0;
 
     static readonly ConcurrentDictionary<int, TaskCompletionSource> extendedTasks = [];
@@ -175,6 +194,7 @@ record DirectoryItem(
 )
 {
     public ExifData? ExifData { get; set; }
+    public FileVersion? FileVersion { get; set; }
 
     public static DirectoryItem CreateParentItem()
         => new(
@@ -222,6 +242,8 @@ record DirectoryItem(
         : info.Name.GetFileExtension();
 };
 
+public record FileVersion(int Major, int Minor, int Build, int Patch);
+
 record DirFileInfo(
     DirectoryItem[] Directories,
     DirectoryItem[] Files
@@ -237,3 +259,11 @@ record GetFilesResult(
     DirectoryItem[] Items
 )
     : ChangePathResult(Cancelled, Id, Controller, Path, DirCount, FileCount);
+
+static class FileVersionInfoExtensions
+{
+    public static FileVersion? MapVersion(this FileVersionInfo? info)
+           => info != null
+               ? new(info.FileMajorPart, info.FileMinorPart, info.FileBuildPart, info.FilePrivatePart)
+               : null;
+}

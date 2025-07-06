@@ -54,28 +54,30 @@ export interface FolderViewItem extends SelectableItem {
     icon?:        string
     // Root item
     description?: string
-    mountPoint?:  string
     isMounted?: boolean
-    isEjectable?: boolean
+
     driveKind?: DriveKind
     // FileSystem item
     time?:        string
     exifData?:    ExifData
     isHidden?:    boolean
-    // Remotes item
-    ipAddress?:   string
-    isAndroid?:   boolean
-    isNew?: boolean
-    // ExtendedRename
-    newName?:     string|null
+    fileVersion?: FileVersion
     // Favorites
     path?: string | null
+    isNew?: boolean
 }
 
 export type ExifData = {
     dateTime?: string 
     latitude?: number
     longitude?: number
+}
+
+export type FileVersion = {
+    major: number,
+    minor: number,
+    build: number,
+    patch: number
 }
 
 const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((

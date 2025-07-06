@@ -91,16 +91,16 @@ static class Requests
             await webSocket.SendJson(new WebSocketMsg("status", null, null, new(id, requestId, text), null)); 
     }
 
-    public static async void SendExifInfo(string id, int requestId, DirectoryItem[] items)
+    public static async void SendExtendedInfo(string id, int requestId, DirectoryItem[] items)
     {
         try
         {
             if (webSocket != null)
-                await webSocket.SendJson(new WebSocketMsg("exifinfo", null, null, null, new(id, requestId, items)));
+                await webSocket.SendJson(new WebSocketMsg("extendedinfo", null, null, null, new(id, requestId, items)));
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Error sending exif info: {ex}");
+            Console.Error.WriteLine($"Error sending extended info: {ex}");
         }
     }
 
@@ -205,7 +205,7 @@ record WebSocketMsg(
     CmdMsg? CmdMsg,
     CmdToggleMsg? CmdToggleMsg,
     StatusMsg? StatusMsg,
-    ExifMsg? ExifMsg);
+    ExtendedInfo? ExtendedInfo);
 
 record CmdMsg(string Cmd);
 record CmdToggleMsg(string Cmd, bool Checked);
@@ -213,7 +213,7 @@ record StatusMsg(
     string FolderId,
     int RequestId,
     string? Text);
-record ExifMsg(
+record ExtendedInfo(
     string FolderId,
     int RequestId,
     DirectoryItem[] Items);

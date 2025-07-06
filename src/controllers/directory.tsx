@@ -1,6 +1,6 @@
 import type { TableColumns } from "virtual-table-react"
 import { formatDateTime, formatSize, IconNameType, sortItems, type EnterData, type IController, type OnEnterResult } from "./controller"
-import type { FolderViewItem } from "../components/FolderView"
+import type { FileVersion, FolderViewItem } from "../components/FolderView"
 import IconName from "../components/IconName"
 import "../extensions/extensions"
 import { SelectedItemsType, type PrepareCopyResponse } from "../requests/requests"
@@ -13,7 +13,8 @@ export class Directory implements IController {
             columns: [
     	        { name: "Name", isSortable: true, subColumn: "Erw." },
 		        { name: "Datum", isSortable: true },
-                { name: "Größe", isSortable: true, isRightAligned: true }
+                { name: "Größe", isSortable: true, isRightAligned: true },
+                { name: "Version", isSortable: true }
             ],
             getRowClasses,
             renderRow
@@ -58,6 +59,8 @@ export class Directory implements IController {
                 } 
             : index == 2
             ? (a: FolderViewItem, b: FolderViewItem) => (a.size || 0) - (b.size || 0)
+            : index == 3
+            ? sortVersion
             : index == 10
             ? (a: FolderViewItem, b: FolderViewItem) => a.name.getExtension().localeCompare(b.name.getExtension()) 
             : undefined
@@ -104,5 +107,35 @@ const renderRow = (item: FolderViewItem) => [
 			: IconNameType.File}
 		iconPath={item.icon} />),
 	(<span className={item.exifData?.dateTime ? "exif" : "" } >{formatDateTime(item?.exifData?.dateTime ?? item?.time)}</span>),
-	formatSize(item.size)
+    formatSize(item.size),
+    formatVersion(item.fileVersion)
 ]
+
+const formatVersion = (version?: FileVersion) => 
+    version ? `${version.major}.${version.minor}.${version.build}.${version.patch}` : ""
+
+const sortVersion = (a: FolderViewItem, b: FolderViewItem) =>
+    a.fileVersion && !b.fileVersion
+    ? 1
+    : !a.fileVersion && b.fileVersion   
+    ? -1
+    : a.fileVersion && b.fileVersion   
+    ? a.fileVersion.major > b.fileVersion.major
+    ? 1
+    : a.fileVersion.major < b.fileVersion.major
+    ? -1
+    : a.fileVersion.minor > b.fileVersion.minor
+    ? 1                
+    : a.fileVersion.minor < b.fileVersion.minor
+    ? -1                
+    : a.fileVersion.build > b.fileVersion.build
+    ? 1                
+    : a.fileVersion.build < b.fileVersion.build
+    ? -1                
+    : a.fileVersion.patch > b.fileVersion.patch
+    ? 1                
+    : a.fileVersion.patch < b.fileVersion.patch
+    ? -1                
+    : 0
+    : 0            
+                
