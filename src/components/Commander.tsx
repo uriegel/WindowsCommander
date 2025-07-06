@@ -12,6 +12,7 @@ import Menu from "./Menu"
 import PictureViewer from "./PictureViewer"
 import MediaPlayer from "./MediaPlayer"
 import FileViewer from "./FileViewer"
+import { sendMenuCmd } from "../requests/requests"
 
 const ID_LEFT = "left"
 const ID_RIGHT = "right"
@@ -72,10 +73,10 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 
 	const onMenuAction = useCallback(async (key: string) => {
 		switch (key) {
-			case "refresh":
+			case "REFRESH":
 				getActiveFolder()?.refresh()
 				break
-			case "adaptpath": {
+			case "ADAPT_PATH": {
 				const path = getActiveFolder()?.getPath()
 				if (path)
 					getInactiveFolder()?.changePath(path)
@@ -92,17 +93,23 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 			case "insert":
 				getActiveFolder()?.insertSelection()
 				break
-			case "selectall":
+			case "SEL_ALL":
 				getActiveFolder()?.selectAll()
 				break
-			case "selectnone":
+			case "SEL_NONE":
 				getActiveFolder()?.selectNone()
 				break
 			case "copy": {
 					const other = getInactiveFolder()
 					if (other)
 						getActiveFolder()?.copyItems(other, false)
-				}
+				}			
+				break
+			case "SHOW_DEV_TOOLS":
+				await sendMenuCmd({ cmd: key })
+				break
+			case "END":
+				window.close()
 				break
 		}
 	}, [getActiveFolder, getInactiveFolder, previewMode, showViewer])

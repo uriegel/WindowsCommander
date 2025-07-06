@@ -21,9 +21,9 @@ static class Requests
         return request.SubPath switch
         {
             "changepath" => await ChangePath(request),
+            "sendmenucmd" => await MenuCmd(request),
             "preparecopy" => await PrepareCopy(request),
             "copy" => await Copy(request),
-            "getextended" => await GetExtended(request),
             _ => false
         };
     }
@@ -109,6 +109,14 @@ static class Requests
         {
             DetectController(n.Id, n.Path);
             return GetController(n.Id).ChangePathAsync(n.Path, n.ShowHidden);
+        });
+
+    static Task<bool> MenuCmd(IRequest request)
+        => Request<SendMenuCmdRequest, SendMenuCmdResponse>(request, n =>
+        {
+            if (n.Cmd == "SHOW_DEV_TOOLS")
+                Program.Instance.WebView.ShowDevTools();
+            return new SendMenuCmdResponse().ToAsync();
         });
 
     static Task<bool> GetExtended(IRequest request)
@@ -218,3 +226,5 @@ record ExtendedInfo(
     int RequestId,
     DirectoryItem[] Items);
 
+record SendMenuCmdRequest(string Cmd);
+record SendMenuCmdResponse();

@@ -43,6 +43,14 @@ interface GetExtendedResponse {
     cancelled?: boolean
 }
 
+interface SendMenuCmd {
+    cmd: string
+}
+
+interface SendMenuCmdResponse {  
+    cancelled?: boolean
+}
+
 export const SelectedItemsType = {
     None: 0,
     Folder: 1,
@@ -57,6 +65,7 @@ export const changePath = getJsonPost<ChangePath, ChangePathResponse>("changepat
 export const prepareCopy = getJsonPost<PrepareCopy, PrepareCopyResponse>("preparecopy")
 export const copy = getJsonPost<Copy, CopyResponse>("copy")
 export const getExtended = getJsonPost<GetExtended, GetExtendedResponse>("getextended")
+export const sendMenuCmd = getJsonPost<SendMenuCmd, SendMenuCmdResponse>("sendmenucmd")
 
 function getJsonPost<RequestType, ResponseType>(method: string): (request: RequestType) => Promise<ResponseType> {
  
