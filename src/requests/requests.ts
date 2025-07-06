@@ -51,6 +51,16 @@ interface SendMenuCmdResponse {
     cancelled?: boolean
 }
 
+interface OnEnter {
+    id: string
+    path: string,
+    name: string,
+}
+
+interface OnEnterResponse {
+    success: boolean
+}
+
 export const SelectedItemsType = {
     None: 0,
     Folder: 1,
@@ -66,6 +76,7 @@ export const prepareCopy = getJsonPost<PrepareCopy, PrepareCopyResponse>("prepar
 export const copy = getJsonPost<Copy, CopyResponse>("copy")
 export const getExtended = getJsonPost<GetExtended, GetExtendedResponse>("getextended")
 export const sendMenuCmd = getJsonPost<SendMenuCmd, SendMenuCmdResponse>("sendmenucmd")
+export const onEnter = getJsonPost<OnEnter, OnEnterResponse>("onenter")
 
 function getJsonPost<RequestType, ResponseType>(method: string): (request: RequestType) => Promise<ResponseType> {
  

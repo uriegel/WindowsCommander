@@ -59,11 +59,13 @@ const Menu = ({ autoMode, releaseMode, showHidden, toggleShowHidden, showViewer,
         }, {
             name: "_Eigenschaften",
             type: MenuItemType.MenuItem,
-            shortcut: "Strg+Enter"
+            shortcut: "Strg+Enter",
+            key: "PROPERTIES"
         }, {
             name: "Öffnen _mit",
             type: MenuItemType.MenuItem,
-            shortcut: "Alt+Enter"
+            shortcut: "Alt+Enter",
+            key: "OPENAS"
         }, {
             type: MenuItemType.Separator
         }, {

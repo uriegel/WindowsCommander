@@ -70,6 +70,20 @@ class DirectoryController(string folderId) : Controller(folderId)
         return null;
     }
 
+    public override Task<OnEnterResult> OnEnter(OnEnterRequest data)
+    {
+        using var proc = new Process()
+        {
+            StartInfo = new ProcessStartInfo(data.Path.AppendPath(data.Name))
+            {
+                UseShellExecute = true,
+            },
+        };
+            
+        proc.Start();        
+        return new OnEnterResult(true).ToAsync();
+    }
+
     public override Task<GetExtendedResult> GetExtended(int id)
     {
         if (extendedTasks.TryGetValue(id, out var tcs))

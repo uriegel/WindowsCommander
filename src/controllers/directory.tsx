@@ -3,7 +3,7 @@ import { formatDateTime, formatSize, IconNameType, sortItems, type EnterData, ty
 import type { FileVersion, FolderViewItem } from "../components/FolderView"
 import IconName from "../components/IconName"
 import "../extensions/extensions"
-import { SelectedItemsType, type PrepareCopyResponse } from "../requests/requests"
+import { onEnter, SelectedItemsType, type PrepareCopyResponse } from "../requests/requests"
 
 export class Directory implements IController {
     id: string
@@ -28,7 +28,7 @@ export class Directory implements IController {
     async onEnter(enterData: EnterData): Promise<OnEnterResult> {
         
         if (!enterData.item.isDirectory) {
-            // TODO await onEnter({ id: enterData.id ?? "", name: enterData.item.name, path: enterData.path })
+            await onEnter({ id: enterData.id ?? "", name: enterData.item.name, path: enterData.path })
             return {
                 processed: true
             }

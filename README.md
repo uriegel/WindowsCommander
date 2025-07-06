@@ -1,4 +1,4 @@
-// TODO Enter: run program
+// TODO CHECK menu shortcut with enter
 // TODO Menu with shortcut alt: Show properties
 // TODO Menu with shortcut ctrl: open as
 

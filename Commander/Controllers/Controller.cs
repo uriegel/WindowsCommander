@@ -8,6 +8,7 @@ abstract class Controller(string folderId)
     public virtual Task<PrepareCopyResult> PrepareCopy(PrepareCopyRequest data) => throw new NotImplementedException();
     public virtual Task<CopyResult> Copy() => throw new NotImplementedException();
     public virtual Task<GetExtendedResult> GetExtended(int id) => throw new NotImplementedException();
+    public virtual Task<OnEnterResult> OnEnter(OnEnterRequest rename) => throw new NotImplementedException();
 
     protected bool CheckInitial()
     {

@@ -93,6 +93,12 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 						? PreviewMode.Both
 						: PreviewMode.Default)			
 				break
+			case "PROPERTIES":
+				console.log("properties")
+				break
+			case "OPENAS":
+				console.log("openas")
+				break
 			case "FAVORITES":
 				getActiveFolder()?.changePath("fav")
 				break

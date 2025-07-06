@@ -200,7 +200,7 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
     }, [id, setItems])
 
     const processEnter = async (item: FolderViewItem, otherPath?: string) => {
-        const res = await controller.current.onEnter({ path, item, selectedItems: getSelectedItems(), dialog, otherPath })
+        const res = await controller.current.onEnter({ path, item, selectedItems: getSelectedItems(), dialog, otherPath, id })
         if (!res.processed)
             changePath(res.pathToSet, showHidden, res.mount, res.latestPath)
         if (res.refresh)

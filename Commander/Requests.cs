@@ -24,6 +24,7 @@ static class Requests
             "sendmenucmd" => await MenuCmd(request),
             "preparecopy" => await PrepareCopy(request),
             "copy" => await Copy(request),
+            "onenter" => await OnEnter(request),
             _ => false
         };
     }
@@ -128,6 +129,9 @@ static class Requests
     static Task<bool> Copy(IRequest request)
         => Request<CopyRequest, CopyResult>(request, n => GetController(n.Id).Copy());
 
+    static Task<bool> OnEnter(IRequest request)
+        => Request<OnEnterRequest, OnEnterResult>(request, n => GetController(n.Id).OnEnter(n));
+
     static Task<Stream> GetIconStream(string iconHint)
         => Try(() => iconHint.Contains('\\')
             ? (Icon.ExtractAssociatedIcon(iconHint)?.Handle ?? 0).ToAsync()
@@ -228,3 +232,11 @@ record ExtendedInfo(
 
 record SendMenuCmdRequest(string Cmd);
 record SendMenuCmdResponse();
+
+record OnEnterRequest(
+    string Id,
+    string Path,
+    string Name
+);
+
+record OnEnterResult(bool Success);
