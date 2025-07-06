@@ -1,7 +1,3 @@
-// TODO CHECK menu shortcut with enter
-// TODO Menu with shortcut alt: Show properties
-// TODO Menu with shortcut ctrl: open as
-
 // TODO copy/move with progress with shellexecute without progress see WindowsCommander
 
 // TODO Menu open explorer here

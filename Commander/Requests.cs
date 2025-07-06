@@ -236,7 +236,9 @@ record SendMenuCmdResponse();
 record OnEnterRequest(
     string Id,
     string Path,
-    string Name
+    string Name,
+    bool Ctrl,
+    bool Alt
 );
 
 record OnEnterResult(bool Success);

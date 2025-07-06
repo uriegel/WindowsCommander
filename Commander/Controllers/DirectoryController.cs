@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using CsTools.Extensions;
 
 using static System.Console;
@@ -72,15 +73,29 @@ class DirectoryController(string folderId) : Controller(folderId)
 
     public override Task<OnEnterResult> OnEnter(OnEnterRequest data)
     {
-        using var proc = new Process()
+        var path = data.Path.AppendPath(data.Name);
+        if (data.Alt || data.Ctrl)
         {
-            StartInfo = new ProcessStartInfo(data.Path.AppendPath(data.Name))
+            var info = new ClrWinApi.ShellExecuteInfo();
+            info.Size = Marshal.SizeOf(info);
+            info.Verb = data.Alt == true ? "properties" : "openas";
+            info.File = path;
+            info.Show = ClrWinApi.ShowWindowFlag.Show;
+            info.Mask = ClrWinApi.ShellExecuteFlag.InvokeIDList;
+            ClrWinApi.Api.ShellExecuteEx(ref info);
+        }
+        else
+        {
+            using var proc = new Process()
             {
-                UseShellExecute = true,
-            },
-        };
-            
-        proc.Start();        
+                StartInfo = new ProcessStartInfo(path)
+                {
+                    UseShellExecute = true,
+                },
+            };
+
+            proc.Start();
+        }
         return new OnEnterResult(true).ToAsync();
     }
 

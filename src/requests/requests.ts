@@ -55,6 +55,8 @@ interface OnEnter {
     id: string
     path: string,
     name: string,
+    ctrl: boolean,
+    alt: boolean
 }
 
 interface OnEnterResponse {

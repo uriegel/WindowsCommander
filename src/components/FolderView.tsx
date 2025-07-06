@@ -1,6 +1,6 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react"
 import './FolderView.css'
-import VirtualTable, { type OnSort, type SelectableItem, type TableColumns, type VirtualTableHandle } from "virtual-table-react"
+import VirtualTable, { type OnSort, type SelectableItem, type SpecialKeys, type TableColumns, type VirtualTableHandle } from "virtual-table-react"
 import { changePath as changePathRequest, getExtended, prepareCopy } from "../requests/requests"
 import { getController, type IController } from "../controllers/controller"
 import { Root } from "../controllers/root"
@@ -13,14 +13,16 @@ import type { DialogHandle } from "web-dialog-react"
 export type FolderViewHandle = {
     id: string
     setFocus: ()=>void
-    processEnter: (item: FolderViewItem, otherPath?: string)=>Promise<void>
+    processEnter: (item: FolderViewItem, otherPath?: string, specialKeys?: SpecialKeys)=>Promise<void>
     refresh: (forceShowHidden?: boolean) => void
     getPath: () => string
     changePath: (path: string) => void
     insertSelection: () => void
     selectAll: () => void
     selectNone: () => void
-    copyItems: (inactiveFolder: FolderViewHandle, move: boolean)=>Promise<void>
+    copyItems: (inactiveFolder: FolderViewHandle, move: boolean) => Promise<void>
+    showProperties: () => Promise<void>
+    openAs: ()=>Promise<void>
 }
 
 interface ItemCount {
@@ -34,7 +36,7 @@ interface FolderViewProp {
     onFocus: () => void
     onItemChanged: (path: string, isDir: boolean, latitude?: number, longitude?: number) => void
     onItemsChanged: (count: ItemCount)=>void
-    onEnter: (item: FolderViewItem)=>void
+    onEnter: (item: FolderViewItem, specialKeys?: SpecialKeys)=>void
     setStatusText: (text?: string) => void
     dialog: DialogHandle
 }
@@ -145,7 +147,9 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         insertSelection,
         selectAll,
         selectNone,
-        copyItems
+        copyItems,
+        showProperties,
+        openAs
     }))
 
     const input = useRef<HTMLInputElement | null>(null)
@@ -199,12 +203,27 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         return () => subscription.unsubscribe()
     }, [id, setItems])
 
-    const processEnter = async (item: FolderViewItem, otherPath?: string) => {
-        const res = await controller.current.onEnter({ path, item, selectedItems: getSelectedItems(), dialog, otherPath, id })
+    const processEnter = async (item: FolderViewItem, otherPath?: string, specialKeys?: SpecialKeys) => {
+        const res = await controller.current.onEnter({
+            path, item, selectedItems: getSelectedItems(), dialog, otherPath, id,
+            alt: specialKeys?.alt || false, ctrl: specialKeys?.ctrl || false
+        })
         if (!res.processed)
             changePath(res.pathToSet, showHidden, res.mount, res.latestPath)
         if (res.refresh)
             refresh()
+    }
+
+    const showProperties = async () => {
+        const selectedItem = getSelectedItem()
+        if (selectedItem)
+            processEnter(selectedItem, undefined, { alt: true, ctrl: false, shift: false })
+    }
+
+    const openAs = async () => {
+        const selectedItem = getSelectedItem()
+        if (selectedItem)
+            processEnter(selectedItem, undefined, { alt: false, ctrl: true, shift: false })
     }
 
     const refresh = (forceShowHidden?: boolean) => changePath(path, forceShowHidden || (forceShowHidden === false ? false : showHidden))
@@ -325,6 +344,14 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         return selected.length > 0
             ? selected
             : [checkParent(items[virtualTable.current?.getPosition() ?? 0])].filter(n => n != null) as FolderViewItem[]
+    }
+
+    const getSelectedItem = () => {
+        const selected = getSelectedItems()
+        if (selected.length == 1)
+            return selected[0]
+        else
+            return null
     }
 
     const checkRestricted = (key: string) => {

@@ -14,6 +14,7 @@ import MediaPlayer from "./MediaPlayer"
 import FileViewer from "./FileViewer"
 import { sendMenuCmd } from "../requests/requests"
 import { DialogContext } from "web-dialog-react"
+import type { SpecialKeys } from "virtual-table-react"
 
 const ID_LEFT = "left"
 const ID_RIGHT = "right"
@@ -94,10 +95,10 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 						: PreviewMode.Default)			
 				break
 			case "PROPERTIES":
-				console.log("properties")
+				getActiveFolder()?.showProperties()
 				break
 			case "OPENAS":
-				console.log("openas")
+				getActiveFolder()?.openAs()
 				break
 			case "FAVORITES":
 				getActiveFolder()?.changePath("fav")
@@ -169,9 +170,9 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 			setItemProperty({ path, isDirectory, latitude, longitude })
 	, [])
 
-	const onEnter = (item: FolderViewItem) => {
-		getActiveFolder()?.processEnter(item, getInactiveFolder()?.getPath())
-	}
+	const onEnter = (item: FolderViewItem, specialKeys?: SpecialKeys) => 
+		getActiveFolder()?.processEnter(item, getInactiveFolder()?.getPath(), specialKeys)
+		
 
 	const VerticalSplitView = () => (
 		<ViewSplit firstView={FolderLeft} secondView={FolderRight}></ViewSplit>

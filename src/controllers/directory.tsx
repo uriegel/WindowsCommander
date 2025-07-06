@@ -27,8 +27,8 @@ export class Directory implements IController {
 
     async onEnter(enterData: EnterData): Promise<OnEnterResult> {
         
-        if (!enterData.item.isDirectory) {
-            await onEnter({ id: enterData.id ?? "", name: enterData.item.name, path: enterData.path })
+        if (!enterData.item.isDirectory || enterData.alt || enterData.ctrl) {
+            await onEnter({ id: enterData.id ?? "", name: enterData.item.name, path: enterData.path, alt: enterData.alt, ctrl: enterData.ctrl })
             return {
                 processed: true
             }
