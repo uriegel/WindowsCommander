@@ -4,6 +4,7 @@ import type { FolderViewItem } from "../components/FolderView"
 import { Directory } from "./directory"
 import type { PrepareCopyResponse } from "../requests/requests"
 import { Favorites } from "./favorites"
+import type { DialogHandle } from "web-dialog-react"
 
 export const IconNameType = {
     Parent: 'Parent',
@@ -25,12 +26,16 @@ export interface OnEnterResult {
     pathToSet?: string
     latestPath?: string
     mount?: boolean
+    refresh?: boolean
 }
 
 export interface EnterData {
+    id?: string
     path: string,
     item: FolderViewItem, 
-    //setError: (e: string)=>void
+    selectedItems?: FolderViewItem[]
+    dialog: DialogHandle
+    otherPath?: string
 }
 
 export interface IController {

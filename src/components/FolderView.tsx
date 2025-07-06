@@ -8,11 +8,12 @@ import { exifDataEvents, statusEvents } from "../requests/events"
 import { filter } from "rxjs/operators"
 import RestrictionView, { type RestrictionViewHandle } from "./RestrictionView"
 import { initializeHistory } from "../history"
+import type { DialogHandle } from "web-dialog-react"
 
 export type FolderViewHandle = {
     id: string
     setFocus: ()=>void
-    processEnter: (item: FolderViewItem)=>Promise<void>
+    processEnter: (item: FolderViewItem, otherPath?: string)=>Promise<void>
     refresh: (forceShowHidden?: boolean) => void
     getPath: () => string
     changePath: (path: string) => void
@@ -34,7 +35,8 @@ interface FolderViewProp {
     onItemChanged: (path: string, isDir: boolean, latitude?: number, longitude?: number) => void
     onItemsChanged: (count: ItemCount)=>void
     onEnter: (item: FolderViewItem)=>void
-    setStatusText: (text?: string)=>void
+    setStatusText: (text?: string) => void
+    dialog: DialogHandle
 }
 
 const DriveKind = {
@@ -81,7 +83,7 @@ export type FileVersion = {
 }
 
 const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
-    { id, showHidden, onFocus, onItemChanged, onItemsChanged, onEnter, setStatusText },
+    { id, showHidden, onFocus, onItemChanged, onItemsChanged, onEnter, setStatusText, dialog },
     ref) => {
     
     const setItems = useCallback((items: FolderViewItem[], dirCount?: number, fileCount?: number) => {
@@ -197,10 +199,12 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         return () => subscription.unsubscribe()
     }, [id, setItems])
 
-    const processEnter = async (item: FolderViewItem) => {
-        const res = await controller.current.onEnter({ path, item })
+    const processEnter = async (item: FolderViewItem, otherPath?: string) => {
+        const res = await controller.current.onEnter({ path, item, selectedItems: getSelectedItems(), dialog, otherPath })
         if (!res.processed)
             changePath(res.pathToSet, showHidden, res.mount, res.latestPath)
+        if (res.refresh)
+            refresh()
     }
 
     const refresh = (forceShowHidden?: boolean) => changePath(path, forceShowHidden || (forceShowHidden === false ? false : showHidden))

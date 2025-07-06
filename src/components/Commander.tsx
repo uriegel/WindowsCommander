@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react"
+import { forwardRef, useCallback, useContext, useEffect, useImperativeHandle, useRef, useState } from "react"
 import ViewSplit from "view-split-react"
 import type { FolderViewHandle, FolderViewItem } from "./FolderView"
 import FolderView from "./FolderView"
@@ -13,6 +13,7 @@ import PictureViewer from "./PictureViewer"
 import MediaPlayer from "./MediaPlayer"
 import FileViewer from "./FileViewer"
 import { sendMenuCmd } from "../requests/requests"
+import { DialogContext } from "web-dialog-react"
 
 const ID_LEFT = "left"
 const ID_RIGHT = "right"
@@ -60,6 +61,8 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	const showHiddenRef = useRef(false)
 	const showViewerRef = useRef(false)
 
+	const dialog = useContext(DialogContext)
+
 	const onKeyDown = (evt: React.KeyboardEvent) => {
 		if (evt.code == "Tab" && !evt.shiftKey) {
 			getInactiveFolder()?.setFocus()
@@ -89,6 +92,9 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 						: previewMode == PreviewMode.Location
 						? PreviewMode.Both
 						: PreviewMode.Default)			
+				break
+			case "FAVORITES":
+				getActiveFolder()?.changePath("fav")
 				break
 			case "insert":
 				getActiveFolder()?.insertSelection()
@@ -158,7 +164,7 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	, [])
 
 	const onEnter = (item: FolderViewItem) => {
-		getActiveFolder()?.processEnter(item)
+		getActiveFolder()?.processEnter(item, getInactiveFolder()?.getPath())
 	}
 
 	const VerticalSplitView = () => (
@@ -167,11 +173,11 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
     
 	const FolderLeft = () => (
 		<FolderView ref={folderLeft} id={ID_LEFT} onFocus={onFocusLeft} onItemChanged={onItemChanged} onItemsChanged={setItemCount}
-			onEnter={onEnter} showHidden={showHidden} setStatusText={setStatusTextLeft} />
+			onEnter={onEnter} showHidden={showHidden} setStatusText={setStatusTextLeft} dialog={dialog} />
 	)
 	const FolderRight = () => (
 		<FolderView ref={folderRight} id={ID_RIGHT} onFocus={onFocusRight} onItemChanged={onItemChanged} onItemsChanged={setItemCount}
-			onEnter={onEnter} showHidden={showHidden} setStatusText={setStatusTextRight} />
+			onEnter={onEnter} showHidden={showHidden} setStatusText={setStatusTextRight} dialog={dialog} />
 	)
 
 	const getStatusText = useCallback(() => 
