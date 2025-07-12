@@ -128,7 +128,7 @@ static class Requests
         => Request<PrepareCopyRequest, PrepareCopyResult>(request, n => GetController(n.Id).PrepareCopy(n));
 
     static Task<bool> Copy(IRequest request)
-        => Request<CopyRequest, CopyResult>(request, n => GetController(n.Id).Copy());
+        => Request<CopyRequest, CopyResult>(request, n => GetController(n.Id).Copy(n));
 
     static Task<bool> OnEnter(IRequest request)
         => Request<OnEnterRequest, OnEnterResult>(request, n => GetController(n.Id).OnEnter(n));
@@ -201,7 +201,12 @@ record PrepareCopyResult(
     CopyItem[] Conflicts
 );
 
-record CopyRequest(string Id);
+record CopyRequest(
+    string Id,
+    bool Cancelled,
+    bool NotOverwrite
+
+);
 record CopyResult();
 
 record GetExtendedRequest(int Id, string FolderId);

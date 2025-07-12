@@ -13,16 +13,39 @@ enum SelectedItemsType
     Both
 }
 
-class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType selectedItemsType, DirectoryItem[] selectedItems)
+class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType selectedItemsType, DirectoryItem[] selectedItems, bool move)
 {
+    public static CopyProcessor? Current { get; private set; }
 
-    public PrepareCopyResult PrepareCopy(bool move)
+    public PrepareCopyResult PrepareCopy()
     {
-        var dirs = move ? selectedItems.Where(n => n.IsDirectory).Select(n => n.Name) : [];
-        var copyItems = MakeCopyItems(MakeSourceCopyItems(selectedItems, sourcePath), targetPath);
+        Current = this;
+        copyItems = MakeCopyItems(MakeSourceCopyItems(selectedItems, sourcePath), targetPath);
         var conflicts = copyItems.Where(n => n.Target != null).ToArray();
-        var size = copyItems.Aggregate(0L, (s, n) => s + n.Source.Size);
-        return new(selectedItemsType, size, conflicts);
+        var copySize = copyItems.Aggregate(0L, (s, n) => s + n.Source.Size);
+        return new(selectedItemsType, copySize, conflicts);
+    }
+
+    public Task<CopyResult> Copy(CopyRequest data)
+    {
+        try
+        {
+            copyItems = data.NotOverwrite ? [.. copyItems.Where(n => n.Target == null)] : copyItems;
+
+            return new CopyResult().ToAsync();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return new CopyResult().ToAsync();
+        }
+        catch
+        {
+            return new CopyResult().ToAsync();
+        }
+        finally
+        {
+            Current = null;
+        }
     }
 
     protected virtual CopyItem[] MakeCopyItems(IEnumerable<DirectoryItem> items, string targetPath)
@@ -70,6 +93,8 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
             return null;
         return DirectoryItem.CreateFileItem(info);
     }
+
+    CopyItem[] copyItems = [];
 }
 
 record CopyItem(DirectoryItem Source, DirectoryItem? Target);

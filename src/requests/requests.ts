@@ -38,6 +38,8 @@ export interface PrepareCopyResponse {
 
 interface Copy {
     id: string
+    cancelled?: boolean
+    notOverwrite?: boolean
 }
 
 interface CopyResponse {

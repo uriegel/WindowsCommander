@@ -1,14 +1,14 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react"
 import './FolderView.css'
 import VirtualTable, { type OnSort, type SelectableItem, type SpecialKeys, type TableColumns, type VirtualTableHandle } from "virtual-table-react"
-import { changePath as changePathRequest, getExtended, prepareCopy, SelectedItemsType } from "../requests/requests"
+import { changePath as changePathRequest, copy, getExtended, prepareCopy, SelectedItemsType } from "../requests/requests"
 import { getController, type IController } from "../controllers/controller"
 import { Root } from "../controllers/root"
 import { exifDataEvents, statusEvents } from "../requests/events"
 import { filter } from "rxjs/operators"
 import RestrictionView, { type RestrictionViewHandle } from "./RestrictionView"
 import { initializeHistory } from "../history"
-import { Slide, type DialogHandle } from "web-dialog-react"
+import { ResultType, Slide, type DialogHandle } from "web-dialog-react"
 import CopyConflicts, { type ConflictItem } from "./dialogparts/CopyConflicts"
 
 export type FolderViewHandle = {
@@ -363,7 +363,12 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
             defBtnYes: !defNo && prepareResult.conflicts.length > 0,
             defBtnNo: defNo
         })
-
+        const result = await copy({ id, cancelled: res.result == ResultType.Cancel, notOverwrite: res.result == ResultType.No })
+        if (!result.cancelled) {
+            inactiveFolder.refresh()
+            if (move)
+                refresh()
+        }
     }
 
     const onSort = async (sort: OnSort) => {
