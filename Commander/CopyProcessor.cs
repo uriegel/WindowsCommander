@@ -22,7 +22,7 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
         var copyItems = MakeCopyItems(MakeSourceCopyItems(selectedItems, sourcePath), targetPath);
         var conflicts = copyItems.Where(n => n.Target != null).ToArray();
         var size = copyItems.Aggregate(0L, (s, n) => s + n.Source.Size);
-        return new(selectedItemsType, size);
+        return new(selectedItemsType, size, conflicts);
     }
 
     protected virtual CopyItem[] MakeCopyItems(IEnumerable<DirectoryItem> items, string targetPath)

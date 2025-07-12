@@ -8,7 +8,8 @@ import { exifDataEvents, statusEvents } from "../requests/events"
 import { filter } from "rxjs/operators"
 import RestrictionView, { type RestrictionViewHandle } from "./RestrictionView"
 import { initializeHistory } from "../history"
-import type { DialogHandle } from "web-dialog-react"
+import { Slide, type DialogHandle } from "web-dialog-react"
+import CopyConflicts, { type ConflictItem } from "./dialogparts/CopyConflicts"
 
 export type FolderViewHandle = {
     id: string
@@ -335,7 +336,34 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         if (prepareResult.selectedItemsType == SelectedItemsType.None) 
             return
         
-        console.log(prepareResult)
+        const defNo = prepareResult.conflicts.length > 0
+            && prepareResult
+                .conflicts
+                .filter(n => (n.source.time ?? "") < (n.target.time ?? ""))
+                .length > 0
+        
+        const res = await dialog.show({
+            text: controller.current.getCopyText(prepareResult, move),
+            slide: fromLeft ? Slide.Left : Slide.Right,
+            extension: prepareResult.conflicts.length ? CopyConflicts : undefined,
+            extensionProps: prepareResult.conflicts.map(n => ({
+                name: n.source.name.getFileName(),
+                subPath: n.source.name.getParentPath(),
+                iconPath: n.source.name,
+                size: n.source.size,
+                time: n.source.time,
+                targetSize: n.target.size,
+                targetTime: n.target.time
+            }) as ConflictItem), 
+            fullscreen: prepareResult.conflicts.length > 0,
+            btnYes: prepareResult.conflicts.length > 0,
+            btnNo: prepareResult.conflicts.length > 0,
+            btnOk: prepareResult.conflicts.length == 0,
+            btnCancel: true,
+            defBtnYes: !defNo && prepareResult.conflicts.length > 0,
+            defBtnNo: defNo
+        })
+
     }
 
     const onSort = async (sort: OnSort) => {
