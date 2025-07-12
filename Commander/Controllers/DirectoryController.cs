@@ -58,7 +58,9 @@ class DirectoryController(string folderId) : Controller(folderId)
 
     public override Task<PrepareCopyResult> PrepareCopy(PrepareCopyRequest data)
     {
-        if ((data.TargetPath.StartsWith('/') != true && data.TargetPath?.StartsWith("remote/") != true)
+        //if ((data.TargetPath.StartsWith('/') != true && data.TargetPath?.StartsWith("remote/") != true)
+        if (data.TargetPath.Length < 1
+        || data.TargetPath[1] != ':'
         || string.Compare(data.Path, data.TargetPath, StringComparison.CurrentCultureIgnoreCase) == 0
         || data.Items.Length == 0)
             return new PrepareCopyResult(SelectedItemsType.None, 0).ToAsync();
@@ -194,7 +196,7 @@ class DirectoryController(string folderId) : Controller(folderId)
     static Task WaitForExtendedDataRequest(int requestId)
     {
         var tcs = new TaskCompletionSource();
-        var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+        var cancellation = new CancellationTokenSource(TimeSpan.FromMinutes(3));
         cancellation.Token.Register(() => tcs.TrySetCanceled());
         extendedTasks.AddOrUpdate(requestId, tcs, (id, t) => tcs);
         return tcs.Task;

@@ -112,10 +112,16 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 			case "SEL_NONE":
 				getActiveFolder()?.selectNone()
 				break
-			case "copy": {
+			case "COPY": {
 					const other = getInactiveFolder()
 					if (other)
-						getActiveFolder()?.copyItems(other, false)
+						getActiveFolder()?.copyItems(other, false, getActiveFolder()?.id == ID_LEFT)
+				}			
+				break
+			case "MOVE": {
+					const other = getInactiveFolder()
+					if (other)
+						getActiveFolder()?.copyItems(other, true, getActiveFolder()?.id == ID_LEFT)
 				}			
 				break
 			case "SHOW_DEV_TOOLS":

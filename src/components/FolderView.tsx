@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react"
 import './FolderView.css'
 import VirtualTable, { type OnSort, type SelectableItem, type SpecialKeys, type TableColumns, type VirtualTableHandle } from "virtual-table-react"
-import { changePath as changePathRequest, getExtended, prepareCopy } from "../requests/requests"
+import { changePath as changePathRequest, getExtended, prepareCopy, SelectedItemsType } from "../requests/requests"
 import { getController, type IController } from "../controllers/controller"
 import { Root } from "../controllers/root"
 import { exifDataEvents, statusEvents } from "../requests/events"
@@ -20,7 +20,7 @@ export type FolderViewHandle = {
     insertSelection: () => void
     selectAll: () => void
     selectNone: () => void
-    copyItems: (inactiveFolder: FolderViewHandle, move: boolean) => Promise<void>
+    copyItems: (inactiveFolder: FolderViewHandle, move: boolean, fromLeft: boolean) => Promise<void>
     showProperties: () => Promise<void>
     openAs: ()=>Promise<void>
 }
@@ -250,6 +250,15 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
 
     const onKeyDown = async (evt: React.KeyboardEvent) => {
         switch (evt.code) {
+            case "Insert":
+                if (controller.current.itemsSelectable) {
+                    setItems(items.map((n, i) => i != virtualTable.current?.getPosition() ? n : toggleSelection(n)))
+                    virtualTable.current?.setPosition(virtualTable.current.getPosition() + 1)
+                    controller.current.onSelectionChanged(items)
+                    evt.preventDefault()
+                    evt.stopPropagation()
+                }
+                break
             case "Home":
                 if (evt.shiftKey && controller.current.itemsSelectable) 
                     setItems(items.map((n, i) => setSelection(n, i <= (virtualTable.current?.getPosition() ?? 0))))
@@ -321,8 +330,10 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         }
     }
 
-    const copyItems = async (inactiveFolder: FolderViewHandle, move: boolean) => {
-        const prepareResult = prepareCopy({ id, move, path, targetPath: inactiveFolder.getPath(), items: getSelectedItems() })
+    const copyItems = async (inactiveFolder: FolderViewHandle, move: boolean, fromLeft: boolean) => {
+        const prepareResult = await prepareCopy({ id, move, path, targetPath: inactiveFolder.getPath(), items: getSelectedItems() })
+        if (prepareResult.selectedItemsType == SelectedItemsType.None) 
+            return
         
         console.log(prepareResult)
     }

@@ -22,6 +22,7 @@ static class Requests
         {
             "changepath" => await ChangePath(request),
             "sendmenucmd" => await MenuCmd(request),
+            "getextended" => await GetExtended(request),
             "preparecopy" => await PrepareCopy(request),
             "copy" => await Copy(request),
             "onenter" => await OnEnter(request),
