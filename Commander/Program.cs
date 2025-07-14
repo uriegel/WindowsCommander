@@ -1,3 +1,5 @@
+using System.Drawing;
+using System.Windows.Forms;
 using Commander;
 using WebServerLight;
 using WebServerLight.Routing;
@@ -8,6 +10,9 @@ class Program
     public static Program Instance { get; } = new Program();
 
     public WebView WebView { get; }
+
+    public nint WindowHandle { get; private set;}
+    public Form? Window { get; private set; }
 
     public static void Main() => Instance.WebView.Run();
 
@@ -54,11 +59,19 @@ class Program
             .DefaultContextMenuDisabled()
             .ResourceIcon("icon")
             .WithoutNativeTitlebar()
+            .BackgroundColor(Color.Transparent)
+            .OnFormCreating(SetWindow)
             .DebugUrl("http://localhost:5173")
             .Url("http://localhost:20000")
             .CanClose(() => true);
     }
 
+    void SetWindow(Form window)
+    {
+        Window = window;
+        WindowHandle = window.Handle;
+    } 
+    
     readonly IServer server;
 }
 

@@ -1,5 +1,7 @@
+using ClrWinApi;
 using Commander.Controllers;
 using CsTools.Extensions;
+using WebWindowNetCore;
 
 namespace Commander;
 
@@ -30,8 +32,22 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
     {
         try
         {
-            copyItems = data.NotOverwrite ? [.. copyItems.Where(n => n.Target == null)] : copyItems;
-
+            Program.Instance.Window?.BeginInvoke(() =>
+            {
+                copyItems = data.NotOverwrite ? [.. copyItems.Where(n => n.Target == null)] : copyItems;
+                var op = new ShFileOPStruct()
+                {
+                    //Hwnd = Program.Instance.WindowHandle,
+                    Flags = FileOpFlags.MULTIDESTFILES | FileOpFlags.ALLOWUNDO,
+                    From = string.Join("\0", copyItems.Select(n => sourcePath.AppendPath(n.Source.Name))) + "\0",
+                    To = string.Join("\0", copyItems.Select(n => targetPath.AppendPath(n.Source.Name))) + "\0",
+                    Func = move ? FileFuncFlags.MOVE : FileFuncFlags.COPY,
+                    ProgressTitle = move ? "Verschiebe Dateien" : "Kopiere Dateien"
+                };
+                // if (!data.NotOverwrite)
+                    //op.Flags |= FileOpFlags.NOCONFIRMATION;
+                var res = Api.SHFileOperation(op);
+            });
             return new CopyResult().ToAsync();
         }
         catch (UnauthorizedAccessException)
