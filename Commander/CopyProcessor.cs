@@ -37,17 +37,16 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
             if (data.Cancelled)
                 return new CopyResult(true);
 
-            //ProgressContext.Instance.SetRunning();
+            ProgressContext.Instance.SetRunning();
             var index = 0;
             copyItems = data.NotOverwrite ? [.. copyItems.Where(n => n.Target == null)] : copyItems;
             copySize = data.NotOverwrite ? copyItems.Sum(n => n.Source.Size) : copySize;
-            //var cancellation = ProgressContext.Instance.Start(data.Id, move ? "Verschieben" : "Kopieren", copySize, copyItems.Length);
-            var cancellation = CancellationToken.None;
+            var cancellation = ProgressContext.Instance.Start(data.Id, move ? "Verschieben" : "Kopieren", copySize, copyItems.Length);
             foreach (var item in copyItems)
             {
                 if (cancellation.IsCancellationRequested)
                     throw new TaskCanceledException();
-                //                ProgressContext.Instance.SetNewFileProgress(item.Source.Name, item.Source.Size, ++index);
+                ProgressContext.Instance.SetNewFileProgress(item.Source.Name, item.Source.Size, ++index);
                 await CopyItem(item, move, cancellation);
             }
 
@@ -60,7 +59,7 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
         }
         catch (UnauthorizedAccessException)
         {
-            //          MainContext.Instance.ErrorText = "Zugriff verweigert";
+            //MainContext.Instance.ErrorText = "Zugriff verweigert";
             return new CopyResult(false);
         }
         catch
@@ -69,8 +68,8 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
         }
         finally
         {
-            // ProgressContext.Instance.Stop();
-            // ProgressContext.Instance.SetRunning(false);
+            ProgressContext.Instance.Stop();
+            ProgressContext.Instance.SetRunning(false);
             Current = null;
         }
     }
@@ -105,12 +104,12 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
         var res = move
             ? MoveFileWithProgress(sourcePath.AppendPath(item.Source.Name), newFileName, (total, current, c, d, e, f, g, h, i) =>
                 {
-                    //            progress(current, total);
+                    ProgressContext.Instance.SetProgress(total, current);
                     return CopyProgressResult.Continue;
                 }, IntPtr.Zero, MoveFileFlags.CopyAllowed | MoveFileFlags.ReplaceExisting)
             : CopyFileEx(sourcePath.AppendPath(item.Source.Name), newFileName, (total, current, c, d, e, f, g, h, i) =>
                 {
-                    //            progress(current, total);
+                    ProgressContext.Instance.SetProgress(total, current);
                     return CopyProgressResult.Continue;
                 }, IntPtr.Zero, ref cancel, (CopyFileFlags)0);
         if (!res)
@@ -126,21 +125,21 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
     }
 
     static IEnumerable<DirectoryItem> Flatten(string item, string sourcePath)
-        {
-            var info = new DirectoryInfo(sourcePath.AppendPath(item));
+    {
+        var info = new DirectoryInfo(sourcePath.AppendPath(item));
 
-            var dirs = info
-                .GetDirectories()
-                .OrderBy(n => n.Name)
-                .Select(n => item.AppendPath(n.Name))
-                .SelectMany(n => Flatten(n, sourcePath));
+        var dirs = info
+            .GetDirectories()
+            .OrderBy(n => n.Name)
+            .Select(n => item.AppendPath(n.Name))
+            .SelectMany(n => Flatten(n, sourcePath));
 
-            var files = info
-                .GetFiles()
-                .OrderBy(n => n.Name)
-                .Select(n => DirectoryItem.CreateCopyFileItem(item.AppendPath(n.Name), n));
-            return dirs.Concat(files);
-        }
+        var files = info
+            .GetFiles()
+            .OrderBy(n => n.Name)
+            .Select(n => DirectoryItem.CreateCopyFileItem(item.AppendPath(n.Name), n));
+        return dirs.Concat(files);
+    }
 
     static DirectoryItem? ValidateFile(string subPath, string path)
     {
@@ -149,8 +148,6 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
             return null;
         return DirectoryItem.CreateFileItem(info);
     }
-
-    protected const string TMP_POSTFIX = "-tmp-commander";
 
     CopyItem[] copyItems = [];
     long copySize;
