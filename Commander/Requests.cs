@@ -207,7 +207,7 @@ record CopyRequest(
     bool NotOverwrite
 
 );
-record CopyResult();
+record CopyResult(bool Cancelled);
 
 record GetExtendedRequest(int Id, string FolderId);
 record GetExtendedResult();

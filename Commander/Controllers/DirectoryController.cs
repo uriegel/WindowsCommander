@@ -68,7 +68,7 @@ class DirectoryController(string folderId) : Controller(folderId)
         return Task.Run(copyProcessor.PrepareCopy);
     }
 
-    public override Task<CopyResult> Copy(CopyRequest copyRequest) => CopyProcessor.Current?.Copy(copyRequest) ?? new CopyResult().ToAsync();
+    public override Task<CopyResult> Copy(CopyRequest copyRequest) => CopyProcessor.Current?.Copy(copyRequest) ?? new CopyResult(true).ToAsync();
 
     public override Task<OnEnterResult> OnEnter(OnEnterRequest data)
     {
