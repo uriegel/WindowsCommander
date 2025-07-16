@@ -1,10 +1,10 @@
 
 import './Titlebar.css'
-//import Pie from 'react-progress-control'
+import Pie from 'react-progress-control'
 //import CopyProgress from "./dialogparts/CopyProgress"
 import { DialogContext } from "web-dialog-react"
 import "functional-extensions"
-import { useContext, useEffect, useRef, useState, type JSX } from "react"
+import { useCallback, useContext, useEffect, useRef, useState, type JSX } from "react"
 
 declare type WebViewType = {
     initializeCustomTitlebar: () => void,
@@ -14,22 +14,24 @@ declare const WebView: WebViewType
 
 interface TitlebarProps {
     menu: JSX.Element
+    progress: number
+    progressRevealed: boolean
+    progressFinished: boolean
 }
 
-const Titlebar = ({ menu, }: TitlebarProps) => {
+const Titlebar = ({ menu, progress, progressFinished, progressRevealed }: TitlebarProps) => {
     
     const dialog = useContext(DialogContext)
 
-    const [_move, _setMove] = useState(false)
+    const [move, _setMove] = useState(false)
 
     const dialogOpen = useRef(false)
 
-    const [progressRevealed, _setProgressRevealed] = useState(false)
 	const [_progressFinished, _setProgressFinished] = useState(false)
-	const [_totalSize, _setTotalSize] = useState(0)
+	const [totalSize, _setTotalSize] = useState(0)
     const [_progress, _setProgress] = useState(0)
 
-//     const startProgressDialog = useCallback(() => {
+    const startProgressDialog = useCallback(() => {
 //         const start = async () => {
 //             dialogOpen.current = true
 //             await dialog.show({
@@ -45,7 +47,7 @@ const Titlebar = ({ menu, }: TitlebarProps) => {
 //         }
 
 //         start()
-//     }, [dialog, move, totalSize])
+    }, [dialog, move, totalSize])
 
     useEffect(() => {
         WebView.initializeCustomTitlebar()
@@ -94,9 +96,9 @@ const Titlebar = ({ menu, }: TitlebarProps) => {
             <div className="titlebarGrip" id="$DRAG_REGION$">
                 <span id="$TITLE$"></span>
             </div>
-            {/* <div className={`pieContainer${progressRevealed ? " revealed" : ""}${progressFinished ? " finished" : ""}`} onClick={startProgressDialog}>
+            <div className={`pieContainer${progressRevealed ? " revealed" : ""}${progressFinished ? " finished" : ""}`} onClick={startProgressDialog}>
                 <Pie progress={progress}/>
-            </div>             */}
+            </div>             
             <div className="titlebarButton" id="$MINIMIZE$"><span className="dash">&#x2012;</span></div>
             <div className="titlebarButton" id="$RESTORE$"><span>&#10697;</span></div>  
             <div className="titlebarButton" id="$MAXIMIZE$"><span>&#9744;</span></div>

@@ -21,11 +21,12 @@ export type ExtendedInfo = {
 }
 
 type WebSocketMsg = {
-    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo",
+    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo" | "progressrevealed",
     cmdMsg?: CmdMsg,
     cmdToggleMsg?: CmdToggleMsg,
     statusMsg?: StatusMsg
-    extendedInfo?: ExtendedInfo
+    extendedInfo?: ExtendedInfo,
+    progressRevealed?: boolean
 }
 
 const socket = webSocket<WebSocketMsg>('ws://localhost:20000/events').pipe(share())
@@ -42,6 +43,9 @@ export const statusEvents = socket
 export const exifDataEvents = socket
                     .pipe(filter(n => n.method == "extendedinfo"))
                     .pipe(map(n => n.extendedInfo!))
+export const progressRevealedEvents = socket
+                    .pipe(filter(n => n.method == "progressrevealed"))
+                    .pipe(map(n => n.progressRevealed!))
 
 socket.subscribe({
     error: err => console.error('Subscription error:', err),

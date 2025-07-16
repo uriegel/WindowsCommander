@@ -37,6 +37,7 @@ class ProgressContext
     {
         IsRunning = running;
         Requests.SendStatusBarInfo(Instance.folderId, 100_000, null);
+        Requests.SendProgressRevealed(running);
     }
 
     public static bool CanClose()

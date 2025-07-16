@@ -78,19 +78,19 @@ static class Requests
     public static async void SendMenuCommand(string id)
     {
         if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("cmd", new(id), null, null, null));    
+            await webSocket.SendJson(new WebSocketMsg("cmd", new(id), null, null, null, null));    
     }
 
     public static async void SendMenuCheck(string id, bool check)
     {
         if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("cmdtoggle", null, new(id, check), null, null)); 
+            await webSocket.SendJson(new WebSocketMsg("cmdtoggle", null, new(id, check), null, null, null)); 
     }
 
     public static async void SendStatusBarInfo(string id, int requestId, string? text)
     {
         if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("status", null, null, new(id, requestId, text), null)); 
+            await webSocket.SendJson(new WebSocketMsg("status", null, null, new(id, requestId, text), null, null)); 
     }
 
     public static async void SendExtendedInfo(string id, int requestId, DirectoryItem[] items)
@@ -98,12 +98,18 @@ static class Requests
         try
         {
             if (webSocket != null)
-                await webSocket.SendJson(new WebSocketMsg("extendedinfo", null, null, null, new(id, requestId, items)));
+                await webSocket.SendJson(new WebSocketMsg("extendedinfo", null, null, null, new(id, requestId, items), null));
         }
         catch (Exception ex)
         {
             Console.Error.WriteLine($"Error sending extended info: {ex}");
         }
+    }
+
+    public static async void SendProgressRevealed(bool revealed)
+    {
+        if (webSocket != null)
+            await webSocket.SendJson(new WebSocketMsg("progressrevealed", null, null, null, null, revealed)); 
     }
 
     static Task<bool> ChangePath(IRequest request)
@@ -224,7 +230,9 @@ record WebSocketMsg(
     CmdMsg? CmdMsg,
     CmdToggleMsg? CmdToggleMsg,
     StatusMsg? StatusMsg,
-    ExtendedInfo? ExtendedInfo);
+    ExtendedInfo? ExtendedInfo,
+    bool? ProgressRevealed
+);
 
 record CmdMsg(string Cmd);
 record CmdToggleMsg(string Cmd, bool Checked);

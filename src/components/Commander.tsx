@@ -6,7 +6,7 @@ import '../App.css'
 import '../themes/windows.css'
 import "functional-extensions"
 import Statusbar from "./Statusbar"
-import { cmdEvents, cmdToggleEvents, type CmdToggleMsg } from "../requests/events"
+import { cmdEvents, cmdToggleEvents, progressRevealedEvents, type CmdToggleMsg } from "../requests/events"
 import Titlebar from "./Titlebar"
 import Menu from "./Menu"
 import PictureViewer from "./PictureViewer"
@@ -54,6 +54,9 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	const [statusTextRight, setStatusTextRight] = useState<string | undefined>(undefined)
 	const [errorText, setErrorText] = useState<string | null>(null)
 	const [previewMode, setPreviewMode] = useState(PreviewMode.Default)
+	const [progress, _setProgress] = useState(0)
+	const [progressRevealed, setProgressRevealed] = useState(false)
+	const [progressFinished, _setProgressFinished] = useState(false)
     
 	const [activeFolderId, setActiveFolderId] = useState(ID_LEFT)
 	const onFocusLeft = () => setActiveFolderId(ID_LEFT)
@@ -153,9 +156,11 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	useEffect(() => {
 		const subscription = cmdEvents.subscribe(m => onMenuAction(m!.cmd))
 		const subscriptionToggle = cmdToggleEvents.subscribe(onMenuToggleAction)
+		const subscriptionRevealed = progressRevealedEvents.subscribe(setProgressRevealed)
 		return () => {
 			subscriptionToggle.unsubscribe()
 			subscription.unsubscribe()
+			subscriptionRevealed.unsubscribe()
 		}
 	}, [onMenuAction, onMenuToggleAction])
 
@@ -215,10 +220,10 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	return (
 		<>
 			<Titlebar menu={(
-				<Menu autoMode={false} onMenuAction={onMenuAction} 
-				showHidden={ showHidden} toggleShowHidden={toggleShowHiddenAndRefresh}
-				showViewer={showViewer} toggleShowViewer={toggleShowViewer} />
-			)} />			
+				<Menu autoMode={false} onMenuAction={onMenuAction}
+					showHidden={showHidden} toggleShowHidden={toggleShowHiddenAndRefresh}
+					showViewer={showViewer} toggleShowViewer={toggleShowViewer} />
+			)} progress={progress} progressFinished={progressFinished} progressRevealed={progressRevealed} />			
 			<ViewSplit isHorizontal={true} firstView={VerticalSplitView} secondView={ViewerView} initialWidth={30} secondVisible={showViewer} />
 			<Statusbar path={itemProperty.path} dirCount={itemCount.dirCount} fileCount={itemCount.fileCount}
 					errorText={errorText} setErrorText={setErrorText} statusText={getStatusText()} />		
