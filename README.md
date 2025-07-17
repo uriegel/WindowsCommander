@@ -1,4 +1,6 @@
-// TODO copy/move with shellexecute without progress see WindowsCommander
+// TODO copy/move prevent closing when copying, prevent copying when Copy is in progress
+// TODO copy/move with conflicts control
+// TODO copy/move progress with dialog
 
 // TODO Menu open explorer here
 
