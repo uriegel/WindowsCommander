@@ -57,6 +57,8 @@ class ProgressContext
         {
             if (field != value)
             {
+                if (value != null)
+                    Requests.SendCopyProgress(value);
                 field = value;
             }
         }

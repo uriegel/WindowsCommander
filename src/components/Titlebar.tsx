@@ -5,6 +5,7 @@ import Pie from 'react-progress-control'
 import { DialogContext } from "web-dialog-react"
 import "functional-extensions"
 import { useCallback, useContext, useEffect, useRef, useState, type JSX } from "react"
+import type { CopyProgress } from '../requests/events'
 
 declare type WebViewType = {
     initializeCustomTitlebar: () => void,
@@ -14,12 +15,12 @@ declare const WebView: WebViewType
 
 interface TitlebarProps {
     menu: JSX.Element
-    progress: number
+    copyProgress: CopyProgress
     progressRevealed: boolean
     progressFinished: boolean
 }
 
-const Titlebar = ({ menu, progress, progressFinished, progressRevealed }: TitlebarProps) => {
+const Titlebar = ({ menu, copyProgress, progressFinished, progressRevealed }: TitlebarProps) => {
     
     const dialog = useContext(DialogContext)
 
@@ -29,7 +30,7 @@ const Titlebar = ({ menu, progress, progressFinished, progressRevealed }: Titleb
 
 	const [_progressFinished, _setProgressFinished] = useState(false)
 	const [totalSize, _setTotalSize] = useState(0)
-    const [_progress, _setProgress] = useState(0)
+    const [progress, setProgress] = useState(0)
 
     const startProgressDialog = useCallback(() => {
 //         const start = async () => {
@@ -48,6 +49,11 @@ const Titlebar = ({ menu, progress, progressFinished, progressRevealed }: Titleb
 
 //         start()
     }, [dialog, move, totalSize])
+
+    useEffect(() => {
+console.log("copyProgress", copyProgress)
+        setProgress(copyProgress.currentMaxBytes / copyProgress.totalMaxBytes)
+    }, [copyProgress])
 
     useEffect(() => {
         WebView.initializeCustomTitlebar()

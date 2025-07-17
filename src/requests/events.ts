@@ -20,13 +20,28 @@ export type ExtendedInfo = {
     items: FolderViewItem[]
 }
 
+export type CopyProgress = {
+    // string Title,
+    // string Name,
+    totalCount: number,
+    currentCount: number,
+    totalMaxBytes: number,
+    totalBytes: number,
+    previousTotalBytes: number,
+    currentMaxBytes: number,
+    currentBytes: number,
+    isRunning: boolean,
+//    TimeSpan Duration
+}
+
 type WebSocketMsg = {
-    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo" | "progressrevealed",
+    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo" | "progressrevealed" | "copyprogress",
     cmdMsg?: CmdMsg,
     cmdToggleMsg?: CmdToggleMsg,
     statusMsg?: StatusMsg
     extendedInfo?: ExtendedInfo,
-    progressRevealed?: boolean
+    progressRevealed?: boolean,
+    copyProgress?: CopyProgress
 }
 
 const socket = webSocket<WebSocketMsg>('ws://localhost:20000/events').pipe(share())
@@ -46,6 +61,9 @@ export const exifDataEvents = socket
 export const progressRevealedEvents = socket
                     .pipe(filter(n => n.method == "progressrevealed"))
                     .pipe(map(n => n.progressRevealed!))
+export const copyProgressEvents = socket
+                    .pipe(filter(n => n.method == "copyprogress"))
+                    .pipe(map(n => n.copyProgress!))
 
 socket.subscribe({
     error: err => console.error('Subscription error:', err),
