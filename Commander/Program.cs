@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Windows.Forms;
 using Commander;
 using WebServerLight;
@@ -63,7 +62,7 @@ class Program
             .OnFormCreating(SetWindow)
             .DebugUrl("http://localhost:5173")
             .Url("http://localhost:20000")
-            .CanClose(() => true);
+            .CanClose(ProgressContext.CanClose);
     }
 
     void SetWindow(Form window)

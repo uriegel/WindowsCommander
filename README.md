@@ -1,6 +1,7 @@
-// TODO copy/move prevent closing when copying, prevent copying when Copy is in progress
-// TODO copy/move with conflicts control
-// TODO copy/move progress with dialog
+// TODO copy/move prevent closing when copying, Error display in status bar
+// TODO copy/move prevent copying when Copy is in progress, Error display in status bar
+// TODO copy/move progress with dialog, cancelling
+// TODO copy/move UAC start invisible commander instance
 
 // TODO Menu open explorer here
 

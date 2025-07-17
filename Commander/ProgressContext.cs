@@ -46,6 +46,7 @@ class ProgressContext
             return true;
         else
         {
+            
             return false;
         }
     }
