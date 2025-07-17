@@ -5,8 +5,8 @@ export interface StatusbarProps {
     path: string
     dirCount: number
     fileCount: number
-    errorText: string | null
-    setErrorText: (text: string | null) => void
+    errorText: string | undefined
+    setErrorText: (text: string | undefined) => void
     statusText: string | undefined
 }
 
@@ -17,7 +17,7 @@ const Statusbar = ({ path, dirCount, fileCount, errorText, setErrorText, statusT
     useEffect(() => {
         if (errorText) {
             clearTimeout(timer.current)
-            timer.current = setTimeout(() => setErrorText(null), 5000)            
+            timer.current = setTimeout(() => setErrorText(undefined), 5000)            
         }
     }, [errorText, setErrorText])
 

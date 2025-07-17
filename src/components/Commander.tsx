@@ -52,7 +52,7 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	const [itemCount, setItemCount] = useState({ dirCount: 0, fileCount: 0 })
 	const [statusTextLeft, setStatusTextLeft] = useState<string | undefined>(undefined)
 	const [statusTextRight, setStatusTextRight] = useState<string | undefined>(undefined)
-	const [errorText, setErrorText] = useState<string | null>(null)
+	const [errorText, setErrorText] = useState<string | undefined>(undefined)
 	const [previewMode, setPreviewMode] = useState(PreviewMode.Default)
 	const [progress, setProgress] = useState<CopyProgress>({
 		currentBytes: 0, currentCount: 0, currentMaxBytes: 0, isRunning: false, previousTotalBytes: 0, totalBytes: 0, totalCount: 0, totalMaxBytes: 0
@@ -195,11 +195,11 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
     
 	const FolderLeft = () => (
 		<FolderView ref={folderLeft} id={ID_LEFT} onFocus={onFocusLeft} onItemChanged={onItemChanged} onItemsChanged={setItemCount}
-			onEnter={onEnter} showHidden={showHidden} setStatusText={setStatusTextLeft} dialog={dialog} />
+			onEnter={onEnter} showHidden={showHidden} setStatusText={setStatusTextLeft} setErrorText={setErrorText} dialog={dialog} />
 	)
 	const FolderRight = () => (
 		<FolderView ref={folderRight} id={ID_RIGHT} onFocus={onFocusRight} onItemChanged={onItemChanged} onItemsChanged={setItemCount}
-			onEnter={onEnter} showHidden={showHidden} setStatusText={setStatusTextRight} dialog={dialog} />
+			onEnter={onEnter} showHidden={showHidden} setStatusText={setStatusTextRight} setErrorText={setErrorText} dialog={dialog} />
 	)
 
 	const getStatusText = useCallback(() => 

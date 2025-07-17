@@ -39,6 +39,7 @@ interface FolderViewProp {
     onItemsChanged: (count: ItemCount)=>void
     onEnter: (item: FolderViewItem, specialKeys?: SpecialKeys)=>void
     setStatusText: (text?: string) => void
+    setErrorText: (text?: string) => void
     dialog: DialogHandle
 }
 
