@@ -59,7 +59,7 @@ class Program
             .DefaultContextMenuDisabled()
             .ResourceIcon("icon")
             .WithoutNativeTitlebar()
-            .BackgroundColor(Color.Transparent)
+            //.BackgroundColor(Color.Transparent)
             .OnFormCreating(SetWindow)
             .DebugUrl("http://localhost:5173")
             .Url("http://localhost:20000")

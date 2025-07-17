@@ -52,7 +52,7 @@ const Titlebar = ({ menu, copyProgress, progressFinished, progressRevealed }: Ti
 
     useEffect(() => {
 console.log("copyProgress", copyProgress)
-        setProgress(copyProgress.currentMaxBytes / copyProgress.totalMaxBytes)
+        setProgress((copyProgress.totalBytes + copyProgress.currentBytes) / copyProgress.totalMaxBytes)
     }, [copyProgress])
 
     useEffect(() => {
