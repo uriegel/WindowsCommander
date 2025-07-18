@@ -35,13 +35,14 @@ export type CopyProgress = {
 }
 
 type WebSocketMsg = {
-    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo" | "progressrevealed" | "copyprogress",
+    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo" | "progressrevealed" | "copyprogress" | "progressrunning",
     cmdMsg?: CmdMsg,
     cmdToggleMsg?: CmdToggleMsg,
     statusMsg?: StatusMsg
     extendedInfo?: ExtendedInfo,
     progressRevealed?: boolean,
-    copyProgress?: CopyProgress
+    copyProgress?: CopyProgress,
+    progressRunning?: boolean
 }
 
 const socket = webSocket<WebSocketMsg>('ws://localhost:20000/events').pipe(share())
@@ -64,6 +65,9 @@ export const progressRevealedEvents = socket
 export const copyProgressEvents = socket
                     .pipe(filter(n => n.method == "copyprogress"))
                     .pipe(map(n => n.copyProgress!))
+export const progressRunningEvents = socket
+                    .pipe(filter(n => n.method == "progressrunning"))
+                    .pipe(map(n => n.progressRunning!))
 
 socket.subscribe({
     error: err => console.error('Subscription error:', err),

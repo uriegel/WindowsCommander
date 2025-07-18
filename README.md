@@ -1,5 +1,4 @@
 // TODO copy/move prevent closing when copying, Error display in status bar
-// TODO copy/move prevent copying when Copy is in progress, Error display in status bar
 // TODO copy/move progress with dialog, cancelling
 // TODO copy/move UAC start invisible commander instance
 

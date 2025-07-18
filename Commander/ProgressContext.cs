@@ -46,7 +46,7 @@ class ProgressContext
             return true;
         else
         {
-            
+            Requests.SendProgressRunning();
             return false;
         }
     }

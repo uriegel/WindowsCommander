@@ -87,7 +87,7 @@ export type FileVersion = {
 }
 
 const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
-    { id, showHidden, onFocus, onItemChanged, onItemsChanged, onEnter, setStatusText, dialog },
+    { id, showHidden, onFocus, onItemChanged, onItemsChanged, onEnter, setStatusText, setErrorText, dialog },
     ref) => {
     
     const setItems = useCallback((items: FolderViewItem[], dirCount?: number, fileCount?: number) => {
@@ -334,6 +334,8 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
 
     const copyItems = async (inactiveFolder: FolderViewHandle, move: boolean, fromLeft: boolean) => {
         const prepareResult = await prepareCopy({ id, move, path, targetPath: inactiveFolder.getPath(), items: getSelectedItems() })
+        if (prepareResult.alreadyRunning)
+            setErrorText("Es ist bereits eine Aktion am Laufen!")
         if (prepareResult.selectedItemsType == SelectedItemsType.None) 
             return
         

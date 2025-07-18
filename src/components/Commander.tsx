@@ -6,8 +6,8 @@ import '../App.css'
 import '../themes/windows.css'
 import "functional-extensions"
 import Statusbar from "./Statusbar"
-import { cmdEvents, cmdToggleEvents, copyProgressEvents, progressRevealedEvents, type CmdToggleMsg, type CopyProgress } from "../requests/events"
-import Titlebar from "./Titlebar"
+import { cmdEvents, cmdToggleEvents, copyProgressEvents, progressRevealedEvents, progressRunningEvents, type CmdToggleMsg, type CopyProgress } from "../requests/events"
+import Titlebar, { type TitlebarHandle } from "./Titlebar"
 import Menu from "./Menu"
 import PictureViewer from "./PictureViewer"
 import MediaPlayer from "./MediaPlayer"
@@ -68,6 +68,8 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	const showViewerRef = useRef(false)
 
 	const dialog = useContext(DialogContext)
+
+	const titlebar = useRef(null as TitlebarHandle|null)
 
 	const onKeyDown = (evt: React.KeyboardEvent) => {
 		if (evt.code == "Tab" && !evt.shiftKey) {
@@ -160,13 +162,15 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 		const subscriptionToggle = cmdToggleEvents.subscribe(onMenuToggleAction)
 		const subscriptionRevealed = progressRevealedEvents.subscribe(setProgressRevealed)
 		const subscriptionProgress = copyProgressEvents.subscribe(setProgress)
+		const subscriptionProgressRunning = progressRunningEvents.subscribe(titlebar.current?.startProgressDialog)
 		return () => {
 			subscriptionToggle.unsubscribe()
 			subscription.unsubscribe()
 			subscriptionRevealed.unsubscribe()
 			subscriptionProgress.unsubscribe()
+			subscriptionProgressRunning.unsubscribe()
 		}
-	}, [onMenuAction, onMenuToggleAction])
+	}, [onMenuAction, onMenuToggleAction, titlebar])
 
 	const toggleShowHiddenAndRefresh = () => {
 		showHiddenRef.current = !showHiddenRef.current
@@ -223,7 +227,7 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 
 	return (
 		<>
-			<Titlebar menu={(
+			<Titlebar ref={titlebar} menu={(
 				<Menu autoMode={false} onMenuAction={onMenuAction}
 					showHidden={showHidden} toggleShowHidden={toggleShowHiddenAndRefresh}
 					showViewer={showViewer} toggleShowViewer={toggleShowViewer} />

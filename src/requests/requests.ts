@@ -34,6 +34,7 @@ export interface PrepareCopyResponse {
     selectedItemsType: SelectedItemsType,
     totalSize: number,
     conflicts: CopyItem[]
+    alreadyRunning?: boolean
 }
 
 interface Copy {

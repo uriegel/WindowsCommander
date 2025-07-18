@@ -2,9 +2,9 @@
 import './Titlebar.css'
 import Pie from 'react-progress-control'
 //import CopyProgress from "./dialogparts/CopyProgress"
-import { DialogContext } from "web-dialog-react"
+import { DialogContext, ResultType } from "web-dialog-react"
 import "functional-extensions"
-import { useCallback, useContext, useEffect, useRef, useState, type JSX } from "react"
+import { forwardRef, useCallback, useContext, useEffect, useImperativeHandle, useRef, useState, type JSX } from "react"
 import type { CopyProgress } from '../requests/events'
 
 declare type WebViewType = {
@@ -20,8 +20,16 @@ interface TitlebarProps {
     progressFinished: boolean
 }
 
-const Titlebar = ({ menu, copyProgress, progressFinished, progressRevealed }: TitlebarProps) => {
+export type TitlebarHandle = {
+    startProgressDialog: ()=>void
+}
+
+const Titlebar = forwardRef<TitlebarHandle, TitlebarProps>(({ menu, copyProgress, progressFinished, progressRevealed }, ref) => {
     
+    useImperativeHandle(ref, () => ({
+        startProgressDialog
+    }))
+
     const dialog = useContext(DialogContext)
 
     const [move, _setMove] = useState(false)
@@ -33,21 +41,21 @@ const Titlebar = ({ menu, copyProgress, progressFinished, progressRevealed }: Ti
     const [progress, setProgress] = useState(0)
 
     const startProgressDialog = useCallback(() => {
-//         const start = async () => {
+        const start = async () => {
 //             dialogOpen.current = true
-//             await dialog.show({
-//                 text: `Fortschritt beim ${move ? "Verschieben" : "Kopieren"} (${totalSize?.byteCountToString()})`,
-//                 btnCancel: true,
-//                 btnOk: true,
-//                 btnOkText: "Stoppen",
-// //                extension: CopyProgress
-//             })
-//             dialogOpen.current = false
-//             // if (res?.result == ResultType.Ok)
-//             //     await webViewRequest("cancelcopy")
-//         }
+            const res = await dialog.show({
+                text: `Fortschritt beim ${move ? "Verschieben" : "Kopieren"} (${totalSize?.byteCountToString()})`,
+                btnCancel: true,
+                btnOk: true,
+                btnOkText: "Stoppen",
+//                extension: CopyProgress
+             })
+             dialogOpen.current = false
+                // if (res?.result == ResultType.Ok)
+                //     await webViewRequest("cancelcopy")
+        }
 
-//         start()
+        start()
     }, [dialog, move, totalSize])
 
     useEffect(() => {
@@ -111,6 +119,6 @@ console.log("copyProgress", copyProgress)
             <div className={"titlebarButton close"} id="$CLOSE$"><span>&#10005;</span></div>
             
             </div>)
-}
+})
 
 export default Titlebar

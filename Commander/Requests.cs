@@ -78,19 +78,19 @@ static class Requests
     public static async void SendMenuCommand(string id)
     {
         if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("cmd", new(id), null, null, null, null, null));    
+            await webSocket.SendJson(new WebSocketMsg("cmd", new(id)));    
     }
 
     public static async void SendMenuCheck(string id, bool check)
     {
         if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("cmdtoggle", null, new(id, check), null, null, null, null)); 
+            await webSocket.SendJson(new WebSocketMsg("cmdtoggle", null, new(id, check))); 
     }
 
     public static async void SendStatusBarInfo(string id, int requestId, string? text)
     {
         if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("status", null, null, new(id, requestId, text), null, null, null)); 
+            await webSocket.SendJson(new WebSocketMsg("status", StatusMsg: new(id, requestId, text))); 
     }
 
     public static async void SendExtendedInfo(string id, int requestId, DirectoryItem[] items)
@@ -98,7 +98,7 @@ static class Requests
         try
         {
             if (webSocket != null)
-                await webSocket.SendJson(new WebSocketMsg("extendedinfo", null, null, null, new(id, requestId, items), null, null));
+                await webSocket.SendJson(new WebSocketMsg("extendedinfo", ExtendedInfo: new(id, requestId, items)));
         }
         catch (Exception ex)
         {
@@ -109,13 +109,19 @@ static class Requests
     public static async void SendProgressRevealed(bool revealed)
     {
         if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("progressrevealed", null, null, null, null, revealed, null)); 
+            await webSocket.SendJson(new WebSocketMsg("progressrevealed", ProgressRevealed: revealed)); 
     }
 
     public static async void SendCopyProgress(CopyProgress copyProgress)
     {
         if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("copyprogress", null, null, null, null, null, copyProgress)); 
+            await webSocket.SendJson(new WebSocketMsg("copyprogress", CopyProgress: copyProgress)); 
+    }
+
+    public static async void SendProgressRunning()
+    {
+        if (webSocket != null)
+            await webSocket.SendJson(new WebSocketMsg("progressrunning", ProgressRunning: true)); 
     }
 
     static Task<bool> ChangePath(IRequest request)
@@ -210,7 +216,8 @@ record PrepareCopyRequest(
 record PrepareCopyResult(
     SelectedItemsType SelectedItemsType,
     long TotalSize,
-    CopyItem[] Conflicts
+    CopyItem[] Conflicts,
+    bool? AlreadyRunning = null
 );
 
 record CopyRequest(
@@ -233,12 +240,13 @@ record ViewItem(
 
 record WebSocketMsg(
     string Method,
-    CmdMsg? CmdMsg,
-    CmdToggleMsg? CmdToggleMsg,
-    StatusMsg? StatusMsg,
-    ExtendedInfo? ExtendedInfo,
-    bool? ProgressRevealed,
-    CopyProgress? CopyProgress
+    CmdMsg? CmdMsg = null,
+    CmdToggleMsg? CmdToggleMsg = null,
+    StatusMsg? StatusMsg = null,
+    ExtendedInfo? ExtendedInfo = null,
+    bool? ProgressRevealed = null,
+    CopyProgress? CopyProgress = null,
+    bool? ProgressRunning = null
 );
 
 record CmdMsg(string Cmd);

@@ -23,6 +23,8 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
 
     public PrepareCopyResult PrepareCopy()
     {
+        if (ProgressContext.Instance.IsRunning)
+            return new(SelectedItemsType.None, 0, [], true);
         Current = this;
         copyItems = MakeCopyItems(MakeSourceCopyItems(selectedItems, sourcePath), targetPath);
         var conflicts = copyItems.Where(n => n.Target != null).ToArray();
