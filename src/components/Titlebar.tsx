@@ -1,11 +1,11 @@
 
 import './Titlebar.css'
 import Pie from 'react-progress-control'
-//import CopyProgress from "./dialogparts/CopyProgress"
 import { DialogContext, ResultType } from "web-dialog-react"
 import "functional-extensions"
 import { forwardRef, useCallback, useContext, useEffect, useImperativeHandle, useRef, useState, type JSX } from "react"
 import type { CopyProgress } from '../requests/events'
+import CopyProgressPart from './dialogparts/CopyProgress'
 
 declare type WebViewType = {
     initializeCustomTitlebar: () => void,
@@ -42,13 +42,13 @@ const Titlebar = forwardRef<TitlebarHandle, TitlebarProps>(({ menu, copyProgress
 
     const startProgressDialog = useCallback(() => {
         const start = async () => {
-//             dialogOpen.current = true
+            dialogOpen.current = true
             const res = await dialog.show({
                 text: `Fortschritt beim ${move ? "Verschieben" : "Kopieren"} (${totalSize?.byteCountToString()})`,
                 btnCancel: true,
                 btnOk: true,
                 btnOkText: "Stoppen",
-//                extension: CopyProgress
+                extension: CopyProgressPart
              })
              dialogOpen.current = false
                 // if (res?.result == ResultType.Ok)
@@ -59,7 +59,6 @@ const Titlebar = forwardRef<TitlebarHandle, TitlebarProps>(({ menu, copyProgress
     }, [dialog, move, totalSize])
 
     useEffect(() => {
-console.log("copyProgress", copyProgress)
         setProgress((copyProgress.totalBytes + copyProgress.currentBytes) / copyProgress.totalMaxBytes)
     }, [copyProgress])
 
@@ -67,36 +66,6 @@ console.log("copyProgress", copyProgress)
         WebView.initializeCustomTitlebar()
     }, [])
     
-	// useEffect(() => {
-    //     // const startSubscription = startProgress.subscribe(e => {
-    //     //     progressStartEvents.next(e)
-	// 	// 	setProgressRevealed(true)
-    //     //     setProgressFinished(false)
-    //     //     setMove(e.isMove)
-    // 	// 	setTotalSize(e.totalSize)
-	// 	// })
-    //     // const fileSubscription = fileProgress.subscribe(e => {
-    //     //     progressFileEvents.next(e)
-    //     // })
-    //     // const bytesSubscription = byteProgress.subscribe(e => {
-    //     //     progressBytesEvents.next(e)
-    //     //     setProgress((e.currentBytes + e.completeCurrentBytes) / e.completeTotalBytes)
-    //     // })
-    //     // const finishedProgressSubscription = finishedProgress.subscribe(() => {
-	// 	// 	setProgressFinished(true)
-	// 	// })
-    //     // const disposedProgressSubscription = disposedProgress.subscribe(() => {
-	// 	// 	setProgressRevealed(false)
-	// 	// })
-	// 	return () => {
-    //         startSubscription.unsubscribe()
-    //         fileSubscription.unsubscribe()
-    //         bytesSubscription.unsubscribe()
-	// 		finishedProgressSubscription.unsubscribe()
-	// 		disposedProgressSubscription.unsubscribe()
-	// 	}
-	// }, [])
-
     useEffect(() => {
         if (dialogOpen.current)
             dialog.close()

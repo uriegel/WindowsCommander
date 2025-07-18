@@ -15,24 +15,6 @@ class ProgressContext
             : 0;
     }
 
-    public static object GetEstimatedDuration(object? copyProgress)
-    {
-        var cp = copyProgress as CopyProgress;
-        return cp != null && cp.Duration > ThreeSeconds
-            ? (cp.Duration / (double)GetTotalFraction(copyProgress)) - cp.Duration
-            : TimeSpan.FromMilliseconds(0);
-    }
-
-    public static object GetFraction(object? copyProgress)
-    {
-        var cp = copyProgress as CopyProgress;
-        return cp != null
-            ? cp.CurrentMaxBytes != 0
-            ? (double)cp.CurrentBytes / (double)cp.CurrentMaxBytes
-            : 0
-            : 0;
-    }
-
     public void SetRunning(bool running = true)
     {
         IsRunning = running;
@@ -79,7 +61,7 @@ class ProgressContext
 
     public bool IsRunning { get; private set; }
 
-    public CancellationToken Start(string folderId, string title, long totalSize, int count, bool deleteAction = false)
+    public CancellationToken Start(string folderId, long totalSize, int count, bool deleteAction = false)
     {
         cts?.Cancel();
         this.folderId = folderId;
@@ -87,7 +69,6 @@ class ProgressContext
         startTime = DateTime.Now;
         cts = new CancellationTokenSource();
         CopyProgress = new CopyProgress(
-            title,
             "",
             count,
             0,
@@ -97,7 +78,7 @@ class ProgressContext
             0,
             0,
             true,
-            TimeSpan.FromMilliseconds(0)
+            0
         );
         return cts.Token;
     }
@@ -115,7 +96,7 @@ class ProgressContext
                 CurrentMaxBytes = size,
                 PreviousTotalBytes = currentSize + size,
                 CurrentBytes = 0,
-                Duration = DateTime.Now - startTime
+                Duration = (int)(DateTime.Now - startTime).TotalSeconds
             };
         }
     }
@@ -126,7 +107,7 @@ class ProgressContext
             Instance.CopyProgress = Instance.CopyProgress with
             {
                 IsRunning = false,
-                Duration = DateTime.Now - startTime
+                Duration = (int)(DateTime.Now - startTime).TotalSeconds
             };
 
         try
@@ -151,7 +132,7 @@ class ProgressContext
             var newVal = Instance.CopyProgress with
             {
                 CurrentBytes = size,
-                Duration = DateTime.Now - startTime
+                Duration = (int)(DateTime.Now - startTime).TotalSeconds
             };
 
             if (size < totalSize)
@@ -184,7 +165,6 @@ class ProgressContext
 }
 
 record CopyProgress(
-    string Title,
     string Name,
     int TotalCount,
     int CurrentCount,
@@ -194,5 +174,5 @@ record CopyProgress(
     long CurrentMaxBytes,
     long CurrentBytes,
     bool IsRunning,
-    TimeSpan Duration
+    int Duration
 );

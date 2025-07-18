@@ -43,7 +43,7 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
             var index = 0;
             copyItems = data.NotOverwrite ? [.. copyItems.Where(n => n.Target == null)] : copyItems;
             copySize = data.NotOverwrite ? copyItems.Sum(n => n.Source.Size) : copySize;
-            var cancellation = ProgressContext.Instance.Start(data.Id, move ? "Verschieben" : "Kopieren", copySize, copyItems.Length);
+            var cancellation = ProgressContext.Instance.Start(data.Id, copySize, copyItems.Length);
             foreach (var item in copyItems)
             {
                 if (cancellation.IsCancellationRequested)

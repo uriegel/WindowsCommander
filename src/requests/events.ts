@@ -21,8 +21,7 @@ export type ExtendedInfo = {
 }
 
 export type CopyProgress = {
-    // string Title,
-    // string Name,
+    name: string,
     totalCount: number,
     currentCount: number,
     totalMaxBytes: number,
@@ -31,7 +30,7 @@ export type CopyProgress = {
     currentMaxBytes: number,
     currentBytes: number,
     isRunning: boolean,
-//    TimeSpan Duration
+    duration: number
 }
 
 type WebSocketMsg = {

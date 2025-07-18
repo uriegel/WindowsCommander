@@ -1,6 +1,8 @@
-// TODO copy/move prevent closing when copying, Error display in status bar
 // TODO copy/move progress with dialog, cancelling
+// TODO copy/move prevent closing when copying, Error display in status bar
 // TODO copy/move UAC start invisible commander instance
+// TODO copy/move estimated time rest 
+// TODO copy/move total bytes in dialog title 
 
 // TODO Menu open explorer here
 
