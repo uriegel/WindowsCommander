@@ -6,7 +6,7 @@ import '../App.css'
 import '../themes/windows.css'
 import "functional-extensions"
 import Statusbar from "./Statusbar"
-import { cmdEvents, cmdToggleEvents, copyProgressEvents, progressRevealedEvents, progressRunningEvents, type CmdToggleMsg, type CopyProgress } from "../requests/events"
+import { cmdEvents, cmdToggleEvents, copyProgressEvents, progressFinishedEvents, progressRevealedEvents, progressRunningEvents, type CmdToggleMsg, type CopyProgress } from "../requests/events"
 import Titlebar, { type TitlebarHandle } from "./Titlebar"
 import Menu from "./Menu"
 import PictureViewer from "./PictureViewer"
@@ -59,7 +59,7 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 		previousTotalBytes: 0, totalBytes: 0, totalCount: 0, totalMaxBytes: 0
 	})
 	const [progressRevealed, setProgressRevealed] = useState(false)
-	const [progressFinished, _setProgressFinished] = useState(false)
+	const [progressFinished, setProgressFinished] = useState(false)
     
 	const [activeFolderId, setActiveFolderId] = useState(ID_LEFT)
 	const onFocusLeft = () => setActiveFolderId(ID_LEFT)
@@ -162,12 +162,14 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 		const subscription = cmdEvents.subscribe(m => onMenuAction(m!.cmd))
 		const subscriptionToggle = cmdToggleEvents.subscribe(onMenuToggleAction)
 		const subscriptionRevealed = progressRevealedEvents.subscribe(setProgressRevealed)
+		const subscriptionFinished = progressFinishedEvents.subscribe(setProgressFinished)
 		const subscriptionProgress = copyProgressEvents.subscribe(setProgress)
 		const subscriptionProgressRunning = progressRunningEvents.subscribe(titlebar.current?.startProgressDialog)
 		return () => {
 			subscriptionToggle.unsubscribe()
 			subscription.unsubscribe()
 			subscriptionRevealed.unsubscribe()
+			subscriptionFinished.unsubscribe()
 			subscriptionProgress.unsubscribe()
 			subscriptionProgressRunning.unsubscribe()
 		}

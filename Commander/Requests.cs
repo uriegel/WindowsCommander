@@ -109,8 +109,17 @@ static class Requests
 
     public static async void SendProgressRevealed(bool revealed)
     {
-        if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("progressrevealed", ProgressRevealed: revealed)); 
+        if (webSocket == null)
+            return;
+        if (!revealed)
+        {
+            await webSocket.SendJson(new WebSocketMsg("progressfinished", ProgressFinished: true));
+            await Task.Delay(5000);
+        }
+        else
+            await webSocket.SendJson(new WebSocketMsg("progressfinished", ProgressFinished: false));             
+            
+        await webSocket.SendJson(new WebSocketMsg("progressrevealed", ProgressRevealed: revealed)); 
     }
 
     public static async void SendCopyProgress(CopyProgress copyProgress)
@@ -256,6 +265,7 @@ record WebSocketMsg(
     StatusMsg? StatusMsg = null,
     ExtendedInfo? ExtendedInfo = null,
     bool? ProgressRevealed = null,
+    bool? ProgressFinished = null,
     CopyProgress? CopyProgress = null,
     bool? ProgressRunning = null
 );

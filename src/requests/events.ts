@@ -35,12 +35,13 @@ export type CopyProgress = {
 }
 
 type WebSocketMsg = {
-    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo" | "progressrevealed" | "copyprogress" | "progressrunning",
+    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo" | "progressrevealed" | "copyprogress" | "progressrunning" | "progressfinished",
     cmdMsg?: CmdMsg,
     cmdToggleMsg?: CmdToggleMsg,
     statusMsg?: StatusMsg
     extendedInfo?: ExtendedInfo,
     progressRevealed?: boolean,
+    progressFinished?: boolean
     copyProgress?: CopyProgress,
     progressRunning?: boolean
 }
@@ -59,6 +60,9 @@ export const statusEvents = socket
 export const exifDataEvents = socket
                     .pipe(filter(n => n.method == "extendedinfo"))
                     .pipe(map(n => n.extendedInfo!))
+export const progressFinishedEvents = socket
+                    .pipe(filter(n => n.method == "progressfinished"))
+                    .pipe(map(n => n.progressFinished!))
 export const progressRevealedEvents = socket
                     .pipe(filter(n => n.method == "progressrevealed"))
                     .pipe(map(n => n.progressRevealed!))
