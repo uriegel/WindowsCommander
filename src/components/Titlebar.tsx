@@ -35,15 +35,13 @@ const Titlebar = forwardRef<TitlebarHandle, TitlebarProps>(({ menu, copyProgress
 
     const dialogOpen = useRef(false)
 
-    const move = false
-
     const [progress, setProgress] = useState(0)
 
     const startProgressDialog = useCallback(() => {
         const start = async () => {
             dialogOpen.current = true
             const res = await dialog.show({
-                text: `Fortschritt beim ${move ? "Verschieben" : "Kopieren"} (${copyProgress.totalMaxBytes.byteCountToString()})`,
+                text: `Fortschritt beim ${copyProgress.move ? "Verschieben" : "Kopieren"} (${copyProgress.totalMaxBytes.byteCountToString()})`,
                 btnCancel: true,
                 btnOk: true,
                 btnOkText: "Stoppen",
@@ -55,7 +53,7 @@ const Titlebar = forwardRef<TitlebarHandle, TitlebarProps>(({ menu, copyProgress
         }
 
         start()
-    }, [dialog, move, copyProgress])
+    }, [dialog, copyProgress])
 
     useEffect(() => {
         setProgress((copyProgress.totalBytes + copyProgress.currentBytes) / copyProgress.totalMaxBytes)

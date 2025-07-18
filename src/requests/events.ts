@@ -21,6 +21,7 @@ export type ExtendedInfo = {
 }
 
 export type CopyProgress = {
+    move: boolean
     name: string,
     totalCount: number,
     currentCount: number,

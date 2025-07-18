@@ -61,7 +61,7 @@ class ProgressContext
 
     public bool IsRunning { get; private set; }
 
-    public CancellationToken Start(string folderId, long totalSize, int count, bool deleteAction = false)
+    public CancellationToken Start(string folderId, long totalSize, int count, bool move,  bool deleteAction = false)
     {
         cts?.Cancel();
         this.folderId = folderId;
@@ -69,6 +69,7 @@ class ProgressContext
         startTime = DateTime.Now;
         cts = new CancellationTokenSource();
         CopyProgress = new CopyProgress(
+            move, 
             "",
             count,
             0,
@@ -165,6 +166,7 @@ class ProgressContext
 }
 
 record CopyProgress(
+    bool Move,
     string Name,
     int TotalCount,
     int CurrentCount,

@@ -1,4 +1,3 @@
-// TODO copy/move move in title
 // TODO copy/move progress dialog turn to finish and last 5 seconds 
 // TODO copy/move UAC start invisible commander instance
 
