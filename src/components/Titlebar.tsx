@@ -6,6 +6,7 @@ import "functional-extensions"
 import { forwardRef, useCallback, useContext, useEffect, useImperativeHandle, useRef, useState, type JSX } from "react"
 import type { CopyProgress } from '../requests/events'
 import CopyProgressPart from './dialogparts/CopyProgress'
+import { cancelCopy } from '../requests/requests'
 
 declare type WebViewType = {
     initializeCustomTitlebar: () => void,
@@ -32,31 +33,29 @@ const Titlebar = forwardRef<TitlebarHandle, TitlebarProps>(({ menu, copyProgress
 
     const dialog = useContext(DialogContext)
 
-    const [move, _setMove] = useState(false)
-
     const dialogOpen = useRef(false)
 
-	const [_progressFinished, _setProgressFinished] = useState(false)
-	const [totalSize, _setTotalSize] = useState(0)
+    const move = false
+
     const [progress, setProgress] = useState(0)
 
     const startProgressDialog = useCallback(() => {
         const start = async () => {
             dialogOpen.current = true
             const res = await dialog.show({
-                text: `Fortschritt beim ${move ? "Verschieben" : "Kopieren"} (${totalSize?.byteCountToString()})`,
+                text: `Fortschritt beim ${move ? "Verschieben" : "Kopieren"} (${copyProgress.totalMaxBytes.byteCountToString()})`,
                 btnCancel: true,
                 btnOk: true,
                 btnOkText: "Stoppen",
                 extension: CopyProgressPart
              })
-             dialogOpen.current = false
-                // if (res?.result == ResultType.Ok)
-                //     await webViewRequest("cancelcopy")
+            dialogOpen.current = false
+            if (res?.result == ResultType.Ok)
+                await cancelCopy({})
         }
 
         start()
-    }, [dialog, move, totalSize])
+    }, [dialog, move, copyProgress])
 
     useEffect(() => {
         setProgress((copyProgress.totalBytes + copyProgress.currentBytes) / copyProgress.totalMaxBytes)

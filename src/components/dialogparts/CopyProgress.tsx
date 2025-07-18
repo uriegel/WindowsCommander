@@ -31,8 +31,8 @@ const CopyProgressPart = () => {
             setFileName(e.name)
         })
         return () => subscription.unsubscribe()
-	}, [])
-
+    }, [])
+    
     return (
         <div className='copyProgress'>
             <p>
@@ -47,8 +47,8 @@ const CopyProgressPart = () => {
                             <td className="rightAligned">{secondsToTime(currentTime)}</td>
                         </tr>
                         <tr>
-                            <td>Geschätzte Dauer:</td>
-                            <td className="rightAligned">{secondsToTime(Math.floor(currentTime * totalMax / totalValue))}</td>
+                            <td>Geschätzte Restdauer:</td>
+                            <td className="rightAligned">{secondsToTime(Math.floor(currentTime * totalMax / totalValue) - currentTime)}</td>
                         </tr>
                     </tbody>
                 </table>

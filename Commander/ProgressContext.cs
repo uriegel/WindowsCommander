@@ -120,7 +120,7 @@ class ProgressContext
 
     public static void Cancel()
     {
-        Requests.SendStatusBarInfo(Instance.folderId, 100_000, Instance.DeleteAction ? "Löschvorgang wird abgebrochen..." : "Kopiervorgang wird abgebrochen...");
+        // TODO Requests.SendStatusBarInfo(Instance.folderId, 100_000, Instance.DeleteAction ? "Löschvorgang wird abgebrochen..." : "Kopiervorgang wird abgebrochen...");
         Instance.cts?.Cancel();
         Instance.CopyProgress = null;
     }

@@ -25,6 +25,7 @@ static class Requests
             "getextended" => await GetExtended(request),
             "preparecopy" => await PrepareCopy(request),
             "copy" => await Copy(request),
+            "cancelcopy" => await CancelCopy(request),
             "onenter" => await OnEnter(request),
             _ => false
         };
@@ -148,8 +149,15 @@ static class Requests
     static Task<bool> Copy(IRequest request)
         => Request<CopyRequest, CopyResult>(request, n => GetController(n.Id).Copy(n));
 
+    static Task<bool> CancelCopy(IRequest request)
+        => Request<CancelCopyRequest, CancelCopyResult>(request, _ =>
+        {
+            ProgressContext.Cancel();
+            return new CancelCopyResult().ToAsync();
+        });
+
     static Task<bool> OnEnter(IRequest request)
-        => Request<OnEnterRequest, OnEnterResult>(request, n => GetController(n.Id).OnEnter(n));
+                => Request<OnEnterRequest, OnEnterResult>(request, n => GetController(n.Id).OnEnter(n));
 
     static Task<Stream> GetIconStream(string iconHint)
         => Try(() => iconHint.Contains('\\')
@@ -227,6 +235,9 @@ record CopyRequest(
 
 );
 record CopyResult(bool Cancelled);
+
+record CancelCopyRequest();
+record CancelCopyResult();
 
 record GetExtendedRequest(int Id, string FolderId);
 record GetExtendedResult();

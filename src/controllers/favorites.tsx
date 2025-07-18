@@ -100,7 +100,7 @@ export class Favorites implements IController {
         return itemsStr ? JSON.parse(itemsStr) as FolderViewItem[] : []
     }
 
-    async rename(_: DialogHandle, __: FolderViewItem) { return false }
+    async rename() { return false }
     
     constructor() {
         this.id = "FAV"

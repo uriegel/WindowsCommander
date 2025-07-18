@@ -55,7 +55,8 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	const [errorText, setErrorText] = useState<string | undefined>(undefined)
 	const [previewMode, setPreviewMode] = useState(PreviewMode.Default)
 	const [progress, setProgress] = useState<CopyProgress>({
-		currentBytes: 0, currentCount: 0, currentMaxBytes: 0, isRunning: false, previousTotalBytes: 0, totalBytes: 0, totalCount: 0, totalMaxBytes: 0
+		name: "", duration: 0, currentBytes: 0, currentCount: 0, currentMaxBytes: 0, isRunning: false,
+		previousTotalBytes: 0, totalBytes: 0, totalCount: 0, totalMaxBytes: 0
 	})
 	const [progressRevealed, setProgressRevealed] = useState(false)
 	const [progressFinished, _setProgressFinished] = useState(false)

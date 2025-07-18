@@ -72,6 +72,10 @@ interface OnEnterResponse {
     success: boolean
 }
 
+interface CancelCopy { nil?: boolean }
+
+interface CancelCopyResponse { nil?: boolean }
+
 export const SelectedItemsType = {
     None: 0,
     Folder: 1,
@@ -88,6 +92,7 @@ export const copy = getJsonPost<Copy, CopyResponse>("copy")
 export const getExtended = getJsonPost<GetExtended, GetExtendedResponse>("getextended")
 export const sendMenuCmd = getJsonPost<SendMenuCmd, SendMenuCmdResponse>("sendmenucmd")
 export const onEnter = getJsonPost<OnEnter, OnEnterResponse>("onenter")
+export const cancelCopy = getJsonPost<CancelCopy, CancelCopyResponse>("cancelcopy")
 
 function getJsonPost<RequestType, ResponseType>(method: string): (request: RequestType) => Promise<ResponseType> {
  
