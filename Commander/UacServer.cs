@@ -38,6 +38,7 @@ static class UacServer
 
     public static void Stop()
     {
+        Thread.Sleep(6000);
         processRunning?.SetResult();
     }
 
