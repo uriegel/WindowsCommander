@@ -46,6 +46,8 @@
         --wdr-button-outlinestyle: dotted;
         --wdr-button-outlineoffset: -2px;
         --wdr-input-selection-color: var(--vtr-selected-background-color);
+
+        --rpc-color: var(--vtr-selected-background-color);        
     }
 }
 
@@ -110,6 +112,9 @@
         --wdr-button-outlinestyle: dotted;
         --wdr-button-outlineoffset: -2px;
         --wdr-input-selection-color: var(--vtr-selected-background-color);
+
+        --rpc-background-color: rgb(26, 26, 26);
+        --rpc-color: var(--vtr-selected-background-color);        
     }   
 }
 

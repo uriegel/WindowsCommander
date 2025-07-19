@@ -110,14 +110,15 @@ static class Requests
         }
     }
 
-    public static async void SendProgressRevealed(bool revealed)
+    public static async void SendProgressRevealed(bool revealed, bool fromException)
     {
         if (webSocket == null)
             return;
         if (!revealed)
         {
             await webSocket.SendJson(new WebSocketMsg("progressfinished", ProgressFinished: true));
-            await Task.Delay(5000);
+            if (!fromException)
+                await Task.Delay(5000);
         }
         else
             await webSocket.SendJson(new WebSocketMsg("progressfinished", ProgressFinished: false));             
@@ -134,7 +135,13 @@ static class Requests
     public static async void SendProgressRunning()
     {
         if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("progressrunning", ProgressRunning: true)); 
+            await webSocket.SendJson(new WebSocketMsg("progressrunning", ProgressRunning: true));
+    }
+
+    public static async void SendRaw(string msg)
+    {
+        if (webSocket != null)
+            await webSocket.SendString(msg); 
     }
 
     static Task<bool> ChangePath(IRequest request)

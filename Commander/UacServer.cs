@@ -29,7 +29,7 @@ static class UacServer
         // TODO check websocket client finalizing
         var client = new WsClient("ws://localhost:21000/events", msg =>
         {
-            Console.WriteLine(msg);
+            Requests.SendRaw(msg);
             return 0.ToAsync();
         }, () => Console.WriteLine("Closed"));
 

@@ -15,11 +15,11 @@ class ProgressContext
             : 0;
     }
 
-    public void SetRunning(bool running = true)
+    public void SetRunning(bool running = true, bool fromException = false)
     {
         IsRunning = running;
         Requests.SendStatusBarInfo(Instance.folderId, 100_000, null);
-        Requests.SendProgressRevealed(running);
+        Requests.SendProgressRevealed(running, fromException);
     }
 
     public static bool CanClose()

@@ -57,20 +57,23 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
                 var dirs = move ? selectedItems.Where(n => n.IsDirectory).Select(n => n.Name) : [];
                 dirs.DeleteEmptyDirectories(sourcePath);
             }
+            ProgressContext.Instance.Stop();
+            ProgressContext.Instance.SetRunning(false);            
             return new CopyResult(false);
         }
         catch (UnauthorizedAccessException)
         {
+            ProgressContext.Instance.Stop();
             return new CopyResult(false, AccessDenied: true);
         }
         catch
         {
+            ProgressContext.Instance.Stop();
+            ProgressContext.Instance.SetRunning(false);            
             return new CopyResult(false);
         }
         finally
         {
-            ProgressContext.Instance.Stop();
-            ProgressContext.Instance.SetRunning(false);
             Current = null;
         }
     }
