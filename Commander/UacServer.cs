@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using System.Windows.Forms;
+using Commander.Controllers;
 using CsTools.Extensions;
 using WebServerLight;
 using WebServerLight.Routing;
@@ -28,13 +28,11 @@ static class UacServer
 
     public static void Stop()
     {
-        MessageBox.Show("Kommt an");
         processRunning?.SetResult();
     }
 
     public static async Task Run(int commanderId)
     {
-        Console.WriteLine("Bin jetzt hier");
         processRunning = new();
 
         server =
@@ -59,6 +57,12 @@ static class UacServer
             processRunning.Task
         ]);
 
+    }
+
+    public static Task<SetControllerResponse> SetController(SetControllerRequest setController)
+    {
+        FolderController.DetectController(setController.Id, setController.Path ?? "");       
+        return new SetControllerResponse().ToAsync();
     }
 
     static TaskCompletionSource? processRunning; 

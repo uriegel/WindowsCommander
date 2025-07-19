@@ -61,6 +61,15 @@ interface SendMenuCmdResponse {
     cancelled?: boolean
 }
 
+interface SetController {  
+    id: string,
+    path?: string
+}
+
+interface SetControllerResponse {  
+    cancelled?: boolean
+}
+
 interface OnEnter {
     id: string
     path: string,
@@ -97,6 +106,8 @@ export const cancelCopy = getJsonPost<Nil, NilResponse>("cancelcopy")
 export const startUac = getJsonPost<Nil, NilResponse>("startuac")
 export const stoptUac = getJsonPost<Nil, NilResponse>("stopuac", 21000)
 export const copyUac = getJsonPost<Copy, CopyResponse>("copy", 21000)
+export const setControllerUac = getJsonPost<SetController, SetControllerResponse>("setcontroller", 21000)
+export const prepareCopyUac = getJsonPost<PrepareCopy, PrepareCopyResponse>("preparecopy", 21000)
 
 function getJsonPost<RequestType, ResponseType>(method: string, port = 20000): (request: RequestType) => Promise<ResponseType> {
  

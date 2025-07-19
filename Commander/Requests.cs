@@ -29,6 +29,7 @@ static class Requests
             "onenter" => await OnEnter(request),
             "startuac" => await StartUac(request),
             "stopuac" => await StopUac(request),
+            "setcontroller" => await SetController(request),
             _ => false
         };
     }
@@ -181,6 +182,9 @@ static class Requests
             return new NilResult().ToAsync();
         });
 
+    static Task<bool> SetController(IRequest request)
+        => Request<SetControllerRequest, SetControllerResponse>(request, UacServer.SetController);
+    
     static Task<bool> OnEnter(IRequest request)
                 => Request<OnEnterRequest, OnEnterResult>(request, n => GetController(n.Id).OnEnter(n));
 
@@ -263,6 +267,13 @@ record CopyResult(bool Cancelled, bool? AccessDenied = null);
 
 record NilRequest();
 record NilResult();
+
+record SetControllerRequest (
+    string Id,
+    string? Path
+);
+
+record SetControllerResponse(bool? Cancelled = null);
 
 record GetExtendedRequest(int Id, string FolderId);
 record GetExtendedResult();
