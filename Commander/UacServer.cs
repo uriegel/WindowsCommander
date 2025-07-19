@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Commander.Controllers;
 using CsTools.Extensions;
+using URiegel.WebSocketClient;
 using WebServerLight;
 using WebServerLight.Routing;
 
@@ -8,7 +9,7 @@ namespace Commander;
 
 static class UacServer
 {
-    public static void Start()
+    public static async void Start()
     {
         var p = new Process()
         {
@@ -24,6 +25,15 @@ static class UacServer
             }
 
         }.Start();
+
+        // TODO check websocket client finalizing
+        var client = new WsClient("ws://localhost:21000/events", msg =>
+        {
+            Console.WriteLine(msg);
+            return 0.ToAsync();
+        }, () => Console.WriteLine("Closed"));
+
+        await client.OpenAsync();
     }
 
     public static void Stop()
