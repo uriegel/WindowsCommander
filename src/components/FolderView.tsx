@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react"
 import './FolderView.css'
 import VirtualTable, { type OnSort, type SelectableItem, type SpecialKeys, type TableColumns, type VirtualTableHandle } from "virtual-table-react"
-import { changePath as changePathRequest, copy, getExtended, prepareCopy, SelectedItemsType } from "../requests/requests"
+import { changePath as changePathRequest, copy, getExtended, prepareCopy, SelectedItemsType, startUac, stoptUac } from "../requests/requests"
 import { getController, type IController } from "../controllers/controller"
 import { Root } from "../controllers/root"
 import { exifDataEvents, statusEvents } from "../requests/events"
@@ -366,7 +366,16 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
             defBtnYes: !defNo && prepareResult.conflicts.length > 0,
             defBtnNo: defNo
         })
-        const result = await copy({ id, cancelled: res.result == ResultType.Cancel, notOverwrite: res.result == ResultType.No })
+        
+        let result = await copy({ id, cancelled: res.result == ResultType.Cancel, notOverwrite: res.result == ResultType.No })
+        if (result.accessDenied) {
+            await startUac({})
+            // TODO 2. connect websockets
+            // TODO 3. Test: send events start, finished
+            // TODO 4. copy to uac
+            // TODO 5. cancel uac: show access denied
+            setTimeout(() => stoptUac({}), 10000)
+        }
         if (!result.cancelled) {
             inactiveFolder.refresh()
             if (move)

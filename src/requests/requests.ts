@@ -44,7 +44,8 @@ interface Copy {
 }
 
 interface CopyResponse {
-    cancelled?: boolean
+    cancelled?: boolean,
+    accessDenied?: boolean
 }
 
 interface GetExtended { id: number, folderId: string }
@@ -72,9 +73,9 @@ interface OnEnterResponse {
     success: boolean
 }
 
-interface CancelCopy { nil?: boolean }
+interface Nil { nil?: boolean }
 
-interface CancelCopyResponse { nil?: boolean }
+interface NilResponse { nil?: boolean }
 
 export const SelectedItemsType = {
     None: 0,
@@ -92,9 +93,12 @@ export const copy = getJsonPost<Copy, CopyResponse>("copy")
 export const getExtended = getJsonPost<GetExtended, GetExtendedResponse>("getextended")
 export const sendMenuCmd = getJsonPost<SendMenuCmd, SendMenuCmdResponse>("sendmenucmd")
 export const onEnter = getJsonPost<OnEnter, OnEnterResponse>("onenter")
-export const cancelCopy = getJsonPost<CancelCopy, CancelCopyResponse>("cancelcopy")
+export const cancelCopy = getJsonPost<Nil, NilResponse>("cancelcopy")
+export const startUac = getJsonPost<Nil, NilResponse>("startuac")
+export const stoptUac = getJsonPost<Nil, NilResponse>("stopuac", 21000)
+export const copyUac = getJsonPost<Copy, CopyResponse>("copy", 21000)
 
-function getJsonPost<RequestType, ResponseType>(method: string): (request: RequestType) => Promise<ResponseType> {
+function getJsonPost<RequestType, ResponseType>(method: string, port = 20000): (request: RequestType) => Promise<ResponseType> {
  
     async function jsonPost<RequestType, ResponseType>(method: string, request: RequestType): Promise<ResponseType> {
         const msg = {
@@ -103,7 +107,7 @@ function getJsonPost<RequestType, ResponseType>(method: string): (request: Reque
             body: JSON.stringify(request)
         }
 
-        const response = await fetch(`http://localhost:20000/request/${method}`, msg)
+        const response = await fetch(`http://localhost:${port}/request/${method}`, msg)
         const json = await response.text()
         return JSON.parse(json) as ResponseType
     }

@@ -1,5 +1,6 @@
 using System.Windows.Forms;
 using Commander;
+using CsTools.Extensions;
 using WebServerLight;
 using WebServerLight.Routing;
 using WebWindowNetCore;
@@ -13,7 +14,13 @@ class Program
     public nint WindowHandle { get; private set;}
     public Form? Window { get; private set; }
 
-    public static void Main() => Instance.WebView.Run();
+    public static async Task Main(string[] args)
+    {
+        if (args.Length > 0 && args[0] == "-adminMode")
+            await UacServer.Run(args[1].ParseInt() ?? 0);
+        else
+            Instance.WebView.Run();
+    } 
 
     public Program()
     {

@@ -61,8 +61,7 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
         }
         catch (UnauthorizedAccessException)
         {
-            //MainContext.Instance.ErrorText = "Zugriff verweigert";
-            return new CopyResult(false);
+            return new CopyResult(false, AccessDenied: true);
         }
         catch
         {
@@ -117,10 +116,8 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
         if (!res)
         {
             var error = Marshal.GetLastWin32Error();
-            //            if (error == 5)
-            //                return Error<Nothing, RequestError>(IOErrorType.AccessDenied.ToError());
-            //            else if (error != 0)
-            //                return Error<Nothing, RequestError>(IOErrorType.Exn.ToError());
+            if (error == 5)
+                throw new UnauthorizedAccessException();
         }
 
         return 0.ToAsync();
@@ -168,7 +165,7 @@ static partial class Extensions
             {
                 try
                 {
-                    System.IO.Directory.Delete(dirToCheck, true);
+                    Directory.Delete(dirToCheck, true);
                 }
                 catch (Exception e)
                 {

@@ -27,6 +27,8 @@ static class Requests
             "copy" => await Copy(request),
             "cancelcopy" => await CancelCopy(request),
             "onenter" => await OnEnter(request),
+            "startuac" => await StartUac(request),
+            "stopuac" => await StopUac(request),
             _ => false
         };
     }
@@ -159,10 +161,24 @@ static class Requests
         => Request<CopyRequest, CopyResult>(request, n => GetController(n.Id).Copy(n));
 
     static Task<bool> CancelCopy(IRequest request)
-        => Request<CancelCopyRequest, CancelCopyResult>(request, _ =>
+        => Request<NilRequest, NilResult>(request, _ =>
         {
             ProgressContext.Cancel();
-            return new CancelCopyResult().ToAsync();
+            return new NilResult().ToAsync();
+        });
+
+    static Task<bool> StartUac(IRequest request)
+        => Request<NilRequest, NilResult>(request, _ =>
+        {
+            UacServer.Start();
+            return new NilResult().ToAsync();
+        });
+
+    static Task<bool> StopUac(IRequest request)
+        => Request<NilRequest, NilResult>(request, _ =>
+        {
+            UacServer.Stop();
+            return new NilResult().ToAsync();
         });
 
     static Task<bool> OnEnter(IRequest request)
@@ -243,10 +259,10 @@ record CopyRequest(
     bool NotOverwrite
 
 );
-record CopyResult(bool Cancelled);
+record CopyResult(bool Cancelled, bool? AccessDenied = null);
 
-record CancelCopyRequest();
-record CancelCopyResult();
+record NilRequest();
+record NilResult();
 
 record GetExtendedRequest(int Id, string FolderId);
 record GetExtendedResult();

@@ -1,5 +1,3 @@
-// TODO copy/move UAC start invisible commander instance
-
 // TODO Menu open explorer here
 
 // TODO delete with shellexecute
