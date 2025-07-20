@@ -11,19 +11,21 @@ using static ClrWinApi.Api;
 using static CsTools.Core;
 using ClrWinApi;
 using CsTools.Async;
+using Commander.ProgressAction;
+using Commander.Enums;
 
 namespace Commander;
 
 static class Requests
 {
-    public static async Task<bool> Process(IRequest request)
+    public static async Task<bool> Process(IRequest request, ProgressRunningControl progressRunning)
     {
         return request.SubPath switch
         {
             "changepath" => await ChangePath(request),
             "sendmenucmd" => await MenuCmd(request),
             "getextended" => await GetExtended(request),
-            "preparecopy" => await PrepareCopy(request),
+            "preparecopy" => await PrepareCopy(request, progressRunning),
             "copy" => await Copy(request),
             "cancelcopy" => await CancelCopy(request),
             "onenter" => await OnEnter(request),
@@ -76,74 +78,6 @@ static class Requests
         return true;
     }
     
-    public static void WebSocket(IWebSocket webSocket)
-        => Requests.webSocket = webSocket;
-
-    public static async void SendMenuCommand(string id)
-    {
-        if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("cmd", new(id)));    
-    }
-
-    public static async void SendMenuCheck(string id, bool check)
-    {
-        if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("cmdtoggle", null, new(id, check))); 
-    }
-
-    public static async void SendStatusBarInfo(string id, int requestId, string? text)
-    {
-        if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("status", StatusMsg: new(id, requestId, text))); 
-    }
-
-    public static async void SendExtendedInfo(string id, int requestId, DirectoryItem[] items)
-    {
-        try
-        {
-            if (webSocket != null)
-                await webSocket.SendJson(new WebSocketMsg("extendedinfo", ExtendedInfo: new(id, requestId, items)));
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error sending extended info: {ex}");
-        }
-    }
-
-    public static async void SendProgressRevealed(bool revealed, bool fromException)
-    {
-        if (webSocket == null)
-            return;
-        if (!revealed)
-        {
-            await webSocket.SendJson(new WebSocketMsg("progressfinished", ProgressFinished: true));
-            if (!fromException)
-                await Task.Delay(5000);
-        }
-        else
-            await webSocket.SendJson(new WebSocketMsg("progressfinished", ProgressFinished: false));             
-            
-        await webSocket.SendJson(new WebSocketMsg("progressrevealed", ProgressRevealed: revealed)); 
-    }
-
-    public static async void SendCopyProgress(CopyProgress copyProgress)
-    {
-        if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("copyprogress", CopyProgress: copyProgress)); 
-    }
-
-    public static async void SendProgressRunning()
-    {
-        if (webSocket != null)
-            await webSocket.SendJson(new WebSocketMsg("progressrunning", ProgressRunning: true));
-    }
-
-    public static async void SendRaw(string msg)
-    {
-        if (webSocket != null)
-            await webSocket.SendString(msg); 
-    }
-
     static Task<bool> ChangePath(IRequest request)
         => Request<ChangePathRequest, ChangePathResult>(request, n =>
         {
@@ -162,31 +96,31 @@ static class Requests
     static Task<bool> GetExtended(IRequest request)
         => Request<GetExtendedRequest, GetExtendedResult>(request, n => GetController(n.FolderId).GetExtended(n.Id));
 
-    static Task<bool> PrepareCopy(IRequest request)
-        => Request<PrepareCopyRequest, PrepareCopyResult>(request, n => GetController(n.Id).PrepareCopy(n));
+    static Task<bool> PrepareCopy(IRequest request, ProgressRunningControl progressRunning)
+        => Request<PrepareCopyRequest, PrepareCopyResult>(request, n => GetController(n.Id).PrepareCopy(n, progressRunning));
 
     static Task<bool> Copy(IRequest request)
         => Request<CopyRequest, CopyResult>(request, n => GetController(n.Id).Copy(n));
 
     static Task<bool> CancelCopy(IRequest request)
-        => Request<NilRequest, NilResult>(request, _ =>
+        => Request<NilRequest, NilResponse>(request, _ =>
         {
             ProgressContext.Cancel();
-            return new NilResult().ToAsync();
+            return new NilResponse().ToAsync();
         });
 
     static Task<bool> StartUac(IRequest request)
-        => Request<NilRequest, NilResult>(request, _ =>
+        => Request<NilRequest, NilResponse>(request, _ =>
         {
             UacServer.Start();
-            return new NilResult().ToAsync();
+            return new NilResponse().ToAsync();
         });
 
     static Task<bool> StopUac(IRequest request)
-        => Request<NilRequest, NilResult>(request, _ =>
+        => Request<NilRequest, NilResponse>(request, _ =>
         {
             UacServer.Stop();
-            return new NilResult().ToAsync();
+            return new NilResponse().ToAsync();
         });
 
     static Task<bool> SetController(IRequest request)
@@ -230,8 +164,6 @@ static class Requests
         }
         return true;
     }
-
-    static IWebSocket? webSocket;
 }
 record ChangePathRequest(
     string Id,
@@ -273,7 +205,7 @@ record CopyRequest(
 record CopyResult(bool Cancelled, bool? AccessDenied = null);
 
 record NilRequest();
-record NilResult();
+record NilResponse();
 
 record SetControllerRequest (
     string Id,
@@ -291,29 +223,6 @@ record ViewItem(
     bool? IsParent,
     bool? IsDirectory
 );
-
-record WebSocketMsg(
-    string Method,
-    CmdMsg? CmdMsg = null,
-    CmdToggleMsg? CmdToggleMsg = null,
-    StatusMsg? StatusMsg = null,
-    ExtendedInfo? ExtendedInfo = null,
-    bool? ProgressRevealed = null,
-    bool? ProgressFinished = null,
-    CopyProgress? CopyProgress = null,
-    bool? ProgressRunning = null
-);
-
-record CmdMsg(string Cmd);
-record CmdToggleMsg(string Cmd, bool Checked);
-record StatusMsg(
-    string FolderId,
-    int RequestId,
-    string? Text);
-record ExtendedInfo(
-    string FolderId,
-    int RequestId,
-    DirectoryItem[] Items);
 
 record SendMenuCmdRequest(string Cmd);
 record SendMenuCmdResponse();

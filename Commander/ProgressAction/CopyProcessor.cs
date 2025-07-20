@@ -1,29 +1,20 @@
 using System.Runtime.InteropServices;
 using ClrWinApi;
 using Commander.Controllers;
+using Commander.Enums;
 using CsTools.Extensions;
 
 using static ClrWinApi.Api;
 
-namespace Commander;
+namespace Commander.ProgressAction;
 
-enum SelectedItemsType
-{
-    None,
-    Folder,
-    Folders,
-    File,
-    Files,
-    Both
-}
-
-class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType selectedItemsType, DirectoryItem[] selectedItems, bool move)
+class CopyProcessor(ProgressRunningControl progressRunning, string sourcePath, string targetPath, SelectedItemsType selectedItemsType, DirectoryItem[] selectedItems, bool move)
 {
     public static CopyProcessor? Current { get; private set; }
 
     public PrepareCopyResult PrepareCopy()
     {
-        if (ProgressContext.Instance.IsRunning)
+        if (progressRunning.IsRunning())
             return new(SelectedItemsType.None, 0, [], true);
         Current = this;
         copyItems = MakeCopyItems(MakeSourceCopyItems(selectedItems, sourcePath), targetPath);
@@ -39,16 +30,16 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
             if (data.Cancelled)
                 return new CopyResult(true);
 
-            ProgressContext.Instance.SetRunning();
+            progressRunning.SetRunning();
             var index = 0;
             copyItems = data.NotOverwrite ? [.. copyItems.Where(n => n.Target == null)] : copyItems;
             copySize = data.NotOverwrite ? copyItems.Sum(n => n.Source.Size) : copySize;
-            var cancellation = ProgressContext.Instance.Start(data.Id, copySize, copyItems.Length, move);
+            var cancellation = ProgressContext.Start(copySize, copyItems.Length, move);
             foreach (var item in copyItems)
             {
                 if (cancellation.IsCancellationRequested)
                     throw new TaskCanceledException();
-                ProgressContext.Instance.SetNewFileProgress(item.Source.Name, item.Source.Size, ++index);
+                ProgressContext.SetNewFileProgress(item.Source.Name, item.Source.Size, ++index);
                 await CopyItem(item, move, cancellation);
             }
 
@@ -57,23 +48,25 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
                 var dirs = move ? selectedItems.Where(n => n.IsDirectory).Select(n => n.Name) : [];
                 dirs.DeleteEmptyDirectories(sourcePath);
             }
-            ProgressContext.Instance.Stop();
-            ProgressContext.Instance.SetRunning(false);            
+            ProgressContext.Stop();
             return new CopyResult(false);
         }
         catch (UnauthorizedAccessException)
         {
-            ProgressContext.Instance.Stop();
             return new CopyResult(false, AccessDenied: true);
+        }
+        catch (OperationCanceledException)
+        {
+            return new CopyResult(true);
         }
         catch
         {
-            ProgressContext.Instance.Stop();
-            ProgressContext.Instance.SetRunning(false);            
+            ProgressContext.Stop();
             return new CopyResult(false);
         }
         finally
         {
+            progressRunning.SetRunning(false);
             Current = null;
         }
     }
@@ -108,12 +101,12 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
         var res = move
             ? MoveFileWithProgress(sourcePath.AppendPath(item.Source.Name), newFileName, (total, current, c, d, e, f, g, h, i) =>
                 {
-                    ProgressContext.Instance.SetProgress(total, current);
+                    ProgressContext.SetProgress(total, current);
                     return CopyProgressResult.Continue;
                 }, IntPtr.Zero, MoveFileFlags.CopyAllowed | MoveFileFlags.ReplaceExisting)
             : CopyFileEx(sourcePath.AppendPath(item.Source.Name), newFileName, (total, current, c, d, e, f, g, h, i) =>
                 {
-                    ProgressContext.Instance.SetProgress(total, current);
+                    ProgressContext.SetProgress(total, current);
                     return CopyProgressResult.Continue;
                 }, IntPtr.Zero, ref cancel, (CopyFileFlags)0);
         if (!res)

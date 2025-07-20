@@ -30,18 +30,15 @@ export type CopyProgress = {
     previousTotalBytes: number,
     currentMaxBytes: number,
     currentBytes: number,
-    isRunning: boolean,
     duration: number
 }
 
 type WebSocketMsg = {
-    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo" | "progressrevealed" | "copyprogress" | "progressrunning" | "progressfinished",
+    method: "cmd" | "cmdtoggle" | "status" | "extendedinfo" | "copyprogress",
     cmdMsg?: CmdMsg,
     cmdToggleMsg?: CmdToggleMsg,
     statusMsg?: StatusMsg
     extendedInfo?: ExtendedInfo,
-    progressRevealed?: boolean,
-    progressFinished?: boolean
     copyProgress?: CopyProgress,
     progressRunning?: boolean
 }
@@ -60,18 +57,9 @@ export const statusEvents = socket
 export const exifDataEvents = socket
                     .pipe(filter(n => n.method == "extendedinfo"))
                     .pipe(map(n => n.extendedInfo!))
-export const progressFinishedEvents = socket
-                    .pipe(filter(n => n.method == "progressfinished"))
-                    .pipe(map(n => n.progressFinished!))
-export const progressRevealedEvents = socket
-                    .pipe(filter(n => n.method == "progressrevealed"))
-                    .pipe(map(n => n.progressRevealed!))
 export const copyProgressEvents = socket
                     .pipe(filter(n => n.method == "copyprogress"))
                     .pipe(map(n => n.copyProgress!))
-export const progressRunningEvents = socket
-                    .pipe(filter(n => n.method == "progressrunning"))
-                    .pipe(map(n => n.progressRunning!))
 
 socket.subscribe({
     error: err => console.error('Subscription error:', err),

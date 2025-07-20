@@ -6,7 +6,7 @@ import '../App.css'
 import '../themes/windows.css'
 import "functional-extensions"
 import Statusbar from "./Statusbar"
-import { cmdEvents, cmdToggleEvents, copyProgressEvents, progressFinishedEvents, progressRevealedEvents, progressRunningEvents, type CmdToggleMsg, type CopyProgress } from "../requests/events"
+import { cmdEvents, cmdToggleEvents, copyProgressEvents, type CmdToggleMsg, type CopyProgress } from "../requests/events"
 import Titlebar, { type TitlebarHandle } from "./Titlebar"
 import Menu from "./Menu"
 import PictureViewer from "./PictureViewer"
@@ -55,7 +55,7 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	const [errorText, setErrorText] = useState<string | undefined>(undefined)
 	const [previewMode, setPreviewMode] = useState(PreviewMode.Default)
 	const [progress, setProgress] = useState<CopyProgress>({
-		move: false, name: "", duration: 0, currentBytes: 0, currentCount: 0, currentMaxBytes: 0, isRunning: false,
+		move: false, name: "", duration: 0, currentBytes: 0, currentCount: 0, currentMaxBytes: 0, 
 		previousTotalBytes: 0, totalBytes: 0, totalCount: 0, totalMaxBytes: 0
 	})
 	const [progressRevealed, setProgressRevealed] = useState(false)
@@ -135,6 +135,9 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 			case "SHOW_DEV_TOOLS":
 				await sendMenuCmd({ cmd: key })
 				break
+			case "SHOW_PROGRESS":
+				titlebar.current?.startProgressDialog()
+				break
 			case "END":
 				window.close()
 				break
@@ -161,17 +164,11 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 	useEffect(() => {
 		const subscription = cmdEvents.subscribe(m => onMenuAction(m!.cmd))
 		const subscriptionToggle = cmdToggleEvents.subscribe(onMenuToggleAction)
-		const subscriptionRevealed = progressRevealedEvents.subscribe(setProgressRevealed)
-		const subscriptionFinished = progressFinishedEvents.subscribe(setProgressFinished)
 		const subscriptionProgress = copyProgressEvents.subscribe(setProgress)
-		const subscriptionProgressRunning = progressRunningEvents.subscribe(titlebar.current?.startProgressDialog)
 		return () => {
 			subscriptionToggle.unsubscribe()
 			subscription.unsubscribe()
-			subscriptionRevealed.unsubscribe()
-			subscriptionFinished.unsubscribe()
 			subscriptionProgress.unsubscribe()
-			subscriptionProgressRunning.unsubscribe()
 		}
 	}, [onMenuAction, onMenuToggleAction, titlebar])
 
@@ -202,10 +199,12 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
     
 	const FolderLeft = () => (
 		<FolderView ref={folderLeft} id={ID_LEFT} onFocus={onFocusLeft} onItemChanged={onItemChanged} onItemsChanged={setItemCount}
+			setProgressRevealed={setProgressRevealed} setProgressFinished={setProgressFinished}
 			onEnter={onEnter} showHidden={showHidden} setStatusText={setStatusTextLeft} setErrorText={setErrorText} dialog={dialog} />
 	)
 	const FolderRight = () => (
-		<FolderView ref={folderRight} id={ID_RIGHT} onFocus={onFocusRight} onItemChanged={onItemChanged} onItemsChanged={setItemCount}
+		<FolderView ref={folderRight} id={ID_RIGHT} onFocus={onFocusRight} onItemChanged={onItemChanged} onItemsChanged={setItemCount} 
+			setProgressRevealed= {setProgressRevealed} setProgressFinished={setProgressFinished}
 			onEnter={onEnter} showHidden={showHidden} setStatusText={setStatusTextRight} setErrorText={setErrorText} dialog={dialog} />
 	)
 

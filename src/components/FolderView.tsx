@@ -10,6 +10,7 @@ import RestrictionView, { type RestrictionViewHandle } from "./RestrictionView"
 import { initializeHistory } from "../history"
 import { ResultType, Slide, type DialogHandle } from "web-dialog-react"
 import CopyConflicts, { type ConflictItem } from "./dialogparts/CopyConflicts"
+import { delayAsync } from "functional-extensions"
 
 export type FolderViewHandle = {
     id: string
@@ -40,6 +41,8 @@ interface FolderViewProp {
     onEnter: (item: FolderViewItem, specialKeys?: SpecialKeys)=>void
     setStatusText: (text?: string) => void
     setErrorText: (text?: string) => void
+    setProgressRevealed: (revealed: boolean) => void
+    setProgressFinished: (revealed: boolean) => void
     dialog: DialogHandle
 }
 
@@ -87,7 +90,7 @@ export type FileVersion = {
 }
 
 const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
-    { id, showHidden, onFocus, onItemChanged, onItemsChanged, onEnter, setStatusText, setErrorText, dialog },
+    { id, showHidden, onFocus, onItemChanged, onItemsChanged, onEnter, setStatusText, setErrorText, setProgressRevealed, setProgressFinished, dialog },
     ref) => {
     
     const setItems = useCallback((items: FolderViewItem[], dirCount?: number, fileCount?: number) => {
@@ -366,6 +369,9 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
             defBtnYes: !defNo && prepareResult.conflicts.length > 0,
             defBtnNo: defNo
         })
+
+        setProgressRevealed(true)
+        setProgressFinished(false)
         
         let result = await copy({ id, cancelled: res.result == ResultType.Cancel, notOverwrite: res.result == ResultType.No })
         if (result.accessDenied) {
@@ -374,16 +380,16 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
             const prepareResult = await prepareCopyUac({ id, move, path, targetPath: inactiveFolder.getPath(), items: getSelectedItems() })
             console.log("prepareResult", prepareResult)
             result = await copyUac({ id, cancelled: res.result == ResultType.Cancel, notOverwrite: res.result == ResultType.No })
-            // TODO 2. connect websockets
-            // TODO 3. Test: send events start, finished
-            // TODO 5. cancel uac: show access denied
             await stoptUac({})
         }
+        setProgressFinished(true)
         if (!result.cancelled) {
             inactiveFolder.refresh()
             if (move)
                 refresh()
+            await delayAsync(5000)
         }
+        setProgressRevealed(false)
     }
 
     const onSort = async (sort: OnSort) => {

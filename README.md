@@ -1,3 +1,6 @@
+// TODO eliminate ProgressRunning: isRunning in ProgressContext  O R  uacProgress isRunnging
+// TODO copy uac: 
+
 // TODO Menu open explorer here
 
 // TODO delete with shellexecute

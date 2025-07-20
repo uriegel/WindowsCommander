@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Commander.Controllers;
+using Commander.ProgressAction;
 using CsTools.Extensions;
 using URiegel.WebSocketClient;
 using WebServerLight;
@@ -29,7 +30,11 @@ static class UacServer
         // TODO check websocket client finalizing
         var client = new WsClient("ws://localhost:21000/events", msg =>
         {
-            Requests.SendRaw(msg);
+            // var running = JsonSerializer.Deserialize<WebSocketRunningMsg>(msg);
+            // if (running?.Method == "progressrunning")
+            //     ProgressContext.Instance.SetRunning(running.ProgressRunning == true);
+            // else
+                Events.SendRaw(msg);
             return 0.ToAsync();
         }, () => Console.WriteLine("Closed"));
 
@@ -55,11 +60,11 @@ static class UacServer
                     .New(Method.Post)
                     .Add(PathRoute
                         .New("/request")
-                        .Request(Requests.Process)))
+                        .Request(req => Requests.Process(req, new UacProgressRunningControl()))))
                 .AddAllowedOrigin("http://localhost:5173")
                 .AddAllowedOrigin("http://localhost:20000")
                 .AccessControlMaxAge(TimeSpan.FromMinutes(5))
-                .WebSocket(Requests.WebSocket)
+                .WebSocket(Events.WebSocket)
                 .Build();
         server.Start();
 
@@ -72,10 +77,15 @@ static class UacServer
 
     public static Task<SetControllerResponse> SetController(SetControllerRequest setController)
     {
-        FolderController.DetectController(setController.Id, setController.Path ?? "");       
+        FolderController.DetectController(setController.Id, setController.Path ?? "");
         return new SetControllerResponse().ToAsync();
     }
 
-    static TaskCompletionSource? processRunning; 
+    static TaskCompletionSource? processRunning;
     static IServer? server;
 }
+
+record WebSocketRunningMsg(
+    string Method,
+    bool? ProgressRunning = null
+);

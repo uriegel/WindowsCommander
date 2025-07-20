@@ -1,5 +1,6 @@
 using System.Windows.Forms;
 using Commander;
+using Commander.ProgressAction;
 using CsTools.Extensions;
 using WebServerLight;
 using WebServerLight.Routing;
@@ -33,7 +34,7 @@ class Program
                     .New(Method.Post)
                     .Add(PathRoute
                         .New("/request")
-                        .Request(Requests.Process)))
+                        .Request(req => Requests.Process(req, new ProgressRunningControl()))))
                 .Route(MethodRoute
                     .New(Method.Get)
                     .Add(PathRoute
@@ -50,7 +51,7 @@ class Program
                         .Request(Requests.GetTrack)))
                 .AddAllowedOrigin("http://localhost:5173")
                 .AccessControlMaxAge(TimeSpan.FromMinutes(5))
-                .WebSocket(Requests.WebSocket)
+                .WebSocket(Events.WebSocket)
                 .UseRange()
                 .Build();
         server.Start();
@@ -69,7 +70,7 @@ class Program
             .OnFormCreating(SetWindow)
             .DebugUrl("http://localhost:5173")
             .Url("http://localhost:20000")
-            .CanClose(ProgressContext.CanClose);
+            .CanClose(ProgressRunning.CanClose);
     }
 
     void SetWindow(Form window)

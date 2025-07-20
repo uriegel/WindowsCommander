@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Commander.Enums;
+using Commander.ProgressAction;
 using CsTools.Extensions;
 
 using static System.Console;
@@ -56,7 +58,7 @@ class DirectoryController(string folderId) : Controller(folderId)
         static void OnError(Exception e) => Error.WriteLine($"Konnte Pfad nicht ändern: {e}");
     }
 
-    public override Task<PrepareCopyResult> PrepareCopy(PrepareCopyRequest data)
+    public override Task<PrepareCopyResult> PrepareCopy(PrepareCopyRequest data, ProgressRunningControl progressRunning)
     {
         //if ((data.TargetPath.StartsWith('/') != true && data.TargetPath?.StartsWith("remote/") != true)
         if (data.TargetPath.Length < 1
@@ -64,7 +66,7 @@ class DirectoryController(string folderId) : Controller(folderId)
         || string.Compare(data.Path, data.TargetPath, StringComparison.CurrentCultureIgnoreCase) == 0
         || data.Items.Length == 0)
             return new PrepareCopyResult(SelectedItemsType.None, 0, []).ToAsync();
-        var copyProcessor = new CopyProcessor(data.Path, data.TargetPath, GetSelectedItemsType(data.Items), data.Items, data.Move);
+        var copyProcessor = new CopyProcessor(progressRunning, data.Path, data.TargetPath, GetSelectedItemsType(data.Items), data.Items, data.Move);
         return Task.Run(copyProcessor.PrepareCopy);
     }
 
@@ -153,7 +155,7 @@ class DirectoryController(string folderId) : Controller(folderId)
             bool changed = false;
             await Task.Run(async () =>
             {
-                Requests.SendStatusBarInfo(FolderId, changePathId, "Ermittle erweiterte Informationen...");
+                Events.SendStatusBarInfo(FolderId, changePathId, "Ermittle erweiterte Informationen...");
                 foreach (var item in items
                                         .Where(item => !cancellation.IsCancellationRequested
                                                 && (item.Name.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase)
@@ -179,14 +181,14 @@ class DirectoryController(string folderId) : Controller(folderId)
                 {
                     await extendedReady;
 
-                    Requests.SendExtendedInfo(FolderId, changePathId, items);
+                    Events.SendExtendedInfo(FolderId, changePathId, items);
                 }
             }, cancellation);
         }
         catch { }
         finally
         {
-            Requests.SendStatusBarInfo(FolderId, changePathId, null);
+            Events.SendStatusBarInfo(FolderId, changePathId, null);
         }
     }
 
