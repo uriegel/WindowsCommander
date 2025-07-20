@@ -58,7 +58,7 @@ class DirectoryController(string folderId) : Controller(folderId)
         static void OnError(Exception e) => Error.WriteLine($"Konnte Pfad nicht ändern: {e}");
     }
 
-    public override Task<PrepareCopyResult> PrepareCopy(PrepareCopyRequest data, ProgressRunningControl progressRunning)
+    public override Task<PrepareCopyResult> PrepareCopy(PrepareCopyRequest data)
     {
         //if ((data.TargetPath.StartsWith('/') != true && data.TargetPath?.StartsWith("remote/") != true)
         if (data.TargetPath.Length < 1
@@ -66,7 +66,7 @@ class DirectoryController(string folderId) : Controller(folderId)
         || string.Compare(data.Path, data.TargetPath, StringComparison.CurrentCultureIgnoreCase) == 0
         || data.Items.Length == 0)
             return new PrepareCopyResult(SelectedItemsType.None, 0, []).ToAsync();
-        var copyProcessor = new CopyProcessor(progressRunning, data.Path, data.TargetPath, GetSelectedItemsType(data.Items), data.Items, data.Move);
+        var copyProcessor = new CopyProcessor(data.Path, data.TargetPath, GetSelectedItemsType(data.Items), data.Items, data.Move);
         return Task.Run(copyProcessor.PrepareCopy);
     }
 

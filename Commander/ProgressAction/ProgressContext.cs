@@ -5,6 +5,8 @@ namespace Commander.ProgressAction;
 
 static class ProgressContext
 {
+    public static bool IsRunning { get; private set; }
+
     public static CopyProgress? CopyProgress
     {
         get => field;
@@ -38,6 +40,19 @@ static class ProgressContext
             0
         );
         return cts.Token;
+    }
+
+    public static void SetRunning(bool running = true) => IsRunning = running;
+
+    public static bool CanClose()
+    {
+        if (!IsRunning)
+            return true;
+        else
+        {
+            Events.SendMenuCommand("SHOW_PROGRESS");
+            return false;
+        }
     }
 
     public static void SetNewFileProgress(string name, long size, int index)

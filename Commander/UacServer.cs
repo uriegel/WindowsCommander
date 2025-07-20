@@ -60,7 +60,7 @@ static class UacServer
                     .New(Method.Post)
                     .Add(PathRoute
                         .New("/request")
-                        .Request(req => Requests.Process(req, new UacProgressRunningControl()))))
+                        .Request(req => Requests.Process(req))))
                 .AddAllowedOrigin("http://localhost:5173")
                 .AddAllowedOrigin("http://localhost:20000")
                 .AccessControlMaxAge(TimeSpan.FromMinutes(5))

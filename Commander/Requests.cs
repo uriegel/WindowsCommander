@@ -18,14 +18,14 @@ namespace Commander;
 
 static class Requests
 {
-    public static async Task<bool> Process(IRequest request, ProgressRunningControl progressRunning)
+    public static async Task<bool> Process(IRequest request)
     {
         return request.SubPath switch
         {
             "changepath" => await ChangePath(request),
             "sendmenucmd" => await MenuCmd(request),
             "getextended" => await GetExtended(request),
-            "preparecopy" => await PrepareCopy(request, progressRunning),
+            "preparecopy" => await PrepareCopy(request),
             "copy" => await Copy(request),
             "cancelcopy" => await CancelCopy(request),
             "onenter" => await OnEnter(request),
@@ -96,8 +96,8 @@ static class Requests
     static Task<bool> GetExtended(IRequest request)
         => Request<GetExtendedRequest, GetExtendedResult>(request, n => GetController(n.FolderId).GetExtended(n.Id));
 
-    static Task<bool> PrepareCopy(IRequest request, ProgressRunningControl progressRunning)
-        => Request<PrepareCopyRequest, PrepareCopyResult>(request, n => GetController(n.Id).PrepareCopy(n, progressRunning));
+    static Task<bool> PrepareCopy(IRequest request)
+        => Request<PrepareCopyRequest, PrepareCopyResult>(request, n => GetController(n.Id).PrepareCopy(n));
 
     static Task<bool> Copy(IRequest request)
         => Request<CopyRequest, CopyResult>(request, n => GetController(n.Id).Copy(n));

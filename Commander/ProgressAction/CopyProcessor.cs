@@ -8,13 +8,13 @@ using static ClrWinApi.Api;
 
 namespace Commander.ProgressAction;
 
-class CopyProcessor(ProgressRunningControl progressRunning, string sourcePath, string targetPath, SelectedItemsType selectedItemsType, DirectoryItem[] selectedItems, bool move)
+class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType selectedItemsType, DirectoryItem[] selectedItems, bool move)
 {
     public static CopyProcessor? Current { get; private set; }
 
     public PrepareCopyResult PrepareCopy()
     {
-        if (progressRunning.IsRunning())
+        if (ProgressContext.IsRunning)
             return new(SelectedItemsType.None, 0, [], true);
         Current = this;
         copyItems = MakeCopyItems(MakeSourceCopyItems(selectedItems, sourcePath), targetPath);
@@ -30,7 +30,7 @@ class CopyProcessor(ProgressRunningControl progressRunning, string sourcePath, s
             if (data.Cancelled)
                 return new CopyResult(true);
 
-            progressRunning.SetRunning();
+            ProgressContext.SetRunning();
             var index = 0;
             copyItems = data.NotOverwrite ? [.. copyItems.Where(n => n.Target == null)] : copyItems;
             copySize = data.NotOverwrite ? copyItems.Sum(n => n.Source.Size) : copySize;
@@ -66,7 +66,7 @@ class CopyProcessor(ProgressRunningControl progressRunning, string sourcePath, s
         }
         finally
         {
-            progressRunning.SetRunning(false);
+            ProgressContext.SetRunning(false);
             Current = null;
         }
     }

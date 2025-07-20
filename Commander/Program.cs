@@ -34,7 +34,7 @@ class Program
                     .New(Method.Post)
                     .Add(PathRoute
                         .New("/request")
-                        .Request(req => Requests.Process(req, new ProgressRunningControl()))))
+                        .Request(req => Requests.Process(req))))
                 .Route(MethodRoute
                     .New(Method.Get)
                     .Add(PathRoute
@@ -70,7 +70,7 @@ class Program
             .OnFormCreating(SetWindow)
             .DebugUrl("http://localhost:5173")
             .Url("http://localhost:20000")
-            .CanClose(ProgressRunning.CanClose);
+            .CanClose(ProgressContext.CanClose);
     }
 
     void SetWindow(Form window)
