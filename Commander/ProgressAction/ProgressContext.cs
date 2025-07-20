@@ -84,13 +84,11 @@ static class ProgressContext
         CopyProgress = null;
     }
 
-    public static void Cancel()
+    public static async Task Cancel()
     {
         cts?.Cancel();
         if (UacServer.IsRunning)
-        {
-            
-        }
+            await UacServer.Cancel();
         CopyProgress = null;
     }
 

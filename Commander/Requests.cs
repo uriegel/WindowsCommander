@@ -103,10 +103,10 @@ static class Requests
         => Request<CopyRequest, CopyResult>(request, n => GetController(n.Id).Copy(n));
 
     static Task<bool> CancelCopy(IRequest request)
-        => Request<NilRequest, NilResponse>(request, _ =>
+        => Request<NilRequest, NilResponse>(request, async _ =>
         {
-            ProgressContext.Cancel();
-            return new NilResponse().ToAsync();
+            await ProgressContext.Cancel();
+            return new NilResponse();
         });
 
     static Task<bool> StartUac(IRequest request)

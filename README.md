@@ -1,5 +1,3 @@
-// TODO copy uac: Cancel not possible: send cancel to Uac
-
 // TODO Menu open explorer here
 
 // TODO delete with shellexecute

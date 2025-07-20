@@ -1,9 +1,12 @@
 using System.Diagnostics;
 using Commander.Controllers;
 using CsTools.Extensions;
+using CsTools.HttpRequest;
 using URiegel.WebSocketClient;
 using WebServerLight;
 using WebServerLight.Routing;
+
+using static CsTools.HttpRequest.Core;
 
 namespace Commander;
 
@@ -53,6 +56,20 @@ static class UacServer
     }
 
     public static void Stop() => processRunning?.SetResult();
+
+    public static async Task Cancel()
+    {
+        var settings = DefaultSettings with
+        {
+            Method = HttpMethod.Post,
+            BaseUrl = $"http://localhost:21000",
+            Url = $"/request/cancelcopy",
+            AddContent = () => new StringContent("{}", new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"))
+        };
+        var msg = await Request.RunAsync(settings);
+        var result = await msg.Content.ReadAsStringAsync();
+        Console.WriteLine(result);
+    }
 
     public static async Task Run(int commanderId)
     {
