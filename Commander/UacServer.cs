@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Commander.Controllers;
-using Commander.ProgressAction;
 using CsTools.Extensions;
 using URiegel.WebSocketClient;
 using WebServerLight;
@@ -10,42 +9,50 @@ namespace Commander;
 
 static class UacServer
 {
-    public static async void Start()
+    public static bool IsRunning { get; private set; }
+
+    public static async Task<bool> Start()
     {
-        var p = new Process()
+        try
         {
-            StartInfo = new(Process.GetCurrentProcess()?.MainModule?.FileName ?? "")
+            process = new Process()
             {
-#if DEBUG            
-                Arguments = $"{Environment.CurrentDirectory.AppendPath(@"Commander\bin\Debug\net9.0-windows\commander.dll")} -adminMode {Environment.ProcessId}",
-#else       
-                Arguments = $"-adminMode {Environment.ProcessId}",
+                StartInfo = new(Process.GetCurrentProcess()?.MainModule?.FileName ?? "")
+                {
+#if DEBUG
+                    Arguments = $"{Environment.CurrentDirectory.AppendPath(@"Commander\bin\Debug\net9.0-windows\commander.dll")} -adminMode {Environment.ProcessId}",
+#else
+                    Arguments = $"-adminMode {Environment.ProcessId}",
 #endif
-                Verb = "runas",
-                UseShellExecute = true
-            }
+                    Verb = "runas",
+                    UseShellExecute = true
+                }
 
-        }.Start();
+            };
+            if (process.Start())
+                IsRunning = true;
+            else
+                return false;
+            process.EnableRaisingEvents = true;
+            process.Exited += (s, e) => IsRunning = false;
 
-        // TODO check websocket client finalizing
-        var client = new WsClient("ws://localhost:21000/events", msg =>
-        {
-            // var running = JsonSerializer.Deserialize<WebSocketRunningMsg>(msg);
-            // if (running?.Method == "progressrunning")
-            //     ProgressContext.Instance.SetRunning(running.ProgressRunning == true);
-            // else
+            // TODO check websocket client finalizing
+            var client = new WsClient("ws://localhost:21000/events", msg =>
+            {
                 Events.SendRaw(msg);
-            return 0.ToAsync();
-        }, () => Console.WriteLine("Closed"));
+                return 0.ToAsync();
+            }, () => Console.WriteLine("Closed"));
 
-        await client.OpenAsync();
+            await client.OpenAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
-    public static void Stop()
-    {
-        Thread.Sleep(6000);
-        processRunning?.SetResult();
-    }
+    public static void Stop() => processRunning?.SetResult();
 
     public static async Task Run(int commanderId)
     {
@@ -83,6 +90,8 @@ static class UacServer
 
     static TaskCompletionSource? processRunning;
     static IServer? server;
+
+    static Process? process;
 }
 
 record WebSocketRunningMsg(

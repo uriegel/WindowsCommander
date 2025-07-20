@@ -1,5 +1,4 @@
-// TODO eliminate ProgressRunning: isRunning in ProgressContext  O R  uacProgress isRunnging
-// TODO copy uac: 
+// TODO copy uac: Cancel not possible: send cancel to Uac
 
 // TODO Menu open explorer here
 

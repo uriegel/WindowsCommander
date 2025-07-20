@@ -110,10 +110,10 @@ static class Requests
         });
 
     static Task<bool> StartUac(IRequest request)
-        => Request<NilRequest, NilResponse>(request, _ =>
+        => Request<NilRequest, StartUacResponse>(request, async _ =>
         {
-            UacServer.Start();
-            return new NilResponse().ToAsync();
+            var res = await UacServer.Start();
+            return new StartUacResponse(res);
         });
 
     static Task<bool> StopUac(IRequest request)
@@ -207,7 +207,9 @@ record CopyResult(bool Cancelled, bool? AccessDenied = null);
 record NilRequest();
 record NilResponse();
 
-record SetControllerRequest (
+record StartUacResponse(bool Success);
+
+record SetControllerRequest(
     string Id,
     string? Path
 );

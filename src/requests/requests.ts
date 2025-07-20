@@ -82,6 +82,10 @@ interface OnEnterResponse {
     success: boolean
 }
 
+interface StartUacResponse{
+    success: boolean
+}
+
 interface Nil { nil?: boolean }
 
 interface NilResponse { nil?: boolean }
@@ -103,7 +107,7 @@ export const getExtended = getJsonPost<GetExtended, GetExtendedResponse>("getext
 export const sendMenuCmd = getJsonPost<SendMenuCmd, SendMenuCmdResponse>("sendmenucmd")
 export const onEnter = getJsonPost<OnEnter, OnEnterResponse>("onenter")
 export const cancelCopy = getJsonPost<Nil, NilResponse>("cancelcopy")
-export const startUac = getJsonPost<Nil, NilResponse>("startuac")
+export const startUac = getJsonPost<Nil, StartUacResponse>("startuac")
 export const stoptUac = getJsonPost<Nil, NilResponse>("stopuac", 21000)
 export const copyUac = getJsonPost<Copy, CopyResponse>("copy", 21000)
 export const setControllerUac = getJsonPost<SetController, SetControllerResponse>("setcontroller", 21000)

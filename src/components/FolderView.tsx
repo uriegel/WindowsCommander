@@ -375,7 +375,13 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         
         let result = await copy({ id, cancelled: res.result == ResultType.Cancel, notOverwrite: res.result == ResultType.No })
         if (result.accessDenied) {
-            await startUac({})
+            if (!(await startUac({})).success)
+            {
+                setProgressRevealed(false)
+                setProgressFinished(true)
+                return;
+            }
+
             await setControllerUac({id, path })
             const prepareResult = await prepareCopyUac({ id, move, path, targetPath: inactiveFolder.getPath(), items: getSelectedItems() })
             console.log("prepareResult", prepareResult)

@@ -5,7 +5,7 @@ namespace Commander.ProgressAction;
 
 static class ProgressContext
 {
-    public static bool IsRunning { get; private set; }
+    public static bool IsRunning { get => isRunning || UacServer.IsRunning; }
 
     public static CopyProgress? CopyProgress
     {
@@ -27,7 +27,7 @@ static class ProgressContext
         startTime = DateTime.Now;
         cts = new CancellationTokenSource();
         CopyProgress = new CopyProgress(
-            move, 
+            move,
             "",
             count,
             0,
@@ -42,7 +42,7 @@ static class ProgressContext
         return cts.Token;
     }
 
-    public static void SetRunning(bool running = true) => IsRunning = running;
+    public static void SetRunning(bool running = true) => isRunning = running;
 
     public static bool CanClose()
     {
@@ -87,6 +87,10 @@ static class ProgressContext
     public static void Cancel()
     {
         cts?.Cancel();
+        if (UacServer.IsRunning)
+        {
+            
+        }
         CopyProgress = null;
     }
 
@@ -120,11 +124,9 @@ static class ProgressContext
     }
 
     static readonly Subject<CopyProgress> progressSubject;
-
-    readonly static TimeSpan ThreeSeconds = TimeSpan.FromSeconds(3);
-
     static CancellationTokenSource? cts;
     static DateTime startTime = DateTime.Now;
+    static bool isRunning;
 }
 
 record CopyProgress(
