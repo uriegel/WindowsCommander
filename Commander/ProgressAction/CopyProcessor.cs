@@ -115,6 +115,7 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
             if (error == 5)
                 throw new UnauthorizedAccessException();
         }
+        ProgressContext.SetProgress(item.Source.Size, item.Source.Size);
 
         return 0.ToAsync();
     }
