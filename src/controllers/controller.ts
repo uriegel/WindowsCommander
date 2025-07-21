@@ -21,6 +21,15 @@ export const IconNameType = {
 }
 export type IconNameType = (typeof IconNameType)[keyof typeof IconNameType]
 
+export const ItemsType = {
+    Directories: 'Directories',
+    Directory: 'Directory',
+    Files: 'Files',
+    File: 'File',
+    All: 'All',
+}
+export type ItemsType = (typeof ItemsType)[keyof typeof ItemsType]
+
 export interface OnEnterResult {
     processed: boolean
     pathToSet?: string
@@ -49,7 +58,8 @@ export interface IController {
     sort: (items: FolderViewItem[], sortIndex: number, sortDescending: boolean) => FolderViewItem[]
     itemsSelectable: boolean
     onSelectionChanged: (items: FolderViewItem[]) => void 
-    getCopyText: (prepareCopy: PrepareCopyResponse, move: boolean)=>string
+    getCopyText: (prepareCopy: PrepareCopyResponse, move: boolean) => string
+    deleteItems: (items: FolderViewItem[], dialog: DialogHandle, id: string, path: string) => Promise<void>
 }
 
 export function getController(id: string): IController {
@@ -111,4 +121,22 @@ export const sortItems = (folderItemArray: FolderViewItem[], sortFunction?: Sort
     let files = folderItemArray.filter(n => !n.isDirectory) 
     files = sortFunction ? files.sort(sortFunction) : files
     return dirs.concat(files)
+}
+
+export const getItemsType = (items: FolderViewItem[]): ItemsType => {
+	const dirs = items.filter(n => n.isDirectory)
+	const files = items.filter(n => !n.isDirectory)
+	return dirs.length == 0
+		? files.length > 1
+		? ItemsType.Files
+		: ItemsType.File
+		: dirs.length == 1
+		? files.length != 0
+		? ItemsType.All
+		: ItemsType.Directory
+		: dirs.length > 1
+		? files.length != 0
+		? ItemsType.All
+		: ItemsType.Directories
+		: ItemsType.All
 }

@@ -297,9 +297,9 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
                     controller.current.onSelectionChanged(items)                    
                 }
                 break                
-            // case "Delete":
-            //     deleteItems()
-            //     break
+            case "Delete":
+                deleteItems()
+                break
             case "Backspace":
                 if (!checkRestricted(evt.key)) {
                     const path = history.current?.get(evt.shiftKey)
@@ -396,6 +396,13 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
             await delayAsync(5000)
         }
         setProgressRevealed(false)
+    }
+
+    const deleteItems = () => {
+        virtualTable.current?.setFocus()
+        const items = getSelectedItems()
+        if (items.length > 0 && dialog)
+            controller.current.deleteItems(items, dialog, id, path)
     }
 
     const onSort = async (sort: OnSort) => {

@@ -37,7 +37,9 @@ export class Root implements IController {
 
     onSelectionChanged() { }
     
-    getCopyText() { return ""}
+    getCopyText() { return "" }
+    
+    async deleteItems() {}
 
     constructor() {
         this.id = "ROOT"

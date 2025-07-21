@@ -86,6 +86,16 @@ interface StartUacResponse{
     success: boolean
 }
 
+interface DeleteItems {
+    id: string
+    path: string
+    items: string[]
+}
+
+interface DeleteItemsResponse {
+    
+}
+
 interface Nil { nil?: boolean }
 
 interface NilResponse { nil?: boolean }
@@ -112,6 +122,7 @@ export const stoptUac = getJsonPost<Nil, NilResponse>("stopuac", 21000)
 export const copyUac = getJsonPost<Copy, CopyResponse>("copy", 21000)
 export const setControllerUac = getJsonPost<SetController, SetControllerResponse>("setcontroller", 21000)
 export const prepareCopyUac = getJsonPost<PrepareCopy, PrepareCopyResponse>("preparecopy", 21000)
+export const deleteItems = getJsonPost<DeleteItems, DeleteItemsResponse>("deleteitems")
 
 function getJsonPost<RequestType, ResponseType>(method: string, port = 20000): (request: RequestType) => Promise<ResponseType> {
  

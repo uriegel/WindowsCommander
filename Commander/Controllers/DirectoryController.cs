@@ -6,6 +6,7 @@ using Commander.ProgressAction;
 using CsTools.Extensions;
 
 using static System.Console;
+using static ClrWinApi.Api;
 
 namespace Commander.Controllers;
 
@@ -71,6 +72,21 @@ class DirectoryController(string folderId) : Controller(folderId)
     }
 
     public override Task<CopyResult> Copy(CopyRequest copyRequest) => CopyProcessor.Current?.Copy(copyRequest) ?? new CopyResult(true).ToAsync();
+
+    public override Task<DeleteItemsResult> DeleteItems(DeleteItemsRequest request)
+    {
+        SHFileOperation(new ClrWinApi.ShFileOPStruct
+        {
+            Func = ClrWinApi.FileFuncFlags.DELETE,
+            From = string.Join("\U00000000", request.Items.Select(request.Path.AppendPath))
+                            + "\U00000000\U00000000",
+            Flags = ClrWinApi.FileOpFlags.NOCONFIRMATION
+                    | ClrWinApi.FileOpFlags.NOCONFIRMMKDIR
+                    | ClrWinApi.FileOpFlags.NOERRORUI
+                    | ClrWinApi.FileOpFlags.ALLOWUNDO
+        });
+        return new DeleteItemsResult().ToAsync();
+    }
 
     public override Task<OnEnterResult> OnEnter(OnEnterRequest data)
     {

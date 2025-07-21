@@ -1,9 +1,10 @@
 import type { TableColumns } from "virtual-table-react"
-import { formatDateTime, formatSize, IconNameType, sortItems, type EnterData, type IController, type OnEnterResult } from "./controller"
+import { formatDateTime, formatSize, getItemsType, IconNameType, ItemsType, sortItems, type EnterData, type IController, type OnEnterResult } from "./controller"
 import type { FileVersion, FolderViewItem } from "../components/FolderView"
 import IconName from "../components/IconName"
 import "../extensions/extensions"
-import { onEnter, SelectedItemsType, type PrepareCopyResponse } from "../requests/requests"
+import { deleteItems, onEnter, SelectedItemsType, type PrepareCopyResponse } from "../requests/requests"
+import { ResultType, type DialogHandle } from "web-dialog-react"
 
 export class Directory implements IController {
     id: string
@@ -87,6 +88,30 @@ export class Directory implements IController {
             : prepareCopy.selectedItemsType == SelectedItemsType.Folders
             ? `Möchtest Du die Verzeichnisse ${copyAction}?`
             : `Möchtest Du die Einträge ${copyAction}?`
+    }
+
+    async deleteItems(items: FolderViewItem[], dialog: DialogHandle, id: string, path: string) {
+        const type = getItemsType(items)
+        const text = type == ItemsType.Directory
+            ? "Möchtest Du das Verzeichnis löschen?"
+            : type == ItemsType.Directories
+            ? "Möchtest Du die Verzeichnisse löschen?"
+            : type == ItemsType.File
+            ? "Möchtest Du die Datei löschen?"
+            : type == ItemsType.Files
+            ? "Möchtest Du die Dateien löschen?"		
+            : "Möchtest Du die Verzeichnisse und Dateien löschen?"	
+        
+        const res = await dialog.show({
+            text,
+            btnOk: true,
+            btnCancel: true,
+            defBtnOk: true
+        })
+        if (res.result == ResultType.Cancel)        
+            return
+
+        deleteItems({ id, path, items: items.map(n => n.name)})
     }
 
     constructor() {

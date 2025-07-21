@@ -32,6 +32,7 @@ static class Requests
             "startuac" => await StartUac(request),
             "stopuac" => await StopUac(request),
             "setcontroller" => await SetController(request),
+            "deleteitems" => await DeleteItems(request),
             _ => false
         };
     }
@@ -126,6 +127,9 @@ static class Requests
     static Task<bool> SetController(IRequest request)
         => Request<SetControllerRequest, SetControllerResponse>(request, UacServer.SetController);
     
+    static Task<bool> DeleteItems(IRequest request)
+        => Request<DeleteItemsRequest, DeleteItemsResult>(request, n => GetController(n.Id).DeleteItems(n));
+
     static Task<bool> OnEnter(IRequest request)
                 => Request<OnEnterRequest, OnEnterResult>(request, n => GetController(n.Id).OnEnter(n));
 
@@ -203,6 +207,9 @@ record CopyRequest(
 
 );
 record CopyResult(bool Cancelled, bool? AccessDenied = null);
+
+record DeleteItemsRequest(string Id, string Path, string[] Items);
+record DeleteItemsResult();
 
 record NilRequest();
 record NilResponse();
