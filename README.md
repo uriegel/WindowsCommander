@@ -1,7 +1,4 @@
-// TODO delete with shellexecute: refresh and error display
-// TODO delete: uac
-
-// TODO create folder: with shellexecute copy to new folder and remove the item
+// TODO create folder
 
 // TODO Menu open explorer here
 

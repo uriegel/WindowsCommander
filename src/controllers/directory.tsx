@@ -3,7 +3,7 @@ import { formatDateTime, formatSize, getItemsType, IconNameType, ItemsType, sort
 import type { FileVersion, FolderViewItem } from "../components/FolderView"
 import IconName from "../components/IconName"
 import "../extensions/extensions"
-import { deleteItems, onEnter, SelectedItemsType, type PrepareCopyResponse } from "../requests/requests"
+import { deleteItems, deleteItemsUac, onEnter, SelectedItemsType, setControllerUac, startUac, type PrepareCopyResponse } from "../requests/requests"
 import { ResultType, type DialogHandle } from "web-dialog-react"
 
 export class Directory implements IController {
@@ -109,9 +109,17 @@ export class Directory implements IController {
             defBtnOk: true
         })
         if (res.result == ResultType.Cancel)        
-            return
+            return false
 
-        deleteItems({ id, path, items: items.map(n => n.name)})
+        let response = await deleteItems({ id, path, items: items.map(n => n.name)})
+        if (response.accessDenied) {
+            if (!(await startUac({})).success) {
+                return false
+            }
+            await setControllerUac({id, path })
+            response = await deleteItemsUac({ id, path, items: items.map(n => n.name)})
+        }
+        return !response.accessDenied
     }
 
     constructor() {

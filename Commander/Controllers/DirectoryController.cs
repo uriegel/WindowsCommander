@@ -63,7 +63,7 @@ class DirectoryController(string folderId) : Controller(folderId)
     {
         //if ((data.TargetPath.StartsWith('/') != true && data.TargetPath?.StartsWith("remote/") != true)
         if (data.TargetPath.Length < 1
-        || data.TargetPath[1] != ':'
+        || (data.TargetPath[1] != ':' && !data.TargetPath.StartsWith('\\'))
         || string.Compare(data.Path, data.TargetPath, StringComparison.CurrentCultureIgnoreCase) == 0
         || data.Items.Length == 0)
             return new PrepareCopyResult(SelectedItemsType.None, 0, []).ToAsync();
@@ -75,7 +75,7 @@ class DirectoryController(string folderId) : Controller(folderId)
 
     public override Task<DeleteItemsResult> DeleteItems(DeleteItemsRequest request)
     {
-        SHFileOperation(new ClrWinApi.ShFileOPStruct
+        var res = SHFileOperation(new ClrWinApi.ShFileOPStruct
         {
             Func = ClrWinApi.FileFuncFlags.DELETE,
             From = string.Join("\U00000000", request.Items.Select(request.Path.AppendPath))
@@ -85,7 +85,7 @@ class DirectoryController(string folderId) : Controller(folderId)
                     | ClrWinApi.FileOpFlags.NOERRORUI
                     | ClrWinApi.FileOpFlags.ALLOWUNDO
         });
-        return new DeleteItemsResult().ToAsync();
+        return new DeleteItemsResult(res == 0x78 ? true : null).ToAsync();
     }
 
     public override Task<OnEnterResult> OnEnter(OnEnterRequest data)

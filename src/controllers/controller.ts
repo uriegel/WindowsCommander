@@ -59,7 +59,7 @@ export interface IController {
     itemsSelectable: boolean
     onSelectionChanged: (items: FolderViewItem[]) => void 
     getCopyText: (prepareCopy: PrepareCopyResponse, move: boolean) => string
-    deleteItems: (items: FolderViewItem[], dialog: DialogHandle, id: string, path: string) => Promise<void>
+    deleteItems: (items: FolderViewItem[], dialog: DialogHandle, id: string, path: string) => Promise<boolean>
 }
 
 export function getController(id: string): IController {

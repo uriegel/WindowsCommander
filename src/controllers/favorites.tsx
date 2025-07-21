@@ -62,7 +62,7 @@ export class Favorites implements IController {
     async deleteItems(items: FolderViewItem[], dialog: DialogHandle) {
         const itemsToDelete = items.filter(n => !n.isNew && !n.isParent)
         if (itemsToDelete.length == 0)
-            return
+            return false
         const res = await dialog.show({
 		    text: `Möchtest Du ${itemsToDelete.length > 1 ? "die Favoriten" : "den Favoriten"} löschen?`,
     		btnOk: true,
@@ -70,10 +70,11 @@ export class Favorites implements IController {
 		    defBtnOk: true
         })
         if (res.result != ResultType.Ok)
-            return
+            return false
         
         const favs = this.getFavoriteItems().filter(x => !items.find(n => n.name == x.name))
         localStorage.setItem("fav", JSON.stringify(favs))
+        return true
     }
 
     async createFavorite(dialog: DialogHandle, otherPath: string) {

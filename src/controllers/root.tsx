@@ -39,7 +39,7 @@ export class Root implements IController {
     
     getCopyText() { return "" }
     
-    async deleteItems() {}
+    async deleteItems() { return false }
 
     constructor() {
         this.id = "ROOT"

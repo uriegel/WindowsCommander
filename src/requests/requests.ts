@@ -93,7 +93,7 @@ interface DeleteItems {
 }
 
 interface DeleteItemsResponse {
-    
+    accessDenied?: boolean
 }
 
 interface Nil { nil?: boolean }
@@ -123,6 +123,7 @@ export const copyUac = getJsonPost<Copy, CopyResponse>("copy", 21000)
 export const setControllerUac = getJsonPost<SetController, SetControllerResponse>("setcontroller", 21000)
 export const prepareCopyUac = getJsonPost<PrepareCopy, PrepareCopyResponse>("preparecopy", 21000)
 export const deleteItems = getJsonPost<DeleteItems, DeleteItemsResponse>("deleteitems")
+export const deleteItemsUac = getJsonPost<DeleteItems, DeleteItemsResponse>("deleteitems", 21000)
 
 function getJsonPost<RequestType, ResponseType>(method: string, port = 20000): (request: RequestType) => Promise<ResponseType> {
  

@@ -398,11 +398,13 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         setProgressRevealed(false)
     }
 
-    const deleteItems = () => {
+    const deleteItems = async () => {
         virtualTable.current?.setFocus()
         const items = getSelectedItems()
         if (items.length > 0 && dialog)
-            controller.current.deleteItems(items, dialog, id, path)
+            if (await controller.current.deleteItems(items, dialog, id, path))
+                refresh()
+        await stoptUac({})
     }
 
     const onSort = async (sort: OnSort) => {

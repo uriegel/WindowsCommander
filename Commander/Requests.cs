@@ -209,7 +209,7 @@ record CopyRequest(
 record CopyResult(bool Cancelled, bool? AccessDenied = null);
 
 record DeleteItemsRequest(string Id, string Path, string[] Items);
-record DeleteItemsResult();
+record DeleteItemsResult(bool? AccessDenied = null);
 
 record NilRequest();
 record NilResponse();
