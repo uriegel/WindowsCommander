@@ -404,7 +404,8 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         if (items.length > 0 && dialog)
             if (await controller.current.deleteItems(items, dialog, id, path))
                 refresh()
-        await stoptUac({})
+            else
+                setErrorText("Löschen nicht möglich!")
     }
 
     const onSort = async (sort: OnSort) => {

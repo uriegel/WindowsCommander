@@ -3,8 +3,9 @@ import { formatDateTime, formatSize, getItemsType, IconNameType, ItemsType, sort
 import type { FileVersion, FolderViewItem } from "../components/FolderView"
 import IconName from "../components/IconName"
 import "../extensions/extensions"
-import { deleteItems, deleteItemsUac, onEnter, SelectedItemsType, setControllerUac, startUac, type PrepareCopyResponse } from "../requests/requests"
+import { deleteItems, deleteItemsUac, onEnter, SelectedItemsType, setControllerUac, startUac, stoptUac, type PrepareCopyResponse } from "../requests/requests"
 import { ResultType, type DialogHandle } from "web-dialog-react"
+import { delayAsync } from "functional-extensions"
 
 export class Directory implements IController {
     id: string
@@ -111,15 +112,20 @@ export class Directory implements IController {
         if (res.result == ResultType.Cancel)        
             return false
 
+        await delayAsync(50)
+        dialog.show({text: "Löschen..." })
         let response = await deleteItems({ id, path, items: items.map(n => n.name)})
         if (response.accessDenied) {
             if (!(await startUac({})).success) {
+                dialog.close()
                 return false
             }
             await setControllerUac({id, path })
             response = await deleteItemsUac({ id, path, items: items.map(n => n.name)})
+            await stoptUac({})
         }
-        return !response.accessDenied
+        dialog.close()
+        return !response.error
     }
 
     constructor() {

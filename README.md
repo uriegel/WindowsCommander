@@ -1,6 +1,10 @@
 // TODO create folder
+// TODO rename file
+// TODO rename with copy
 
 // TODO Menu open explorer here
+
+// TODO Parent \\...\C$: goto root, but append and select \\...\C$ as drive
 
 // TODO CopyConflicts: compare versions
 

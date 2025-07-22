@@ -80,12 +80,11 @@ class DirectoryController(string folderId) : Controller(folderId)
             Func = ClrWinApi.FileFuncFlags.DELETE,
             From = string.Join("\U00000000", request.Items.Select(request.Path.AppendPath))
                             + "\U00000000\U00000000",
-            Flags = ClrWinApi.FileOpFlags.NOCONFIRMATION
-                    | ClrWinApi.FileOpFlags.NOCONFIRMMKDIR
+            Flags = ClrWinApi.FileOpFlags.NOCONFIRMMKDIR
                     | ClrWinApi.FileOpFlags.NOERRORUI
                     | ClrWinApi.FileOpFlags.ALLOWUNDO
         });
-        return new DeleteItemsResult(res == 0x78 ? true : null).ToAsync();
+        return new DeleteItemsResult(res != 0 ? true : null, res == 0x78 ? true : null).ToAsync();
     }
 
     public override Task<OnEnterResult> OnEnter(OnEnterRequest data)

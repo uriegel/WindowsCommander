@@ -93,6 +93,7 @@ interface DeleteItems {
 }
 
 interface DeleteItemsResponse {
+    error?: boolean,
     accessDenied?: boolean
 }
 
