@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using CsTools.Extensions;
 
 namespace Commander.Controllers;
 
@@ -27,9 +28,13 @@ static class FolderController
             "/.." => typeof(RootController),
             "" => typeof(RootController),
             "fav" => typeof(FavoritesController),
-            _ => typeof(DirectoryController)
+            _ => IsShareParent(path)
+                ? typeof(RootController) 
+                : typeof(DirectoryController)
         };
 
+    static bool IsShareParent(string path)
+        => path.StartsWith(@"\\") && path.Replace('/', '\\').Pipe(p => p.EndsWith(@"\..") && p.Count(n => n == '\\') == 4);
 
     static Controller CreateController(string folderId, string path)
         => path switch
@@ -38,8 +43,10 @@ static class FolderController
             "/.." => new RootController(folderId),
             "" => new RootController(folderId),
             "fav" => new FavoritesController(folderId),
-            _ => new DirectoryController(folderId)
+            _ => IsShareParent(path)
+                ? new RootController(folderId).SideEffect(_ => RootController.SaveShare(path))
+                : new DirectoryController(folderId)
         };
 
-    static readonly ConcurrentDictionary<string, Controller> controllers = new();
+    static readonly ConcurrentDictionary<string, Controller> controllers = [];
 }

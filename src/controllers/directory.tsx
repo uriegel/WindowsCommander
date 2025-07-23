@@ -38,7 +38,7 @@ export class Directory implements IController {
         else
             return {
                 processed: false,
-                pathToSet: enterData.item.isParent && (enterData.path.length == 3 || enterData.path.endsWith('$')) 
+                pathToSet: enterData.item.isParent && (enterData.path.length == 3) 
                     ? "root" 
                     : this.appendPath(enterData.path, enterData.item.name),
                 latestPath: enterData.item.isParent ? enterData.path.extractSubPath() : undefined 

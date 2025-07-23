@@ -8,6 +8,12 @@ class RootController(string folderId) : Controller(folderId)
 {
     public override string Id { get; } = "ROOT";
 
+    public static void SaveShare(string pathWithShare)
+    {
+        string[] res = [.. shares, pathWithShare[..^3]];
+        shares = [.. res.Distinct().Order()]; 
+    }
+     
     public override async Task<ChangePathResult> ChangePathAsync(string path, bool _)
     {
         var cancellation = Cancellations.ChangePathCancellation(FolderId);
@@ -16,10 +22,10 @@ class RootController(string folderId) : Controller(folderId)
         var fav = new RootItem(
             "fav",
             "Favoriten",
-            null,
+            -1,
             false);
 
-        var items = ConcatEnumerables(rootItems, [fav]).ToArray();
+        var items = ConcatEnumerables(rootItems, [fav], shares.Select(n => new RootItem(n, "", -1, true))).ToArray();
         return new RootResult(null, CheckInitial() ? Id : null, "root", items.Length, 0, items);
     }
 
@@ -33,8 +39,10 @@ class RootController(string folderId) : Controller(folderId)
                    n.IsReady ? n.TotalSize : -1,
                    true))
                 .ToArray()
-                .ToAsync();     
+                .ToAsync();
     }
+
+    static string[] shares = [];
 }
 
 record RootResult(
