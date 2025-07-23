@@ -17,6 +17,8 @@ const IconName = ({ namePart, type, iconPath }: IconNameProps) =>
         ? (<img className="iconImage" src={`http://localhost:20000/iconfromextension/${iconPath}`} alt="" />)
         : type == IconNameType.Root && namePart == "C:\\"
         ? (<img className="image" src={`http://localhost:20000/iconfromname/windowsdrive`} alt="" />)
+        : type == IconNameType.Root && namePart.startsWith("\\\\")
+        ? (<img className="image" src={`http://localhost:20000/iconfromname/networkshare`} alt="" />)        
         : type == IconNameType.Root
         ? (<img className="image" src={`http://localhost:20000/iconfromname/drive`} alt="" />)
         : type == IconNameType.RootEjectable
