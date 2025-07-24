@@ -98,6 +98,16 @@ interface DeleteItemsResponse {
     accessDenied?: boolean
 }
 
+interface ConnectShare {
+    name: string
+    password: string
+    share: string
+}
+
+interface ConnectShareResponse {
+    success: boolean
+}
+
 interface Nil { nil?: boolean }
 
 interface NilResponse { nil?: boolean }
@@ -126,6 +136,7 @@ export const setControllerUac = getJsonPost<SetController, SetControllerResponse
 export const prepareCopyUac = getJsonPost<PrepareCopy, PrepareCopyResponse>("preparecopy", 21000)
 export const deleteItems = getJsonPost<DeleteItems, DeleteItemsResponse>("deleteitems")
 export const deleteItemsUac = getJsonPost<DeleteItems, DeleteItemsResponse>("deleteitems", 21000)
+export const connectShare = getJsonPost<ConnectShare, ConnectShareResponse>("connectshare")
 
 function getJsonPost<RequestType, ResponseType>(method: string, port = 20000): (request: RequestType) => Promise<ResponseType> {
  

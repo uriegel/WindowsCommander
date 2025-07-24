@@ -9,7 +9,7 @@ abstract class Controller(string folderId)
     public virtual Task<CopyResult> Copy(CopyRequest copyRequest) => throw new NotImplementedException();
     public virtual Task<GetExtendedResult> GetExtended(int id) => throw new NotImplementedException();
     public virtual Task<OnEnterResult> OnEnter(OnEnterRequest rename) => throw new NotImplementedException();
-    public virtual Task<DeleteItemsResult> DeleteItems(DeleteItemsRequest request) => throw new NotImplementedException();
+    public virtual Task<DeleteItemsResponse> DeleteItems(DeleteItemsRequest request) => throw new NotImplementedException();
 
     protected bool CheckInitial()
     {

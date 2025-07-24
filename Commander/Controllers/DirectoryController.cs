@@ -75,7 +75,7 @@ class DirectoryController(string folderId) : Controller(folderId)
 
     public override Task<CopyResult> Copy(CopyRequest copyRequest) => CopyProcessor.Current?.Copy(copyRequest) ?? new CopyResult(true).ToAsync();
 
-    public override Task<DeleteItemsResult> DeleteItems(DeleteItemsRequest request)
+    public override Task<DeleteItemsResponse> DeleteItems(DeleteItemsRequest request)
     {
         var res = SHFileOperation(new ClrWinApi.ShFileOPStruct
         {
@@ -86,7 +86,7 @@ class DirectoryController(string folderId) : Controller(folderId)
                     | ClrWinApi.FileOpFlags.NOERRORUI
                     | ClrWinApi.FileOpFlags.ALLOWUNDO
         });
-        return new DeleteItemsResult(res != 0 ? true : null, res == 0x78 ? true : null).ToAsync();
+        return new DeleteItemsResponse(res != 0 ? true : null, res == 0x78 ? true : null).ToAsync();
     }
 
     public override Task<OnEnterResult> OnEnter(OnEnterRequest data)
@@ -122,6 +122,25 @@ class DirectoryController(string folderId) : Controller(folderId)
         if (extendedTasks.TryGetValue(id, out var tcs))
             tcs.TrySetResult();
         return new GetExtendedResult().ToAsync();
+    }
+
+    public static Task<ConnectShareResponse> ConnectShare(ConnectShareRequest connectShare)
+    {
+        var res = WNetAddConnection2(new()
+        {
+            Scope = ClrWinApi.ResourceScope.GlobalNetwork,
+            ResourceType = ClrWinApi.ResourceType.Disk,
+            DisplayType = ClrWinApi.ResourceDisplaytype.Share,
+            RemoteName = connectShare.Share
+        }, connectShare.Password, connectShare.Name, 0);
+        // {
+        //     0  => Ok<Nothing, RequestError>(nothing),
+        //     67 => Error<Nothing, RequestError>(IOErrorType.NetNameNotFound.ToError()),
+        //     5 or 86  => Error<Nothing, RequestError>(IOErrorType.WrongCredentials.ToError())
+        //                     .SideEffect(_ => Events.Credentials(credentials.Path)),
+        //     _  => Error<Nothing, RequestError>(IOErrorType.Exn.ToError())
+        // };
+        return new ConnectShareResponse(res == 0).ToAsync();
     }
 
     public static SelectedItemsType GetSelectedItemsType(DirectoryItem[] items)

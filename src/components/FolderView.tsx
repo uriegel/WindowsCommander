@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react"
 import './FolderView.css'
 import VirtualTable, { type OnSort, type SelectableItem, type SpecialKeys, type TableColumns, type VirtualTableHandle } from "virtual-table-react"
-import { changePath as changePathRequest, copy, copyUac, getExtended, prepareCopy, prepareCopyUac, SelectedItemsType, setControllerUac, startUac, stoptUac } from "../requests/requests"
+import { changePath as changePathRequest, connectShare, copy, copyUac, getExtended, prepareCopy, prepareCopyUac, SelectedItemsType, setControllerUac, startUac, stoptUac } from "../requests/requests"
 import { getController, type IController } from "../controllers/controller"
 import { Root } from "../controllers/root"
 import { exifDataEvents, statusEvents } from "../requests/events"
@@ -116,11 +116,11 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
     }, [getWidthsId])
 
     const changePath = useCallback(async (path?: string, forceShowHidden?: boolean, mount?: boolean, latestPath?: string, fromBacklog?: boolean, checkPosition?: (checkItem: FolderViewItem) => boolean) => {
-        const result = await changePathRequest({ id, path, showHidden: forceShowHidden === undefined ? showHidden : forceShowHidden, mount })
+        let result = await changePathRequest({ id, path, showHidden: forceShowHidden === undefined ? showHidden : forceShowHidden, mount })
         if (result.cancelled)
             return
         if (result.accessDenied) {
-        while (true) {
+            while (true) {
                 let name = ""
                 let password = ""
                 const res = await dialog.show({
@@ -137,9 +137,19 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
                 })
                 if (res.result == ResultType.Cancel) 
                     return
+                var response = await connectShare({
+                    name, 
+                    password,
+                    share: path ?? "" // TODO substring to raw network share
+                })
+                if (response.success)
+                    break
                                     
                 await delayAsync(500)
             }
+            result = await changePathRequest({ id, path, showHidden: forceShowHidden === undefined ? showHidden : forceShowHidden, mount })
+            if (result.cancelled  || result.accessDenied)
+                return
         }
         restrictionView.current?.reset()
         if (result.controller) {
