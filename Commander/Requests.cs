@@ -178,6 +178,7 @@ record ChangePathRequest(
 );
 record ChangePathResult(
     bool? Cancelled,
+    bool? AccessDenied,
     int Id,
     string? Controller,
     string Path,

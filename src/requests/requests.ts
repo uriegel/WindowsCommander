@@ -9,6 +9,7 @@ interface ChangePath {
 
 interface ChangePathResponse {
     cancelled?: boolean
+    accessDenied?: boolean
     id: number
     controller?: string,
     dirCount: number,

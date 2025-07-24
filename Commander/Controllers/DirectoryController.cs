@@ -27,12 +27,13 @@ class DirectoryController(string folderId) : Controller(folderId)
         catch (UnauthorizedAccessException uae)
         {
             OnError(uae);
-            return new ChangePathResult(true, changePathId, null, "", 0, 0);
+            return new ChangePathResult(false, true, changePathId, null, "", 0, 0);
         }
         catch (DirectoryNotFoundException dnfe)
         {
             OnError(dnfe);
-            return new ChangePathResult(true, changePathId, null, "", 0, 0);
+            // TODO: Show error in status bar
+            return new ChangePathResult(true, null, changePathId, null, "", 0, 0);
         }
         // catch (RequestException re) when (re.CustomRequestError == CustomRequestError.ConnectionError)
         // {
@@ -48,12 +49,13 @@ class DirectoryController(string folderId) : Controller(folderId)
         // }
         catch (OperationCanceledException)
         {
-            return new ChangePathResult(true, changePathId, null, "", 0, 0);
+            return new ChangePathResult(true, null, changePathId, null, "", 0, 0);
         }
         catch (Exception e)
         {
             OnError(e);
-            return new ChangePathResult(true, changePathId, null, "", 0, 0);
+            // TODO: Show error in status bar
+            return new ChangePathResult(true, null, changePathId, null, "", 0, 0);
         }
 
         static void OnError(Exception e) => Error.WriteLine($"Konnte Pfad nicht ändern: {e}");
@@ -303,7 +305,7 @@ record GetFilesResult(
     int FileCount,
     DirectoryItem[] Items
 )
-    : ChangePathResult(Cancelled, Id, Controller, Path, DirCount, FileCount);
+    : ChangePathResult(Cancelled, null, Id, Controller, Path, DirCount, FileCount);
 
 static class FileVersionInfoExtensions
 {

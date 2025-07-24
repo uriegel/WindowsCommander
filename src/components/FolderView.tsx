@@ -11,6 +11,7 @@ import { initializeHistory } from "../history"
 import { ResultType, Slide, type DialogHandle } from "web-dialog-react"
 import CopyConflicts, { type ConflictItem } from "./dialogparts/CopyConflicts"
 import { delayAsync } from "functional-extensions"
+import Credentials, { type CredentialsProps } from "./dialogparts/Credentials"
 
 export type FolderViewHandle = {
     id: string
@@ -118,6 +119,28 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         const result = await changePathRequest({ id, path, showHidden: forceShowHidden === undefined ? showHidden : forceShowHidden, mount })
         if (result.cancelled)
             return
+        if (result.accessDenied) {
+        while (true) {
+                let name = ""
+                let password = ""
+                const res = await dialog.show({
+                    text: "Zugriff verweigert",
+                    extension: Credentials,
+                    extensionProps: { name, password },
+                    onExtensionChanged: (e: CredentialsProps) => {
+                        name = e.name
+                        password = e.password
+                    },          
+                    btnOk: true,
+                    btnCancel: true,
+                    defBtnOk: true,      
+                })
+                if (res.result == ResultType.Cancel) 
+                    return
+                                    
+                await delayAsync(500)
+            }
+        }
         restrictionView.current?.reset()
         if (result.controller) {
             controller.current = getController(result.controller)
@@ -140,7 +163,7 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
             if (!fromBacklog)
                 history.current.set(result.path)
         }
-    }, [id, setItems, setWidths, showHidden])
+    }, [id, setItems, setWidths, showHidden, dialog])
 
     useImperativeHandle(ref, () => ({
         id,

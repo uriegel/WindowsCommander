@@ -53,7 +53,7 @@ record RootResult(
     int FileCount,
     RootItem[] Items
 )
-    : ChangePathResult(Cancelled, 0, Controller, Path, DirCount, FileCount);
+    : ChangePathResult(Cancelled, null, 0, Controller, Path, DirCount, FileCount);
 
 
 record RootItem(
