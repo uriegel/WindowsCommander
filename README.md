@@ -1,6 +1,6 @@
+// TODO rename file
 // TODO ConnectShare: error in status bar
 // TODO create folder
-// TODO rename file
 // TODO rename with copy
 
 // TODO Menu open explorer here

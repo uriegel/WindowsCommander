@@ -138,6 +138,9 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 			case "SHOW_PROGRESS":
 				titlebar.current?.startProgressDialog()
 				break
+			case "RENAME":
+				getActiveFolder()?.rename()
+				break
 			case "END":
 				window.close()
 				break

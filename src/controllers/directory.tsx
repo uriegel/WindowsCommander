@@ -128,6 +128,19 @@ export class Directory implements IController {
         return !response.error
     }
 
+    async rename(item: FolderViewItem, dialog: DialogHandle, id: string, path: string) {
+        const res = await dialog.show({
+            text: `Möchtest du ${item.isDirectory ? "das Verzeichnis" : "die Datei"} umbenennen?`,
+            btnOk: true,
+            btnCancel: true,
+            defBtnOk: true
+        })
+        if (res.result == ResultType.Cancel)        
+            return false
+
+        return true
+    }
+
     constructor() {
         this.id = "ROOT"
         this.itemsSelectable = true

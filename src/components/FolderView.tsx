@@ -26,6 +26,7 @@ export type FolderViewHandle = {
     copyItems: (inactiveFolder: FolderViewHandle, move: boolean, fromLeft: boolean) => Promise<void>
     showProperties: () => Promise<void>
     openAs: ()=>Promise<void>
+    rename: () => Promise<void>
 }
 
 interface ItemCount {
@@ -137,7 +138,7 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
                 })
                 if (res.result == ResultType.Cancel) 
                     return
-                var response = await connectShare({
+                const response = await connectShare({
                     name, 
                     password,
                     share: path ?? "" // TODO substring to raw network share
@@ -187,7 +188,8 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         selectNone,
         copyItems,
         showProperties,
-        openAs
+        openAs,
+        rename
     }))
 
     const input = useRef<HTMLInputElement | null>(null)
@@ -439,6 +441,15 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
                 refresh()
             else
                 setErrorText("Löschen nicht möglich!")
+    }
+
+    const rename = async () => {
+        const item = getSelectedItem()
+        if (item && dialog)
+            if (await controller.current.rename(item, dialog, id, path))
+                refresh()
+            else
+                setErrorText("Löschen nicht möglich!")       
     }
 
     const onSort = async (sort: OnSort) => {
