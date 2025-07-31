@@ -3,7 +3,7 @@ import { formatDateTime, formatSize, getItemsType, IconNameType, ItemsType, sort
 import type { FileVersion, FolderViewItem } from "../components/FolderView"
 import IconName from "../components/IconName"
 import "../extensions/extensions"
-import { deleteItems, deleteItemsUac, onEnter, SelectedItemsType, setControllerUac, startUac, stoptUac, type PrepareCopyResponse } from "../requests/requests"
+import { deleteItems, deleteItemsUac, onEnter, renameItem, SelectedItemsType, setControllerUac, startUac, stoptUac, type PrepareCopyResponse } from "../requests/requests"
 import { ResultType, type DialogHandle } from "web-dialog-react"
 import { delayAsync } from "functional-extensions"
 
@@ -138,8 +138,10 @@ export class Directory implements IController {
             btnCancel: true,
             defBtnOk: true
         })
-        if (res.result == ResultType.Cancel)        
+        if (res.result != ResultType.Ok || !res.input || selected.name == res.input )        
             return false
+
+        var result = await renameItem({id, path, asCopy, item: selected.name, newName: res.input })
 
         return true
     }

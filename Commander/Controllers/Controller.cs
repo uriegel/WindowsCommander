@@ -10,7 +10,8 @@ abstract class Controller(string folderId)
     public virtual Task<GetExtendedResult> GetExtended(int id) => throw new NotImplementedException();
     public virtual Task<OnEnterResult> OnEnter(OnEnterRequest rename) => throw new NotImplementedException();
     public virtual Task<DeleteItemsResponse> DeleteItems(DeleteItemsRequest request) => throw new NotImplementedException();
-
+    public virtual Task<RenameResponse> Rename(RenameRequest request) => throw new NotImplementedException();
+    
     protected bool CheckInitial()
     {
         if (initial)

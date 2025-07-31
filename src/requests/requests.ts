@@ -98,6 +98,18 @@ interface DeleteItemsResponse {
     accessDenied?: boolean
 }
 
+interface Rename {
+    id: string
+    path: string
+    item: string
+    newName: string
+    asCopy?: boolean
+}
+
+interface RenameResponse {
+    error?: boolean,
+}
+
 interface ConnectShare {
     name: string
     password: string
@@ -137,6 +149,7 @@ export const prepareCopyUac = getJsonPost<PrepareCopy, PrepareCopyResponse>("pre
 export const deleteItems = getJsonPost<DeleteItems, DeleteItemsResponse>("deleteitems")
 export const deleteItemsUac = getJsonPost<DeleteItems, DeleteItemsResponse>("deleteitems", 21000)
 export const connectShare = getJsonPost<ConnectShare, ConnectShareResponse>("connectshare")
+export const renameItem = getJsonPost<Rename, RenameResponse>("rename")
 
 function getJsonPost<RequestType, ResponseType>(method: string, port = 20000): (request: RequestType) => Promise<ResponseType> {
  

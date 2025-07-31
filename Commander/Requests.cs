@@ -33,6 +33,7 @@ static class Requests
             "stopuac" => await StopUac(request),
             "setcontroller" => await SetController(request),
             "deleteitems" => await DeleteItems(request),
+            "rename" => await Rename(request),
             "connectshare" => await ConnectShare(request),
             _ => false
         };
@@ -131,6 +132,9 @@ static class Requests
     static Task<bool> DeleteItems(IRequest request)
         => Request<DeleteItemsRequest, DeleteItemsResponse>(request, n => GetController(n.Id).DeleteItems(n));
 
+    static Task<bool> Rename(IRequest request)
+        => Request<RenameRequest, RenameResponse>(request, n => GetController(n.Id).Rename(n));
+    
     static Task<bool> ConnectShare(IRequest request)
         => Request<ConnectShareRequest, ConnectShareResponse>(request, DirectoryController.ConnectShare);
     
@@ -218,6 +222,16 @@ record DeleteItemsResponse(bool? Error = null, bool? AccessDenied = null);
 
 record ConnectShareRequest(string Name, string Password, string Share);
 record ConnectShareResponse(bool Success);
+
+record RenameRequest(
+    string Id,
+    string Path,
+    string Item,
+    string NewName,
+    bool? AsCopy
+);
+
+record RenameResponse(bool? Error);
 
 record NilRequest();
 record NilResponse();

@@ -89,6 +89,20 @@ class DirectoryController(string folderId) : Controller(folderId)
         return new DeleteItemsResponse(res != 0 ? true : null, res == 0x78 ? true : null).ToAsync();
     }
 
+    public override Task<RenameResponse> Rename(RenameRequest request)
+    {
+        var res = SHFileOperation(new ClrWinApi.ShFileOPStruct
+        {
+            Func = request.AsCopy == true ? ClrWinApi.FileFuncFlags.COPY : ClrWinApi.FileFuncFlags.RENAME,
+            Hwnd = Program.Instance.WindowHandle,
+            From = string.Join("\U00000000", request.Path.AppendPath(request.Item)) + "\U00000000\U00000000",
+            To = string.Join("\U00000000", request.Path.AppendPath(request.NewName)) + "\U00000000\U00000000",
+            Flags = ClrWinApi.FileOpFlags.NOCONFIRMMKDIR
+                    | ClrWinApi.FileOpFlags.ALLOWUNDO
+        });
+        return new RenameResponse(res != 0 ? true : null).ToAsync();
+    }
+
     public override Task<OnEnterResult> OnEnter(OnEnterRequest data)
     {
         var path = data.Path.AppendPath(data.Name);
