@@ -142,8 +142,7 @@ export class Directory implements IController {
             return false
 
         var result = await renameItem({id, path, asCopy, item: selected.name, newName: res.input })
-
-        return true
+        return !result.error 
     }
 
     constructor() {
