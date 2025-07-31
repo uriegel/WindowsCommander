@@ -26,7 +26,7 @@ export type FolderViewHandle = {
     copyItems: (inactiveFolder: FolderViewHandle, move: boolean, fromLeft: boolean) => Promise<void>
     showProperties: () => Promise<void>
     openAs: ()=>Promise<void>
-    rename: () => Promise<void>
+    rename: (asCopy?: boolean) => Promise<void>
 }
 
 interface ItemCount {
@@ -443,13 +443,13 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
                 setErrorText("Löschen nicht möglich!")
     }
 
-    const rename = async () => {
+    const rename = async (asCopy?: boolean) => {
         const item = getSelectedItem()
-        if (item && dialog)
-            if (await controller.current.rename(item, dialog, id, path))
+        if (item && dialog && !(item.isDirectory && asCopy))
+            if (await controller.current.rename(item, dialog, id, path, item, asCopy == true))
                 refresh()
             else
-                setErrorText("Löschen nicht möglich!")       
+                setErrorText("Vorgang nicht möglich!")       
     }
 
     const onSort = async (sort: OnSort) => {

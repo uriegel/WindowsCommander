@@ -128,9 +128,12 @@ export class Directory implements IController {
         return !response.error
     }
 
-    async rename(item: FolderViewItem, dialog: DialogHandle, id: string, path: string) {
+    async rename(item: FolderViewItem, dialog: DialogHandle, id: string, path: string, selected: FolderViewItem, asCopy: boolean) {
         const res = await dialog.show({
-            text: `Möchtest du ${item.isDirectory ? "das Verzeichnis" : "die Datei"} umbenennen?`,
+            text: asCopy 
+                ? `Möchtest du eine Kopie anlegen?`
+                : `Möchtest du ${item.isDirectory ? "das Verzeichnis" : "die Datei"} umbenennen?`,
+            inputText: selected.name,
             btnOk: true,
             btnCancel: true,
             defBtnOk: true

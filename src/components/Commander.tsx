@@ -141,6 +141,9 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 			case "RENAME":
 				getActiveFolder()?.rename()
 				break
+			case "RENAME_AS_COPY":
+				getActiveFolder()?.rename(true)
+				break
 			case "END":
 				window.close()
 				break
