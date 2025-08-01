@@ -27,6 +27,7 @@ export type FolderViewHandle = {
     showProperties: () => Promise<void>
     openAs: ()=>Promise<void>
     rename: (asCopy?: boolean) => Promise<void>
+    createFolder: () => Promise<void>
 }
 
 interface ItemCount {
@@ -189,7 +190,8 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
         copyItems,
         showProperties,
         openAs,
-        rename
+        rename,
+        createFolder
     }))
 
     const input = useRef<HTMLInputElement | null>(null)
@@ -446,10 +448,19 @@ const FolderView = forwardRef<FolderViewHandle, FolderViewProp>((
     const rename = async (asCopy?: boolean) => {
         const item = getSelectedItem()
         if (item && dialog && !(item.isDirectory && asCopy))
-            if (await controller.current.rename(item, dialog, id, path, item, asCopy == true))
+            if (await controller.current.rename(dialog, id, path, item, asCopy == true))
                 refresh()
             else
                 setErrorText("Vorgang nicht möglich!")       
+    }
+
+    const createFolder = async () => {
+        const item = getSelectedItem()
+        if (dialog)
+            if (await controller.current.createFolder(dialog, id, path, item))
+                refresh()
+            else
+                setErrorText("Konnte den Ordner nicht anlegen!")       
     }
 
     const onSort = async (sort: OnSort) => {

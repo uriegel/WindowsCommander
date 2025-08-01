@@ -31,6 +31,8 @@ export class Root implements IController {
 
     async rename() { return false }
 
+    async createFolder() { return false }
+
     getItems(): FolderViewItem[] { throw "not implemented" }
 
     sort(items: FolderViewItem[]) { return items }

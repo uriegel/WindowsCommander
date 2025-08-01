@@ -3,7 +3,7 @@ import { formatDateTime, formatSize, getItemsType, IconNameType, ItemsType, sort
 import type { FileVersion, FolderViewItem } from "../components/FolderView"
 import IconName from "../components/IconName"
 import "../extensions/extensions"
-import { deleteItems, deleteItemsUac, onEnter, renameItem, SelectedItemsType, setControllerUac, startUac, stoptUac, type PrepareCopyResponse } from "../requests/requests"
+import { createFolderRequest, deleteItems, deleteItemsUac, onEnter, renameItem, SelectedItemsType, setControllerUac, startUac, stoptUac, type PrepareCopyResponse } from "../requests/requests"
 import { ResultType, type DialogHandle } from "web-dialog-react"
 import { delayAsync } from "functional-extensions"
 
@@ -128,11 +128,11 @@ export class Directory implements IController {
         return !response.error
     }
 
-    async rename(item: FolderViewItem, dialog: DialogHandle, id: string, path: string, selected: FolderViewItem, asCopy: boolean) {
+    async rename(dialog: DialogHandle, id: string, path: string, selected: FolderViewItem, asCopy: boolean) {
         const res = await dialog.show({
             text: asCopy 
                 ? `Möchtest du eine Kopie anlegen?`
-                : `Möchtest du ${item.isDirectory ? "das Verzeichnis" : "die Datei"} umbenennen?`,
+                : `Möchtest du ${selected.isDirectory ? "das Verzeichnis" : "die Datei"} umbenennen?`,
             inputText: selected.name,
             btnOk: true,
             btnCancel: true,
@@ -142,6 +142,21 @@ export class Directory implements IController {
             return false
 
         var result = await renameItem({id, path, asCopy, item: selected.name, newName: res.input })
+        return !result.error 
+    }
+
+    async createFolder(dialog: DialogHandle, id: string, path: string, selected: FolderViewItem) {
+        const res = await dialog.show({
+            text: `Möchtest du einen neuen Ordner anlegen?`,
+            inputText: selected.name,
+            btnOk: true,
+            btnCancel: true,
+            defBtnOk: true
+        })
+        if (res.result != ResultType.Ok || !res.input || selected.name == res.input )        
+            return false
+
+        var result = await createFolderRequest({id, path, newName: res.input })
         return !result.error 
     }
 

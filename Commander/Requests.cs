@@ -34,6 +34,7 @@ static class Requests
             "setcontroller" => await SetController(request),
             "deleteitems" => await DeleteItems(request),
             "rename" => await Rename(request),
+            "createfolder" => await CreateFolder(request),
             "connectshare" => await ConnectShare(request),
             _ => false
         };
@@ -134,6 +135,9 @@ static class Requests
 
     static Task<bool> Rename(IRequest request)
         => Request<RenameRequest, RenameResponse>(request, n => GetController(n.Id).Rename(n));
+
+    static Task<bool> CreateFolder(IRequest request)
+        => Request<CreateFolderRequest, CreateFolderResponse>(request, n => GetController(n.Id).CreateFolder(n));
     
     static Task<bool> ConnectShare(IRequest request)
         => Request<ConnectShareRequest, ConnectShareResponse>(request, DirectoryController.ConnectShare);
@@ -232,6 +236,14 @@ record RenameRequest(
 );
 
 record RenameResponse(bool? Error);
+
+record CreateFolderRequest(
+    string Id,
+    string Path,
+    string NewName
+);
+
+record CreateFolderResponse(bool? Error);
 
 record NilRequest();
 record NilResponse();

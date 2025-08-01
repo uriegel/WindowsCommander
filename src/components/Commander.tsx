@@ -144,6 +144,9 @@ const Commander = forwardRef<CommanderHandle, object>((_, ref) => {
 			case "RENAME_AS_COPY":
 				getActiveFolder()?.rename(true)
 				break
+			case "CREATE_FOLDER":
+				getActiveFolder()?.createFolder()
+				break
 			case "END":
 				window.close()
 				break

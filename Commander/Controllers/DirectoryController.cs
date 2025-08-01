@@ -103,6 +103,19 @@ class DirectoryController(string folderId) : Controller(folderId)
         return new RenameResponse(res != 0 ? true : null).ToAsync();
     }
 
+    public override Task<CreateFolderResponse> CreateFolder(CreateFolderRequest request)
+    {
+        try
+        {
+            Directory.CreateDirectory(request.Path.AppendPath(request.NewName));
+            return new CreateFolderResponse(null).ToAsync();
+        }
+        catch (Exception e)
+        {
+            return new CreateFolderResponse(true).ToAsync();
+        }
+    }
+
     public override Task<OnEnterResult> OnEnter(OnEnterRequest data)
     {
         var path = data.Path.AppendPath(data.Name);

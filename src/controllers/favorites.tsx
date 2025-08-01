@@ -101,6 +101,8 @@ export class Favorites implements IController {
     }
 
     async rename() { return false }
+
+    async createFolder() { return false }
    
     constructor() {
         this.id = "FAV"

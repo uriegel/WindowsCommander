@@ -110,6 +110,16 @@ interface RenameResponse {
     error?: boolean,
 }
 
+interface CreateFolder {
+    id: string
+    path: string
+    newName: string
+}
+
+interface CreateFolderResponse {
+    error?: boolean,
+}
+
 interface ConnectShare {
     name: string
     password: string
@@ -150,6 +160,7 @@ export const deleteItems = getJsonPost<DeleteItems, DeleteItemsResponse>("delete
 export const deleteItemsUac = getJsonPost<DeleteItems, DeleteItemsResponse>("deleteitems", 21000)
 export const connectShare = getJsonPost<ConnectShare, ConnectShareResponse>("connectshare")
 export const renameItem = getJsonPost<Rename, RenameResponse>("rename")
+export const createFolderRequest = getJsonPost<CreateFolder, CreateFolderResponse>("createfolder")
 
 function getJsonPost<RequestType, ResponseType>(method: string, port = 20000): (request: RequestType) => Promise<ResponseType> {
  
