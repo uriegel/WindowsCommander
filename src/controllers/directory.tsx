@@ -145,15 +145,15 @@ export class Directory implements IController {
         return !result.error 
     }
 
-    async createFolder(dialog: DialogHandle, id: string, path: string, selected: FolderViewItem) {
+    async createFolder(dialog: DialogHandle, id: string, path: string, selected: FolderViewItem|null) {
         const res = await dialog.show({
             text: `Möchtest du einen neuen Ordner anlegen?`,
-            inputText: selected.name,
+            inputText: selected?.name,
             btnOk: true,
             btnCancel: true,
             defBtnOk: true
         })
-        if (res.result != ResultType.Ok || !res.input || selected.name == res.input )        
+        if (res.result != ResultType.Ok || !res.input || selected?.name == res.input )        
             return false
 
         var result = await createFolderRequest({id, path, newName: res.input })
