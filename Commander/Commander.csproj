@@ -44,7 +44,7 @@
   <ItemGroup>
     <PackageReference Include="URiegel.WebSocketClient" Version="1.0.0" />
     <PackageReference Include="WebWindowNetCore" Version="11.0.19-beta-19" />
-    <PackageReference Include="WebServerLight" Version="1.0.3" />
+    <PackageReference Include="WebServerLight" Version="1.0.5" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
 
