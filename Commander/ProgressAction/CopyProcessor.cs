@@ -1,9 +1,11 @@
+using System.CodeDom;
 using System.Runtime.InteropServices;
 using ClrWinApi;
 using Commander.Controllers;
 using Commander.Enums;
+using CsTools;
 using CsTools.Extensions;
-
+using Microsoft.VisualBasic;
 using static ClrWinApi.Api;
 
 namespace Commander.ProgressAction;
@@ -94,7 +96,10 @@ class CopyProcessor(string sourcePath, string targetPath, SelectedItemsType sele
 
     protected virtual Task CopyItem(CopyItem item, bool move, CancellationToken cancellation)
     {
-        var newFileName = targetPath.AppendPath(item.Source.Name).RemoveWriteProtection();
+        var newFileName = targetPath
+                            .AppendPath(item.Source.Name)
+                            .RemoveWriteProtection()
+                            .EnsureFileDirectoryExists();
 
         var cancel = 0;
         cancellation.Register(() => cancel = -1);
@@ -162,7 +167,7 @@ static partial class Extensions
             {
                 try
                 {
-                    Directory.Delete(dirToCheck, true);
+                    System.IO.Directory.Delete(dirToCheck, true);
                 }
                 catch (Exception e)
                 {
@@ -173,11 +178,12 @@ static partial class Extensions
     }
 
     public static string RemoveWriteProtection(this string file)
-        => file.SideEffect(n => {
+        => file.SideEffect(n =>
+        {
             var fi = new FileInfo(n);
             if (fi.Exists)
                 fi.IsReadOnly = false;
-        });    
+        });
 
     static bool IsDirectoryEmpty(this string dir)
     {
@@ -194,5 +200,16 @@ static partial class Extensions
                 return false;
         }
         return true;
+    }
+}
+
+// TODO
+static class StringExtensions
+{
+    public static string EnsureFileDirectoryExists(this string file)
+    {
+        var dir = new FileInfo(file);
+        dir.Directory?.FullName.EnsureDirectoryExists();
+        return file;
     }
 }

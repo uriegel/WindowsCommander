@@ -34,7 +34,7 @@ class Program
                     .New(Method.Post)
                     .Add(PathRoute
                         .New("/request")
-                        .Request(req => Requests.Process(req))))
+                        .Request(Requests.Process)))
                 .Route(MethodRoute
                     .New(Method.Get)
                     .Add(PathRoute
